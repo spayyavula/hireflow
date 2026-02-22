@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771780268241,
+  "projectRoot": "D:\\downloads\\hireflow",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 9,
+      "lastAccessed": 1771780268060,
+      "keyFiles": [
+        "DEPLOY.md",
+        "pyproject.toml",
+        "README.md",
+        "requirements.txt",
+        "setup_db.py"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1771780268062,
+      "keyFiles": [
+        "ARCHITECTURE.md"
+      ]
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1771780268063,
+      "keyFiles": [
+        "DEPLOY.md",
+        "deploy.sh",
+        "index.html",
+        "package-lock.json",
+        "package.json"
+      ]
+    },
+    "backend\\api": {
+      "path": "backend\\api",
+      "purpose": "API routes",
+      "fileCount": 3,
+      "lastAccessed": 1771780268065,
+      "keyFiles": [
+        "index.py",
+        "__init__.py"
+      ]
+    },
+    "frontend\\node_modules": {
+      "path": "frontend\\node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1771780268066,
+      "keyFiles": []
+    },
+    "frontend\\public": {
+      "path": "frontend\\public",
+      "purpose": "Public files",
+      "fileCount": 1,
+      "lastAccessed": 1771780268067,
+      "keyFiles": [
+        "favicon.svg"
+      ]
+    },
+    "frontend\\src": {
+      "path": "frontend\\src",
+      "purpose": "Source code",
+      "fileCount": 3,
+      "lastAccessed": 1771780268067,
+      "keyFiles": [
+        "api.js",
+        "App.jsx",
+        "main.jsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "C:\\Users\\sreek\\.claude\\settings.json",
+      "accessCount": 6,
+      "lastAccessed": 1771785100055,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\sreek\\.claude\\CLAUDE.md",
+      "accessCount": 2,
+      "lastAccessed": 1771784505966,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\sreek\\.claude\\hud\\omc-hud.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1771780721005,
+      "type": "file"
+    },
+    {
+      "path": ".claude\\settings.json",
+      "accessCount": 1,
+      "lastAccessed": 1771785089380,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

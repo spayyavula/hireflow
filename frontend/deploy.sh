@@ -85,7 +85,7 @@ fi
 # ─── Deploy Backend ─────────────────────────────────────
 print_step "Deploying Backend API"
 
-BACKEND_DIR="$SCRIPT_DIR/../hireflow-api"
+BACKEND_DIR="$SCRIPT_DIR/../backend/api"
 if [[ ! -d "$BACKEND_DIR" ]]; then
   BACKEND_DIR="$SCRIPT_DIR/hireflow-api"
 fi
