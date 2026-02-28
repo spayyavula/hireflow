@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import api from "./api";
 
 // ═══════════════════════════════════════════════════════════════════
-// HIREFLOW REDESIGN — Editorial/Magazine Aesthetic
-// Typography: Clash Display + Satoshi
+// HIREFLOW REDESIGN — Classic Corporate Aesthetic
+// Typography: Playfair Display + Source Sans 3
 // Colors: Deep ink, warm coral, cream accents
 // ═══════════════════════════════════════════════════════════════════
 
@@ -61,8 +61,7 @@ const MESSAGES = [
 // ─── Global Styles ───────────────────────────────────────────────────
 const GlobalStyles = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-    @import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -87,7 +86,7 @@ const GlobalStyles = () => (
     }
 
     body {
-      font-family: 'Satoshi', 'Inter', -apple-system, sans-serif;
+      font-family: 'Source Sans 3', 'Inter', -apple-system, sans-serif;
       background: var(--cream);
       color: var(--text-primary);
       line-height: 1.5;
@@ -189,7 +188,7 @@ const Button = ({ children, variant = "default", size = "md", onClick, disabled,
     transition: "all 0.2s ease",
     border: "none",
     opacity: disabled ? 0.5 : 1,
-    fontFamily: "'Satoshi', sans-serif",
+    fontFamily: "'Source Sans 3', sans-serif",
   };
 
   const variants = {
@@ -347,7 +346,7 @@ const Avatar = ({ initials, size = 40, color }) => {
       fontWeight: 700,
       color: bg,
       flexShrink: 0,
-      fontFamily: "'Clash Display', sans-serif",
+      fontFamily: "'Playfair Display', serif",
     }}>
       {initials}
     </div>
@@ -388,7 +387,7 @@ const StatCard = ({ label, value, sub, icon, accent }) => (
     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
       <span style={{ color: accent || "var(--coral)", opacity: 0.8 }}>{icon}</span>
     </div>
-    <div style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, color: "var(--ink)", letterSpacing: "-0.02em" }}>{value}</div>
+    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: "var(--ink)", letterSpacing: "-0.02em" }}>{value}</div>
     <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{label}</div>
     {sub && <div style={{ fontSize: 12, color: accent || "var(--coral)", marginTop: 6, fontWeight: 600 }}>{sub}</div>}
   </Card>
@@ -438,18 +437,18 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <button onClick={onSignIn} style={{
             padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
             background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
-            color: "var(--text-primary)", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
           }}>Sign In</button>
           <button onClick={onGetStarted} style={{
             padding: "10px 24px", borderRadius: 10, border: "none",
             background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
           }}>Get Started</button>
         </div>
       </header>
@@ -476,7 +475,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
             AI-Powered Job Marketplace
           </div>
           <h1 style={{
-            fontFamily: "'Clash Display', sans-serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 700,
+            fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 700,
             lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 20,
           }}>
             Where talent meets<br />opportunity
@@ -492,13 +491,13 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
             <button onClick={onGetStarted} style={{
               padding: "14px 36px", borderRadius: 12, border: "none",
               background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
-              cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+              cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
               boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
             }}>Get Started Free</button>
             <button onClick={onSignIn} style={{
               padding: "14px 36px", borderRadius: 12, border: "1.5px solid var(--border-strong)",
               background: "transparent", fontSize: 16, fontWeight: 600,
-              cursor: "pointer", color: "var(--text-primary)", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+              cursor: "pointer", color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
             }}>Sign In</button>
           </div>
         </div>
@@ -518,7 +517,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
               padding: "24px 48px", textAlign: "center",
               borderRight: i < stats.length - 1 ? "1px solid var(--border)" : "none",
             }}>
-              <div style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{s.value}</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{s.value}</div>
               <div style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500, marginTop: 4 }}>{s.label}</div>
             </div>
           ))}
@@ -529,7 +528,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
       <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
         <div className="animate-in-delay-2" style={{ textAlign: "center", marginBottom: 56 }}>
           <h2 style={{
-            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>How it works</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
@@ -553,12 +552,12 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
                   {step.icon}
                 </div>
                 <span style={{
-                  fontFamily: "'Clash Display', sans-serif", fontSize: 14, fontWeight: 700,
+                  fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700,
                   color: "var(--text-muted)", letterSpacing: "0.04em",
                 }}>{step.num}</span>
               </div>
               <h3 style={{
-                fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 700,
+                fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700,
                 color: "var(--ink)", marginBottom: 8,
               }}>{step.title}</h3>
               <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{step.desc}</p>
@@ -571,7 +570,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
       <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <h2 style={{
-            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>Built for everyone</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
@@ -595,7 +594,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
                 {r.icon}
               </div>
               <h3 style={{
-                fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700,
+                fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700,
                 color: "var(--ink)", marginBottom: 16,
               }}>{r.title}</h3>
               <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -615,7 +614,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
       <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <h2 style={{
-            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>Featured opportunities</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
@@ -636,7 +635,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
                 <div style={{
                   width: 40, height: 40, borderRadius: 10, background: "var(--ink)", color: "var(--cream)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "'Clash Display', sans-serif", fontSize: 14, fontWeight: 700,
+                  fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700,
                 }}>
                   {job.company.slice(0, 2).toUpperCase()}
                 </div>
@@ -668,7 +667,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
         background: "var(--ink)", color: "var(--cream)", margin: "64px 0 0",
       }}>
         <h2 style={{
-          fontFamily: "'Clash Display', sans-serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
           letterSpacing: "-0.02em", marginBottom: 16,
         }}>Ready to transform your hiring?</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
@@ -678,13 +677,13 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
           <button onClick={onGetStarted} style={{
             padding: "14px 36px", borderRadius: 12, border: "none",
             background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
-            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
             boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
           }}>Create Free Account</button>
           <button onClick={onSignIn} style={{
             padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
             background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
           }}>Sign In</button>
         </div>
       </section>
@@ -737,7 +736,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
     width: "100%", padding: "14px 16px", borderRadius: 12,
     border: "1.5px solid var(--border)", background: "white",
     fontSize: 15, color: "var(--text-primary)", outline: "none",
-    fontFamily: "'Satoshi', sans-serif",
+    fontFamily: "'Source Sans 3', sans-serif",
   };
 
   const roleOptions = [
@@ -761,7 +760,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
         )}
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
         </div>
       </header>
 
@@ -773,7 +772,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
         }}>
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <h1 style={{
-              fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700,
+              fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
               color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 8,
             }}>
               {mode === "login" ? "Welcome back" : "Create account"}
@@ -835,7 +834,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
                           border: authRole === r.key ? `2px solid ${r.accent}` : "2px solid var(--border)",
                           background: authRole === r.key ? `${r.accent}10` : "transparent",
                           color: authRole === r.key ? r.accent : "var(--text-secondary)",
-                          fontFamily: "'Satoshi', sans-serif",
+                          fontFamily: "'Source Sans 3', sans-serif",
                         }}
                       >
                         {r.label}
@@ -875,7 +874,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
               onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }}
               style={{
                 background: "none", border: "none", color: "var(--coral)",
-                fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Satoshi', sans-serif",
+                fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
               }}
             >
               {mode === "login" ? "Sign up" : "Sign in"}
@@ -909,7 +908,7 @@ const RoleSelect = ({ onSelect }) => {
       <header style={{ padding: "24px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
         </div>
         <Button variant="ghost" size="sm">Sign In</Button>
       </header>
@@ -922,7 +921,7 @@ const RoleSelect = ({ onSelect }) => {
               <span style={{ color: "var(--coral)" }}>{Icons.zap}</span>
               <span style={{ fontSize: 13, fontWeight: 600, color: "var(--coral)" }}>AI-Powered Matching</span>
             </div>
-            <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700, color: "var(--ink)", lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 20 }}>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700, color: "var(--ink)", lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 20 }}>
               Find your perfect<br />
               <span style={{ color: "var(--coral)" }}>career match</span>
             </h1>
@@ -961,7 +960,7 @@ const RoleSelect = ({ onSelect }) => {
                 }}>
                   {role.icon}
                 </div>
-                <h3 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, color: "var(--ink)", marginBottom: 12 }}>{role.title}</h3>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "var(--ink)", marginBottom: 12 }}>{role.title}</h3>
                 <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 24 }}>{role.desc}</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, color: role.accent, fontSize: 14, fontWeight: 600 }}>
                   Get started {Icons.arrow}
@@ -991,7 +990,7 @@ const SeekerChoice = ({ onUpload, onBuild, onBack }) => {
       <header style={{ padding: "24px 48px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
         </div>
       </header>
 
@@ -1001,7 +1000,7 @@ const SeekerChoice = ({ onUpload, onBuild, onBack }) => {
             {Icons.arrowLeft} Back
           </button>
 
-          <h1 className="animate-in" style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 42, fontWeight: 700, color: "var(--ink)", marginBottom: 16, letterSpacing: "-0.02em" }}>
+          <h1 className="animate-in" style={{ fontFamily: "'Playfair Display', serif", fontSize: 42, fontWeight: 700, color: "var(--ink)", marginBottom: 16, letterSpacing: "-0.02em" }}>
             How would you like to start?
           </h1>
           <p className="animate-in-delay-1" style={{ fontSize: 17, color: "var(--text-secondary)", marginBottom: 48 }}>
@@ -1032,7 +1031,7 @@ const SeekerChoice = ({ onUpload, onBuild, onBack }) => {
                   {opt.icon}
                 </div>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "var(--coral)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>{opt.badge}</div>
-                <h3 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, color: "var(--ink)", marginBottom: 12 }}>{opt.title}</h3>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "var(--ink)", marginBottom: 12 }}>{opt.title}</h3>
                 <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{opt.desc}</p>
               </Card>
             ))}
@@ -1157,7 +1156,7 @@ const ResumeUpload = ({ onComplete, onBack }) => {
         <GlobalStyles />
         <div style={{ textAlign: "center", maxWidth: 400 }}>
           <div style={{ width: 64, height: 64, margin: "0 auto 32px", borderRadius: 32, border: "3px solid var(--cream-dark)", borderTopColor: "var(--coral)", animation: "spin 1s linear infinite" }} />
-          <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Analyzing Resume</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Analyzing Resume</h2>
           <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>{fileName}</p>
           <div style={{ height: 6, borderRadius: 3, background: "var(--cream-dark)", overflow: "hidden" }}>
             <div style={{ height: "100%", background: "var(--coral)", width: `${progress}%`, transition: "width 0.1s" }} />
@@ -1175,12 +1174,12 @@ const ResumeUpload = ({ onComplete, onBack }) => {
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
           </header>
 
           <div className="animate-in" style={{ marginBottom: 32 }}>
             <Tag variant="sage" style={{ marginBottom: 16 }}>{Icons.check} Resume parsed successfully</Tag>
-            <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700, marginBottom: 8 }}>Review Your Profile</h1>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, marginBottom: 8 }}>Review Your Profile</h1>
             <p style={{ color: "var(--text-secondary)" }}>Extracted from {fileName} — edit any field before saving</p>
           </div>
 
@@ -1375,10 +1374,10 @@ const ResumeUpload = ({ onComplete, onBack }) => {
       <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
         </div>
 
-        <h1 className="animate-in" style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700, marginBottom: 12 }}>Upload your resume</h1>
+        <h1 className="animate-in" style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, marginBottom: 12 }}>Upload your resume</h1>
         <p className="animate-in-delay-1" style={{ color: "var(--text-secondary)", marginBottom: 40 }}>Our AI extracts your skills, experience, and preferences instantly</p>
 
         {error && (
@@ -1458,7 +1457,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
   const steps = [
     // Step 0: Basic Info
     <div key={0}>
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Let's build your profile</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Let's build your profile</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>Tell us about yourself</p>
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 480 }}>
         <div>
@@ -1482,7 +1481,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
 
     // Step 1: Skills
     <div key={1}>
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>What are your skills?</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>What are your skills?</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: 24 }}>Select at least 3 skills</p>
 
       {profile.skills.length > 0 && (
@@ -1516,7 +1515,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
 
     // Step 2: Preferences
     <div key={2}>
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>What's your dream job?</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>What's your dream job?</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: 32 }}>Help us find the perfect match</p>
 
       <div style={{ marginBottom: 28 }}>
@@ -1550,7 +1549,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
 
     // Step 3: Experience
     <div key={3}>
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Work Experience</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Work Experience</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: 32 }}>Add your relevant experience (optional)</p>
 
       {profile.experience.map((exp, i) => (
@@ -1587,7 +1586,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
 
     // Step 4: AI Summary
     <div key={4}>
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>AI Summary</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, marginBottom: 8 }}>AI Summary</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: 32 }}>Generate your professional summary</p>
 
       <Card style={{ marginBottom: 24, background: "rgba(255, 107, 91, 0.04)", border: "1px solid rgba(255, 107, 91, 0.15)" }}>
@@ -1614,7 +1613,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
 
       <Card>
         <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>Profile Preview</div>
-        <div style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700 }}>{profile.name || "Your Name"}</div>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>{profile.name || "Your Name"}</div>
         <div style={{ color: "var(--coral)", fontWeight: 600, marginTop: 4 }}>{profile.headline}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
           {profile.skills.slice(0, 6).map(s => <Tag key={s} variant="coral">{s}</Tag>)}
@@ -1631,7 +1630,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 48 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             {Array.from({ length: totalSteps }, (_, i) => (
@@ -1694,7 +1693,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px", marginBottom: 8, color: "var(--ink)" }}>
         {Icons.logo}
-        <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 700 }}>HireFlow</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>HireFlow</span>
       </div>
       <div style={{ padding: "8px", fontSize: 11, color: roleColors[role], fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
         {roleLabels[role]}
@@ -1754,7 +1753,7 @@ const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
             <div>
-              <h3 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{job.title}</h3>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{job.title}</h3>
               <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "var(--text-muted)", flexWrap: "wrap" }}>
                 <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{job.company}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>{Icons.mapPin} {job.location}</span>
@@ -1908,12 +1907,12 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
     return (
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-          <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700 }}>My Resume</h1>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>My Resume</h1>
           <Button variant="outline" size="sm" onClick={onEditResume}>{Icons.edit} Edit</Button>
         </div>
         <Card>
           <div style={{ marginBottom: 24 }}>
-            <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 26, fontWeight: 700, marginBottom: 4 }}>{profile.name}</h2>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, marginBottom: 4 }}>{profile.name}</h2>
             <p style={{ color: "var(--coral)", fontWeight: 600 }}>{profile.headline}</p>
             <p style={{ color: "var(--text-muted)", marginTop: 4 }}>{profile.email} · {profile.location}</p>
           </div>
@@ -1950,7 +1949,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
   if (activeTab === "analytics") {
     return (
       <div>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Analytics</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Analytics</h1>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 32 }}>
           <StatCard label="Average Match" value={`${Math.round(matchedJobs.reduce((a, j) => a + j.match, 0) / matchedJobs.length)}%`} icon={Icons.chart} />
           <StatCard label="Strong Matches" value={matchedJobs.filter(j => j.match >= 80).length} sub="80%+ score" icon={Icons.spark} accent="var(--sage)" />
@@ -1981,7 +1980,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Welcome back, {profile.name?.split(" ")[0]}!</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Welcome back, {profile.name?.split(" ")[0]}!</h1>
         <p style={{ color: "var(--text-secondary)" }}>
           {jobsLoading ? "Searching for jobs..." : (
             <>AI found <span style={{ color: "var(--coral)", fontWeight: 700 }}>{matchedJobs.filter(j => j.match >= 70).length} strong matches</span> for you{usingRealJobs ? " from real postings" : ""}</>
@@ -2048,7 +2047,7 @@ const ChatView = () => {
   return (
     <div style={{ display: "flex", height: "calc(100vh - 160px)", background: "white", borderRadius: 20, border: "1px solid var(--border)", overflow: "hidden" }}>
       <div style={{ width: 300, borderRight: "1px solid var(--border)", overflowY: "auto" }}>
-        <div style={{ padding: "20px", fontFamily: "'Clash Display', sans-serif", fontSize: 18, fontWeight: 700 }}>Messages</div>
+        <div style={{ padding: "20px", fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700 }}>Messages</div>
         {MESSAGES.map((m, i) => (
           <div
             key={m.id}
@@ -2116,7 +2115,7 @@ const RecruiterDashboard = ({ activeTab }) => {
   if (activeTab === "pipeline") {
     return (
       <div>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Hiring Pipeline</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Hiring Pipeline</h1>
         <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 16 }}>
           {PIPELINE_STAGES.map((stage, si) => {
             const candidates = PIPELINE_DATA.filter(c => c.stage === si);
@@ -2152,7 +2151,7 @@ const RecruiterDashboard = ({ activeTab }) => {
   if (activeTab === "analytics") {
     return (
       <div>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Analytics</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Analytics</h1>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 32 }}>
           <StatCard label="Placements YTD" value="23" sub="$412k revenue" icon={Icons.check} />
           <StatCard label="Time to Fill" value="18d" sub="-4d vs industry" icon={Icons.clock} accent="var(--sage)" />
@@ -2182,7 +2181,7 @@ const RecruiterDashboard = ({ activeTab }) => {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Candidate Search</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Candidate Search</h1>
         <p style={{ color: "var(--text-secondary)" }}>AI identified <span style={{ color: "var(--sage)", fontWeight: 700 }}>{CANDIDATES.length} strong matches</span> for your roles</p>
       </div>
 
@@ -2200,7 +2199,7 @@ const RecruiterDashboard = ({ activeTab }) => {
             <Avatar initials={c.avatar} size={52} />
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
-                <h3 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 18, fontWeight: 700 }}>{c.name}</h3>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700 }}>{c.name}</h3>
                 <MatchScore score={c.match} />
                 <Tag variant={c.status === "Active" ? "sage" : "outline"}>{c.status}</Tag>
               </div>
@@ -2225,7 +2224,7 @@ const CompanyDashboard = ({ activeTab }) => {
   if (activeTab === "analytics") {
     return (
       <div>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Hiring Analytics</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Hiring Analytics</h1>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 32 }}>
           <StatCard label="Cost per Hire" value="$3.2k" sub="-40% vs industry" icon={Icons.chart} />
           <StatCard label="Offer Accept" value="92%" icon={Icons.check} accent="var(--sage)" />
@@ -2253,7 +2252,7 @@ const CompanyDashboard = ({ activeTab }) => {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Company Dashboard</h1>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Company Dashboard</h1>
         <p style={{ color: "var(--text-secondary)" }}><span style={{ color: "var(--lavender)", fontWeight: 700 }}>6 open positions</span> with AI-matched candidates</p>
       </div>
 
@@ -2263,7 +2262,7 @@ const CompanyDashboard = ({ activeTab }) => {
         <StatCard label="Match Quality" value="91%" icon={Icons.spark} accent="var(--sage)" />
       </div>
 
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Active Postings</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Active Postings</h2>
       {JOBS.slice(0, 3).map(job => (
         <Card key={job.id} hover style={{ marginBottom: 12 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -2273,7 +2272,7 @@ const CompanyDashboard = ({ activeTab }) => {
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 24, fontWeight: 700 }}>{job.applicants}</div>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700 }}>{job.applicants}</div>
                 <div style={{ fontSize: 12, color: "var(--text-muted)" }}>applicants</div>
               </div>
               <Button size="sm">Review {Icons.arrow}</Button>
@@ -2282,7 +2281,7 @@ const CompanyDashboard = ({ activeTab }) => {
         </Card>
       ))}
 
-      <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 700, marginTop: 32, marginBottom: 16 }}>Recommended Candidates</h2>
+      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginTop: 32, marginBottom: 16 }}>Recommended Candidates</h2>
       <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8 }}>
         {CANDIDATES.slice(0, 4).map(c => (
           <Card key={c.id} style={{ minWidth: 200, textAlign: "center" }}>
@@ -2380,7 +2379,7 @@ export default function App() {
         <GlobalStyles />
         <div style={{ textAlign: "center" }}>
           <div style={{ width: 48, height: 48, margin: "0 auto 24px", borderRadius: 24, border: "3px solid var(--cream-dark)", borderTopColor: "var(--coral)", animation: "spin 1s linear infinite" }} />
-          <p style={{ color: "var(--text-muted)", fontFamily: "'Satoshi', sans-serif" }}>Loading...</p>
+          <p style={{ color: "var(--text-muted)", fontFamily: "'Source Sans 3', sans-serif" }}>Loading...</p>
         </div>
       </div>
     );
