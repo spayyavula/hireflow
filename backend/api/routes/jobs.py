@@ -89,8 +89,8 @@ async def search_external_jobs(
         jobs = await search_jsearch(query, location, remote_only, page, api_key=RAPIDAPI_KEY)
     except ValueError as e:
         raise HTTPException(401, str(e))
-    except Exception:
-        raise HTTPException(502, "Failed to fetch jobs from external provider")
+    except Exception as e:
+        raise HTTPException(502, f"Failed to fetch jobs from external provider: {e}")
 
     # If authenticated seeker, compute match scores
     if user and user.get("role") == "seeker":
