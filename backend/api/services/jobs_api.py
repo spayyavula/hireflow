@@ -35,6 +35,8 @@ async def search_jsearch(
 
     async with httpx.AsyncClient(timeout=15.0) as client:
         resp = await client.get(JSEARCH_URL, headers=headers, params=params)
+        if resp.status_code == 403:
+            raise ValueError("Invalid or expired RapidAPI key. Check your RAPIDAPI_KEY.")
         resp.raise_for_status()
         data = resp.json()
 
