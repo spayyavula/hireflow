@@ -110,7 +110,8 @@ class TestSeekerResume:
             files={"file": ("resume.pdf", b"%PDF-fake-content", "application/pdf")},
             headers=auth_header(token))
         assert resp.status_code == 200
-        assert "profile" in resp.json()
+        data = resp.json()
+        assert "parsed_profile" in data or "profile" in data
 
     def test_upload_docx(self, client):
         token, _ = register_user(client, email="docx@test.com", role="seeker", name="Docx")

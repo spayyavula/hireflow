@@ -109,7 +109,7 @@ class SeekerProfileResponse(SeekerProfileCreate):
 
 class ResumeUploadResponse(BaseModel):
     message: str
-    profile: SeekerProfileResponse
+    parsed_profile: dict
     ai_summary: str
     skills_extracted: int
     experience_extracted: int

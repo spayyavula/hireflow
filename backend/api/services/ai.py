@@ -8,8 +8,13 @@ HireFlow AI Services
 from __future__ import annotations
 
 import hashlib
+import io
 import re
+from datetime import datetime
 from typing import Optional
+
+import PyPDF2
+import docx
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -123,87 +128,286 @@ def compute_candidate_match(candidate: dict, job: dict) -> int:
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  RESUME PARSER (Simulated AI Extraction)
+#  RESUME PARSER
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# In production, integrate with OpenAI, Anthropic, or a dedicated
-# resume parsing API (Affinda, Sovren, etc.)
+
+# Skill taxonomy derived from frontend SKILL_CATEGORIES
+_SKILL_TAXONOMY = [
+    # Frontend
+    "React", "Vue.js", "Angular", "TypeScript", "JavaScript", "HTML/CSS",
+    "Next.js", "Tailwind CSS", "Redux", "Svelte",
+    # Backend
+    "Node.js", "Python", "Java", "Go", "Ruby", "PHP", "C#", ".NET", "Rust", "Elixir",
+    # Data & AI
+    "Machine Learning", "TensorFlow", "PyTorch", "Data Analysis", "SQL", "Pandas",
+    "NLP", "Computer Vision", "Deep Learning", "MLOps",
+    # Cloud & DevOps
+    "AWS", "Azure", "GCP", "Docker", "Kubernetes", "Terraform", "CI/CD",
+    "Linux", "Nginx", "Jenkins",
+    # Design
+    "Figma", "UX Research", "UI Design", "Design Systems", "Prototyping",
+    "Adobe XD", "Sketch", "Accessibility", "Motion Design", "Branding",
+    # Management
+    "Agile/Scrum", "Product Strategy", "Stakeholder Mgmt", "Roadmapping",
+    "Team Leadership", "Budgeting", "OKRs", "Hiring", "Mentoring", "Cross-functional",
+    # Common extras
+    "GraphQL", "MongoDB", "Redis", "PostgreSQL", "Express", "Django", "FastAPI",
+    "Flask", "Spring", "Kafka", "Git", "GitHub", "Jira", "NumPy",
+    "Elasticsearch", "RabbitMQ",
+]
+
+# Build a lowercase-to-canonical mapping for fast lookups
+_SKILL_LOWER_MAP: dict[str, str] = {s.lower(): s for s in _SKILL_TAXONOMY}
+
+
+def _extract_text(filename: str, content: bytes) -> str:
+    """Extract plain text from PDF, DOCX, or DOC bytes."""
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+    if ext == "pdf":
+        try:
+            reader = PyPDF2.PdfReader(io.BytesIO(content))
+            pages = [page.extract_text() or "" for page in reader.pages]
+            return "\n".join(pages)
+        except Exception:
+            return ""
+
+    if ext == "docx":
+        try:
+            document = docx.Document(io.BytesIO(content))
+            paragraphs = [p.text for p in document.paragraphs]
+            return "\n".join(paragraphs)
+        except Exception:
+            return ""
+
+    # .doc fallback — try UTF-8 decoding (best-effort)
+    try:
+        return content.decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+
+
+def _infer_experience_level(experience: list[dict]) -> str:
+    """Infer experience level from date spans found in experience entries."""
+    current_year = datetime.now().year
+    total_years = 0
+
+    for entry in experience:
+        duration = entry.get("duration", "")
+        # Find 4-digit years in the duration string
+        years_found = re.findall(r"\b(?:19|20)\d{2}\b", duration)
+        has_present = bool(re.search(r"\b(present|current|now)\b", duration, re.IGNORECASE))
+
+        if len(years_found) >= 2:
+            start = int(years_found[0])
+            end = int(years_found[-1])
+            total_years += end - start
+        elif len(years_found) == 1 and has_present:
+            start = int(years_found[0])
+            total_years += current_year - start
+
+    if total_years >= 10:
+        return "Staff / Lead (10+ yrs)"
+    if total_years >= 6:
+        return "Senior (6-9 yrs)"
+    if total_years >= 3:
+        return "Mid Level (3-5 yrs)"
+    return "Entry Level (0-2 yrs)"
+
+
+def _parse_structured_data(text: str) -> dict:
+    """
+    Extract structured profile data from plain resume text using
+    regex heuristics and skill taxonomy matching.
+    """
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
+
+    # ── Name ─────────────────────────────────────────────
+    name = ""
+    email_re = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
+    phone_re = re.compile(r"(\+?1[\s.-]?)?(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})")
+    for line in lines[:5]:
+        if email_re.search(line) or phone_re.search(line):
+            continue
+        if len(line) < 60 and re.match(r"^[A-Za-z]+([\s\-'][A-Za-z]+){1,4}$", line):
+            name = line
+            break
+
+    # ── Email ────────────────────────────────────────────
+    email = ""
+    email_match = email_re.search(text)
+    if email_match:
+        email = email_match.group(0)
+
+    # ── Phone ────────────────────────────────────────────
+    phone = ""
+    phone_match = phone_re.search(text)
+    if phone_match:
+        phone = phone_match.group(0).strip()
+
+    # ── Location ("City, ST" or "City, State") ───────────
+    location = ""
+    loc_match = re.search(
+        r"\b([A-Z][a-zA-Z ]+),\s*([A-Z]{2}|[A-Z][a-z]+)\b", text
+    )
+    if loc_match:
+        location = loc_match.group(0)
+
+    # ── Skills — taxonomy matching across full text ───────
+    text_lower = text.lower()
+    found_skills: list[str] = []
+    for skill_lower, canonical in _SKILL_LOWER_MAP.items():
+        # Use word-boundary aware search
+        pattern = r"(?<![a-zA-Z0-9])" + re.escape(skill_lower) + r"(?![a-zA-Z0-9])"
+        if re.search(pattern, text_lower):
+            found_skills.append(canonical)
+
+    # Also extract from an explicit "Skills:" section
+    skills_section_match = re.search(
+        r"(?:skills|technical skills|core competencies)[:\s]*\n?(.*?)(?:\n\n|\Z)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if skills_section_match:
+        section_text = skills_section_match.group(1).lower()
+        for skill_lower, canonical in _SKILL_LOWER_MAP.items():
+            if canonical not in found_skills:
+                pattern = r"(?<![a-zA-Z0-9])" + re.escape(skill_lower) + r"(?![a-zA-Z0-9])"
+                if re.search(pattern, section_text):
+                    found_skills.append(canonical)
+
+    # ── Experience ────────────────────────────────────────
+    experience: list[dict] = []
+
+    # Look for "Title at Company" patterns with optional date ranges
+    exp_pattern = re.compile(
+        r"([A-Z][A-Za-z /,]+?)\s+at\s+([A-Z][A-Za-z &,.]+?)(?=\s*(?:[\|–\-]|\n|\Z))"
+        r"(?:\s*[\|–\-]\s*([\w ,–\-]+\d{4}[\w ,–\-]*))?",
+    )
+    for m in exp_pattern.finditer(text):
+        title = m.group(1).strip()
+        company = m.group(2).strip().rstrip(",.")
+        duration = m.group(3).strip() if m.group(3) else ""
+        if 2 <= len(title.split()) <= 7:
+            experience.append({"title": title, "company": company, "duration": duration, "description": ""})
+
+    # Fallback: section-based extraction if no "at" patterns found
+    if not experience:
+        exp_section_match = re.search(
+            r"(?:experience|work history|employment)[:\s]*\n(.*?)(?:\n(?:education|skills|projects|certifications)\b|\Z)",
+            text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if exp_section_match:
+            section = exp_section_match.group(1)
+            for line in section.splitlines():
+                line = line.strip()
+                if line and len(line) > 10 and re.search(r"\d{4}", line):
+                    experience.append({"title": line, "company": "", "duration": "", "description": ""})
+
+    # ── Education ─────────────────────────────────────────
+    education: list[dict] = []
+    degree_keywords = r"(?:B\.?S\.?|B\.?A\.?|M\.?S\.?|M\.?A\.?|MBA|Ph\.?D\.?|Bachelor|Master|Doctor|Associate)"
+
+    # Section-based
+    edu_section_match = re.search(
+        r"(?:education|academic background)[:\s]*\n(.*?)(?:\n(?:experience|skills|projects|certifications)\b|\Z)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if edu_section_match:
+        section = edu_section_match.group(1)
+        year_re = re.compile(r"\b(19|20)\d{2}\b")
+        for line in section.splitlines():
+            line = line.strip()
+            if re.search(degree_keywords, line, re.IGNORECASE) or year_re.search(line):
+                year_match = year_re.search(line)
+                education.append({
+                    "school": "",
+                    "degree": line,
+                    "year": year_match.group(0) if year_match else "",
+                })
+    else:
+        # Inline degree mentions
+        for m in re.finditer(
+            rf"({degree_keywords}[^,\n]{{0,60}})",
+            text,
+            re.IGNORECASE,
+        ):
+            year_match = re.search(r"\b(19|20)\d{2}\b", m.group(1))
+            education.append({
+                "school": "",
+                "degree": m.group(1).strip(),
+                "year": year_match.group(0) if year_match else "",
+            })
+
+    # ── Summary ───────────────────────────────────────────
+    summary = ""
+    summary_match = re.search(
+        r"(?:summary|objective|profile|about)[:\s]*\n?(.*?)(?:\n\n|\n(?:[A-Z][A-Z\s]{3,}:)|\Z)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if summary_match:
+        summary = summary_match.group(1).strip()
+
+    # ── Experience level inference ────────────────────────
+    experience_level = _infer_experience_level(experience)
+
+    return {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "headline": "",
+        "location": location,
+        "skills": found_skills,
+        "desired_roles": [],
+        "experience_level": experience_level,
+        "work_preferences": [],
+        "salary_range": "",
+        "industries": [],
+        "experience": experience,
+        "education": education,
+        "summary": summary,
+    }
+
 
 def parse_resume(filename: str, content: bytes) -> dict:
     """
-    Simulate AI-powered resume parsing.
-    Returns a structured profile extracted from the resume.
+    Parse a resume file (PDF or DOCX) and return a structured profile.
 
-    In production, this would:
-    1. Extract text via PDF/DOCX parser
-    2. Send to LLM for structured extraction
-    3. Map to skill taxonomy
-    4. Infer preferences from context
+    Steps:
+    1. Extract text from the file bytes.
+    2. Parse structured data via regex/heuristics.
+    3. Generate an AI summary from parsed data.
     """
-    # Determine a "persona" based on filename hash for varied demo results
-    h = int(hashlib.md5(filename.encode()).hexdigest(), 16)
-    personas = [
-        {
-            "name": "Alex Rivera",
-            "headline": "Senior Full Stack Developer | React & Node.js Expert",
-            "location": "San Francisco, CA",
-            "skills": ["React", "TypeScript", "Node.js", "Python", "AWS", "Docker", "SQL", "GraphQL", "Next.js", "CI/CD"],
-            "desired_roles": ["Full Stack Developer", "Frontend Developer", "Software Engineer"],
-            "experience_level": "Senior (6-9 yrs)",
-            "work_preferences": ["Remote", "Hybrid"],
-            "salary_range": "$160k–$200k",
-            "industries": ["Tech / SaaS", "AI / ML"],
-            "experience": [
-                {"title": "Senior Full Stack Developer", "company": "Stripe", "duration": "2021 – Present", "description": "Led migration of payment dashboard to Next.js, improving performance by 40%. Architected real-time analytics pipeline."},
-                {"title": "Software Engineer", "company": "Airbnb", "duration": "2018 – 2021", "description": "Built core booking flow components in React. Implemented A/B testing framework increasing conversion by 12%."},
-            ],
-            "education": [{"school": "UC Berkeley", "degree": "B.S. Computer Science", "year": "2018"}],
-        },
-        {
-            "name": "Priya Sharma",
-            "headline": "ML Engineer | NLP & Deep Learning Specialist",
-            "location": "Seattle, WA",
-            "skills": ["Python", "PyTorch", "TensorFlow", "Machine Learning", "NLP", "AWS", "Docker", "SQL", "Pandas", "MLOps"],
-            "desired_roles": ["ML Engineer", "Data Scientist", "AI Research Engineer"],
-            "experience_level": "Mid Level (3-5 yrs)",
-            "work_preferences": ["Remote"],
-            "salary_range": "$160k–$200k",
-            "industries": ["AI / ML", "Tech / SaaS"],
-            "experience": [
-                {"title": "ML Engineer", "company": "Meta", "duration": "2022 – Present", "description": "Developing NLP models for content understanding. Reduced inference latency by 35% through model optimization."},
-                {"title": "Data Scientist", "company": "Spotify", "duration": "2020 – 2022", "description": "Built recommendation models serving 400M+ users. Improved playlist suggestions accuracy by 18%."},
-            ],
-            "education": [{"school": "Stanford University", "degree": "M.S. Computer Science (AI Track)", "year": "2020"}],
-        },
-        {
-            "name": "Jordan Mitchell",
-            "headline": "Product Designer | Design Systems & UX Strategy",
-            "location": "New York, NY",
-            "skills": ["Figma", "UX Research", "UI Design", "Design Systems", "Prototyping", "Accessibility", "Motion Design", "Adobe XD"],
-            "desired_roles": ["Product Designer", "UX Researcher", "Design Lead"],
-            "experience_level": "Senior (6-9 yrs)",
-            "work_preferences": ["Hybrid", "On-site"],
-            "salary_range": "$140k–$175k",
-            "industries": ["Tech / SaaS", "E-commerce"],
-            "experience": [
-                {"title": "Senior Product Designer", "company": "Figma", "duration": "2021 – Present", "description": "Leading design for collaboration features. Shipped auto-layout v3 used by 4M+ designers."},
-                {"title": "Product Designer", "company": "Shopify", "duration": "2018 – 2021", "description": "Redesigned merchant dashboard increasing task completion by 28%."},
-            ],
-            "education": [{"school": "Rhode Island School of Design", "degree": "BFA Graphic Design", "year": "2017"}],
-        },
-    ]
+    text = _extract_text(filename, content)
 
-    persona = personas[h % len(personas)]
+    if not text.strip():
+        # Return a minimal empty profile when text extraction fails
+        return {
+            "profile": {
+                "name": "", "email": "", "phone": "", "headline": "",
+                "location": "", "skills": [], "desired_roles": [],
+                "experience_level": "Entry Level (0-2 yrs)",
+                "work_preferences": [], "salary_range": "", "industries": [],
+                "experience": [], "education": [], "summary": "",
+            },
+            "ai_summary": "",
+        }
+
+    profile = _parse_structured_data(text)
 
     summary = generate_summary(
-        name=persona["name"],
-        skills=persona["skills"],
-        desired_roles=persona["desired_roles"],
-        experience_level=persona["experience_level"],
-        experience=persona["experience"],
+        name=profile["name"],
+        skills=profile["skills"],
+        desired_roles=profile["desired_roles"],
+        experience_level=profile["experience_level"],
+        experience=profile["experience"],
     )
 
     return {
-        "profile": persona,
+        "profile": profile,
         "ai_summary": summary,
     }
 

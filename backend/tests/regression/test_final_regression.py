@@ -31,8 +31,20 @@ class TestSeekerJourney:
         )
         assert resp.status_code == 200
         upload_data = resp.json()
-        assert "profile" in upload_data
-        assert upload_data["skills_extracted"] > 0
+        assert "parsed_profile" in upload_data or "profile" in upload_data
+        assert isinstance(upload_data["skills_extracted"], int)
+
+        # 2b. Explicitly save profile to DB so matches work
+        resp = seeded_client.post("/api/seeker/profile", json={
+            "name": "Test User",
+            "skills": ["React", "TypeScript", "Python", "Docker", "AWS"],
+            "desired_roles": ["Full Stack Developer"],
+            "experience_level": "Senior (6-9 yrs)",
+            "work_preferences": ["Remote"],
+            "experience": [{"title": "Engineer", "company": "Acme", "duration": "2020 - Present"}],
+            "education": [{"school": "MIT", "degree": "B.S. CS", "year": "2020"}],
+        }, headers=auth_header(token))
+        assert resp.status_code == 201
 
         # 3. Get matches
         resp = seeded_client.get("/api/seeker/jobs/matches", headers=auth_header(token))

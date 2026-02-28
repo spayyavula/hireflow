@@ -12,7 +12,6 @@ from api.core.database import (
 from api.models.schemas import (
     SeekerProfileCreate,
     SeekerProfileResponse,
-    ResumeUploadResponse,
     AISummaryRequest,
     AISummaryResponse,
     JobMatchResponse,
@@ -120,13 +119,13 @@ async def get_profile(user: dict = Depends(require_user)):
 
 
 # ── Resume Upload ─────────────────────────────────────────
-@router.post("/resume/upload", response_model=ResumeUploadResponse)
+@router.post("/resume/upload")
 async def upload_resume(file: UploadFile = File(...), user: dict = Depends(require_user)):
-    """Upload a resume file (PDF/DOCX). AI extracts and saves profile data."""
+    """Upload a resume file (PDF/DOCX). AI extracts profile data and returns it without saving."""
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
 
-    allowed = {".pdf", ".doc", ".docx"}
+    allowed = {".pdf", ".docx"}
     ext = "." + file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
     if ext not in allowed:
         raise HTTPException(status_code=400, detail=f"Unsupported file type. Allowed: {', '.join(allowed)}")
@@ -139,22 +138,13 @@ async def upload_resume(file: UploadFile = File(...), user: dict = Depends(requi
     profile_data = result["profile"]
     ai_summary = result["ai_summary"]
 
-    save_data = {
-        **profile_data,
+    return {
+        "message": "Resume parsed successfully",
+        "parsed_profile": profile_data,
         "ai_summary": ai_summary,
-        "summary": ai_summary,
-        "profile_strength": "Strong",
+        "skills_extracted": len(profile_data.get("skills", [])),
+        "experience_extracted": len(profile_data.get("experience", [])),
     }
-    update_user(user["id"], save_data)
-
-    merged = {**user, **save_data, "id": user["id"], "email": user["email"]}
-    return ResumeUploadResponse(
-        message="Resume parsed successfully",
-        profile=_user_to_profile(merged),
-        ai_summary=ai_summary,
-        skills_extracted=len(profile_data.get("skills", [])),
-        experience_extracted=len(profile_data.get("experience", [])),
-    )
 
 
 # ── AI Summary ────────────────────────────────────────────

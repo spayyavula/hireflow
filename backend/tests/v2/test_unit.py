@@ -230,33 +230,30 @@ class TestResumeParser:
         r2 = parse_resume("resume_alex.pdf", b"different content")
         assert r1["profile"]["name"] == r2["profile"]["name"]
 
-    def test_parse_resume_different_filenames_can_differ(self):
-        """Different filenames should produce different personas (at least sometimes)."""
+    def test_parse_resume_empty_bytes_returns_empty_profile(self):
+        """Fake/empty bytes produce an empty profile (real parser, no simulation)."""
         from api.services.ai import parse_resume
-        names = set()
-        for fn in ["a.pdf", "b.pdf", "c.pdf", "d.pdf", "e.pdf", "f.pdf"]:
-            r = parse_resume(fn, b"x")
-            names.add(r["profile"]["name"])
-        assert len(names) >= 2  # Should get at least 2 different personas
+        result = parse_resume("a.pdf", b"x")
+        assert isinstance(result["profile"]["name"], str)
+        assert isinstance(result["profile"]["skills"], list)
 
     def test_parse_resume_summary_is_string(self):
         from api.services.ai import parse_resume
         result = parse_resume("test.docx", b"data")
         assert isinstance(result["ai_summary"], str)
-        assert len(result["ai_summary"]) > 50
 
-    def test_all_personas_have_experience_entries(self):
-        """Every persona should have at least one experience entry."""
+    def test_real_text_produces_experience_entries(self):
+        """Real text content should produce parsed experience entries."""
         from api.services.ai import parse_resume
-        for fn in ["a.pdf", "b.pdf", "c.pdf"]:
-            result = parse_resume(fn, b"x")
-            assert len(result["profile"]["experience"]) >= 1
+        text = b"Jane Doe\n\nExperience\nEngineer at Google | 2019 - 2023\nDeveloped APIs.\n\nEducation\nB.S. Computer Science, Stanford, 2019\n"
+        result = parse_resume("resume.txt", text)
+        assert len(result["profile"]["experience"]) >= 1
 
-    def test_all_personas_have_education_entries(self):
+    def test_real_text_produces_education_entries(self):
         from api.services.ai import parse_resume
-        for fn in ["a.pdf", "b.pdf", "c.pdf"]:
-            result = parse_resume(fn, b"x")
-            assert len(result["profile"]["education"]) >= 1
+        text = b"Jane Doe\n\nEducation\nB.S. Computer Science, Stanford, 2019\n"
+        result = parse_resume("resume.txt", text)
+        assert len(result["profile"]["education"]) >= 1
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

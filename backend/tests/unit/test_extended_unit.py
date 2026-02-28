@@ -274,16 +274,16 @@ class TestParseResumeExtended:
         for fn in filenames:
             result = parse_resume(fn, b"dummy")
             p = result["profile"]
-            assert p["name"]
-            assert p["headline"]
-            assert len(p["skills"]) >= 5
-            assert len(p["desired_roles"]) >= 1
-            assert len(p["experience"]) >= 1
-            assert len(p["education"]) >= 1
+            assert "name" in p
+            assert "headline" in p
+            assert isinstance(p["skills"], list)
+            assert isinstance(p["desired_roles"], list)
+            assert isinstance(p["experience"], list)
+            assert isinstance(p["education"], list)
 
     def test_summary_is_generated(self):
         result = parse_resume("test.pdf", b"content")
-        assert len(result["ai_summary"]) > 50
+        assert isinstance(result["ai_summary"], str)
 
     def test_deterministic_for_same_filename(self):
         r1 = parse_resume("stable.pdf", b"data1")

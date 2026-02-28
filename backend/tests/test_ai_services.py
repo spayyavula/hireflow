@@ -186,7 +186,8 @@ class TestResumeParser:
         assert "profile" in result
         assert "ai_summary" in result
         assert isinstance(result["ai_summary"], str)
-        assert len(result["ai_summary"]) > 50
+        # Fake bytes produce empty text, so ai_summary may be empty
+        assert isinstance(result["profile"], dict)
 
     @pytest.mark.unit
     def test_profile_has_required_fields(self):
@@ -196,26 +197,51 @@ class TestResumeParser:
         assert "skills" in profile
         assert "experience" in profile
         assert "education" in profile
-        assert len(profile["skills"]) >= 5
+        assert isinstance(profile["skills"], list)
 
     @pytest.mark.unit
-    def test_different_filenames_can_produce_different_personas(self):
-        r1 = parse_resume("alice.pdf", b"x")
-        r2 = parse_resume("bob.pdf", b"x")
-        r3 = parse_resume("charlie.pdf", b"x")
-        names = {r1["profile"]["name"], r2["profile"]["name"], r3["profile"]["name"]}
-        # At least 2 different personas should appear across 3 hashes
-        assert len(names) >= 2
+    def test_parses_real_text_content(self):
+        # Simulate a plain-text resume (parsed via UTF-8 fallback for non-PDF/DOCX)
+        resume_text = b"""John Smith
+john.smith@email.com
+(555) 123-4567
+San Francisco, CA
+
+Summary
+Experienced software engineer with expertise in Python and React.
+
+Skills
+Python, React, Docker, AWS, SQL
+
+Experience
+Senior Engineer at TechCorp | 2020 - Present
+Built scalable microservices architecture.
+
+Software Engineer at StartupCo | 2017 - 2020
+Developed frontend applications in React.
+
+Education
+B.S. Computer Science, MIT, 2017
+"""
+        result = parse_resume("resume.txt", resume_text)
+        profile = result["profile"]
+        assert profile["name"] == "John Smith"
+        assert profile["email"] == "john.smith@email.com"
+        assert len(profile["skills"]) >= 3
+        assert len(profile["experience"]) >= 1
+        assert len(result["ai_summary"]) > 20
 
     @pytest.mark.unit
-    def test_same_filename_same_result(self):
-        a = parse_resume("stable_name.pdf", b"a")
-        b = parse_resume("stable_name.pdf", b"b")
-        assert a["profile"]["name"] == b["profile"]["name"]
+    def test_empty_content_returns_empty_profile(self):
+        result = parse_resume("empty.pdf", b"")
+        assert result["profile"]["name"] == ""
+        assert result["profile"]["skills"] == []
+        assert result["ai_summary"] == ""
 
     @pytest.mark.unit
     def test_experience_has_structure(self):
-        result = parse_resume("test.pdf", b"x")
+        resume_text = b"""Jane Doe\n\nExperience\nDeveloper at Acme Inc | 2019 - 2023\n"""
+        result = parse_resume("resume.txt", resume_text)
         for exp in result["profile"]["experience"]:
             assert "title" in exp
             assert "company" in exp

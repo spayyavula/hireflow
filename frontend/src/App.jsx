@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import api from "./api";
 
 // ═══════════════════════════════════════════════════════════════════
 // HIREFLOW REDESIGN — Editorial/Magazine Aesthetic
@@ -551,39 +552,106 @@ const ResumeUpload = ({ onComplete, onBack }) => {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState("");
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const fileRef = useRef(null);
 
-  const extractedProfile = {
-    name: "Alex Rivera",
-    email: "alex.rivera@email.com",
-    headline: "Senior Full Stack Developer",
-    location: "San Francisco, CA",
-    skills: ["React", "TypeScript", "Node.js", "Python", "AWS", "Docker", "PostgreSQL", "GraphQL"],
-    desiredRoles: ["Full Stack Developer", "Frontend Developer"],
-    experienceLevel: "Senior (6-9 yrs)",
-    workPrefs: ["Remote", "Hybrid"],
-    salaryRange: "$160k–$200k",
-    experience: [
-      { id: 1, title: "Senior Developer", company: "Stripe", duration: "2021–Present", desc: "Led Next.js migration, improving performance 40%" },
-      { id: 2, title: "Software Engineer", company: "Airbnb", duration: "2018–2021", desc: "Built core booking components in React" },
-    ],
-    education: [{ id: 1, school: "UC Berkeley", degree: "B.S. Computer Science", year: "2016" }],
+  // Mutable parsed data for the editable review form
+  const [parsed, setParsed] = useState(null);
+  const [aiSummary, setAiSummary] = useState("");
+  const [skillSearch, setSkillSearch] = useState("");
+
+  const set = (k, v) => setParsed(p => ({ ...p, [k]: v }));
+  const toggleSkill = (skill) => setParsed(p => ({
+    ...p, skills: p.skills.includes(skill) ? p.skills.filter(x => x !== skill) : [...p.skills, skill],
+  }));
+  const updateExp = (idx, field, val) => setParsed(p => ({
+    ...p, experience: p.experience.map((e, i) => i === idx ? { ...e, [field]: val } : e),
+  }));
+  const addExp = () => setParsed(p => ({
+    ...p, experience: [...p.experience, { title: "", company: "", duration: "", description: "" }],
+  }));
+  const removeExp = (idx) => setParsed(p => ({ ...p, experience: p.experience.filter((_, i) => i !== idx) }));
+  const updateEdu = (idx, field, val) => setParsed(p => ({
+    ...p, education: p.education.map((e, i) => i === idx ? { ...e, [field]: val } : e),
+  }));
+  const addEdu = () => setParsed(p => ({
+    ...p, education: [...p.education, { school: "", degree: "", year: "" }],
+  }));
+  const removeEdu = (idx) => setParsed(p => ({ ...p, education: p.education.filter((_, i) => i !== idx) }));
+
+  const allSkills = Object.values(SKILL_CATEGORIES).flat();
+  const filteredSkills = skillSearch
+    ? allSkills.filter(s => s.toLowerCase().includes(skillSearch.toLowerCase()) && !(parsed?.skills || []).includes(s)).slice(0, 8)
+    : [];
+
+  const inputStyle = { width: "100%", padding: "14px 16px", borderRadius: 12, border: "1.5px solid var(--border)", background: "white", fontSize: 15, outline: "none" };
+  const labelStyle = { fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", display: "block", marginBottom: 8 };
+  const sectionTitle = { fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 };
+
+  const startParsing = async (file) => {
+    setFileName(file.name);
+    setPhase("parsing");
+    setProgress(10);
+    setError("");
+    // Animate progress while waiting for API
+    let p = 10;
+    const interval = setInterval(() => {
+      p = Math.min(90, p + 1 + Math.random() * 2);
+      setProgress(Math.round(p));
+    }, 80);
+    try {
+      const result = await api.uploadResume(file);
+      clearInterval(interval);
+      setProgress(100);
+      setParsed(result.parsed_profile);
+      setAiSummary(result.ai_summary);
+      setTimeout(() => setPhase("review"), 400);
+    } catch (err) {
+      clearInterval(interval);
+      setError(err.message || "Failed to parse resume. Please try again.");
+      setPhase("upload");
+      if (fileRef.current) fileRef.current.value = "";
+    }
   };
 
-  const extractedSummary = "Results-driven Senior Full Stack Developer with 8+ years building scalable web applications. Expert in React, TypeScript, and Node.js with proven track record at Stripe and Airbnb.";
-
-  const startParsing = (name) => {
-    setFileName(name);
-    setPhase("parsing");
-    let p = 0;
-    const interval = setInterval(() => {
-      p += 2 + Math.random() * 3;
-      if (p >= 100) {
-        clearInterval(interval);
-        setTimeout(() => setPhase("review"), 500);
-      }
-      setProgress(Math.min(100, Math.round(p)));
-    }, 60);
+  const handleSave = async () => {
+    setSaving(true);
+    setError("");
+    try {
+      const payload = {
+        name: parsed.name || "",
+        headline: parsed.headline || "",
+        location: parsed.location || "",
+        skills: parsed.skills || [],
+        desired_roles: parsed.desired_roles || [],
+        experience_level: parsed.experience_level || "",
+        work_preferences: parsed.work_preferences || [],
+        salary_range: parsed.salary_range || "",
+        industries: parsed.industries || [],
+        experience: (parsed.experience || []).map(e => ({
+          title: e.title || "", company: e.company || "", duration: e.duration || "", description: e.description || "",
+        })),
+        education: (parsed.education || []).map(e => ({
+          school: e.school || "", degree: e.degree || "", year: e.year || "",
+        })),
+        summary: aiSummary,
+      };
+      await api.updateProfile(payload);
+      // Convert to camelCase keys for the dashboard
+      const profileForDashboard = {
+        ...parsed,
+        desiredRoles: parsed.desired_roles || [],
+        experienceLevel: parsed.experience_level || "",
+        workPrefs: parsed.work_preferences || [],
+        salaryRange: parsed.salary_range || "",
+      };
+      onComplete(profileForDashboard, aiSummary);
+    } catch (err) {
+      setError(err.message || "Failed to save profile. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (phase === "parsing") {
@@ -603,7 +671,7 @@ const ResumeUpload = ({ onComplete, onBack }) => {
     );
   }
 
-  if (phase === "review") {
+  if (phase === "review" && parsed) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--cream)", padding: "40px 48px" }}>
         <GlobalStyles />
@@ -616,44 +684,188 @@ const ResumeUpload = ({ onComplete, onBack }) => {
           <div className="animate-in" style={{ marginBottom: 32 }}>
             <Tag variant="sage" style={{ marginBottom: 16 }}>{Icons.check} Resume parsed successfully</Tag>
             <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700, marginBottom: 8 }}>Review Your Profile</h1>
-            <p style={{ color: "var(--text-secondary)" }}>Extracted from {fileName}</p>
+            <p style={{ color: "var(--text-secondary)" }}>Extracted from {fileName} — edit any field before saving</p>
           </div>
 
+          {error && (
+            <div style={{ padding: "12px 16px", marginBottom: 20, borderRadius: 12, background: "rgba(220, 38, 38, 0.08)", color: "#dc2626", fontSize: 14, fontWeight: 500 }}>
+              {error}
+            </div>
+          )}
+
+          {/* AI Summary */}
           <Card className="animate-in-delay-1" style={{ marginBottom: 20, background: "rgba(255, 107, 91, 0.04)", border: "1px solid rgba(255, 107, 91, 0.15)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, color: "var(--coral)", fontWeight: 600 }}>
               {Icons.spark} AI Summary
             </div>
-            <p style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>{extractedSummary}</p>
+            <textarea
+              value={aiSummary}
+              onChange={e => setAiSummary(e.target.value)}
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6, fontFamily: "inherit" }}
+            />
           </Card>
 
-          <Card className="animate-in-delay-2" style={{ marginBottom: 32 }}>
-            <div style={{ marginBottom: 24 }}>
-              <h2 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{extractedProfile.name}</h2>
-              <p style={{ color: "var(--coral)", fontWeight: 600, marginBottom: 4 }}>{extractedProfile.headline}</p>
-              <p style={{ color: "var(--text-muted)", fontSize: 14 }}>{extractedProfile.email} · {extractedProfile.location}</p>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>Skills</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {extractedProfile.skills.map(s => <Tag key={s} variant="coral">{s}</Tag>)}
+          {/* Basic Info */}
+          <Card className="animate-in-delay-1" style={{ marginBottom: 20 }}>
+            <div style={sectionTitle}>Basic Info</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Full Name</label>
+                <input style={inputStyle} value={parsed.name || ""} onChange={e => set("name", e.target.value)} placeholder="Your full name" />
+              </div>
+              <div>
+                <label style={labelStyle}>Email</label>
+                <input style={inputStyle} value={parsed.email || ""} onChange={e => set("email", e.target.value)} placeholder="email@example.com" />
+              </div>
+              <div>
+                <label style={labelStyle}>Headline</label>
+                <input style={inputStyle} value={parsed.headline || ""} onChange={e => set("headline", e.target.value)} placeholder="Senior Software Engineer" />
+              </div>
+              <div>
+                <label style={labelStyle}>Location</label>
+                <input style={inputStyle} value={parsed.location || ""} onChange={e => set("location", e.target.value)} placeholder="San Francisco, CA" />
               </div>
             </div>
+          </Card>
 
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>Experience</div>
-              {extractedProfile.experience.map(e => (
-                <div key={e.id} style={{ marginBottom: 12, paddingLeft: 16, borderLeft: "2px solid var(--coral)" }}>
-                  <div style={{ fontWeight: 700 }}>{e.title}</div>
-                  <div style={{ fontSize: 14, color: "var(--text-muted)" }}>{e.company} · {e.duration}</div>
-                </div>
+          {/* Skills */}
+          <Card className="animate-in-delay-2" style={{ marginBottom: 20 }}>
+            <div style={sectionTitle}>Skills</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+              {(parsed.skills || []).map(s => (
+                <Tag key={s} variant="coral" onRemove={() => set("skills", parsed.skills.filter(x => x !== s))}>{s}</Tag>
               ))}
+              {parsed.skills?.length === 0 && <span style={{ color: "var(--text-muted)", fontSize: 14 }}>No skills detected — add some below</span>}
+            </div>
+            <div style={{ position: "relative" }}>
+              <input
+                style={inputStyle}
+                value={skillSearch}
+                onChange={e => setSkillSearch(e.target.value)}
+                placeholder="Search skills to add..."
+              />
+              {filteredSkills.length > 0 && (
+                <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "white", border: "1px solid var(--border)", borderRadius: 12, marginTop: 4, padding: 8, zIndex: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}>
+                  {filteredSkills.map(s => (
+                    <div key={s} onClick={() => { toggleSkill(s); setSkillSearch(""); }} style={{ padding: "8px 12px", cursor: "pointer", borderRadius: 8, fontSize: 14 }} onMouseEnter={e => e.target.style.background = "var(--cream)"} onMouseLeave={e => e.target.style.background = "transparent"}>
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </Card>
 
-          <div className="animate-in-delay-3" style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* Experience */}
+          <Card className="animate-in-delay-2" style={{ marginBottom: 20 }}>
+            <div style={sectionTitle}>Experience</div>
+            {(parsed.experience || []).map((exp, i) => (
+              <div key={i} style={{ marginBottom: 16, padding: 16, borderRadius: 12, border: "1px solid var(--border)", background: "var(--cream)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)" }}>Position {i + 1}</span>
+                  <button onClick={() => removeExp(i)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 18 }}>{Icons.x}</button>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={labelStyle}>Title</label>
+                    <input style={inputStyle} value={exp.title || ""} onChange={e => updateExp(i, "title", e.target.value)} placeholder="Job Title" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Company</label>
+                    <input style={inputStyle} value={exp.company || ""} onChange={e => updateExp(i, "company", e.target.value)} placeholder="Company Name" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Duration</label>
+                    <input style={inputStyle} value={exp.duration || ""} onChange={e => updateExp(i, "duration", e.target.value)} placeholder="2020 - Present" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Description</label>
+                    <input style={inputStyle} value={exp.description || ""} onChange={e => updateExp(i, "description", e.target.value)} placeholder="Brief description" />
+                  </div>
+                </div>
+              </div>
+            ))}
+            <Button size="sm" onClick={addExp}>{Icons.plus} Add Experience</Button>
+          </Card>
+
+          {/* Education */}
+          <Card className="animate-in-delay-2" style={{ marginBottom: 20 }}>
+            <div style={sectionTitle}>Education</div>
+            {(parsed.education || []).map((edu, i) => (
+              <div key={i} style={{ marginBottom: 16, padding: 16, borderRadius: 12, border: "1px solid var(--border)", background: "var(--cream)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)" }}>Education {i + 1}</span>
+                  <button onClick={() => removeEdu(i)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 18 }}>{Icons.x}</button>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={labelStyle}>School</label>
+                    <input style={inputStyle} value={edu.school || ""} onChange={e => updateEdu(i, "school", e.target.value)} placeholder="University" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Degree</label>
+                    <input style={inputStyle} value={edu.degree || ""} onChange={e => updateEdu(i, "degree", e.target.value)} placeholder="B.S. Computer Science" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Year</label>
+                    <input style={inputStyle} value={edu.year || ""} onChange={e => updateEdu(i, "year", e.target.value)} placeholder="2020" />
+                  </div>
+                </div>
+              </div>
+            ))}
+            <Button size="sm" onClick={addEdu}>{Icons.plus} Add Education</Button>
+          </Card>
+
+          {/* Preferences */}
+          <Card className="animate-in-delay-3" style={{ marginBottom: 20 }}>
+            <div style={sectionTitle}>Preferences</div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={labelStyle}>Desired Roles</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {DESIRED_ROLES.map(r => (
+                  <Tag key={r} size="lg" selected={(parsed.desired_roles || []).includes(r)} onClick={() => {
+                    const roles = parsed.desired_roles || [];
+                    set("desired_roles", roles.includes(r) ? roles.filter(x => x !== r) : [...roles, r]);
+                  }}>{r}</Tag>
+                ))}
+              </div>
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={labelStyle}>Experience Level</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {EXPERIENCE_LEVELS.map(l => (
+                  <Tag key={l} size="lg" selected={parsed.experience_level === l} onClick={() => set("experience_level", l)}>{l}</Tag>
+                ))}
+              </div>
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={labelStyle}>Work Preference</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {WORK_PREFS.map(w => (
+                  <Tag key={w} size="lg" selected={(parsed.work_preferences || []).includes(w)} onClick={() => {
+                    const prefs = parsed.work_preferences || [];
+                    set("work_preferences", prefs.includes(w) ? prefs.filter(x => x !== w) : [...prefs, w]);
+                  }}>{w}</Tag>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Target Salary</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {SALARY_RANGES.map(s => (
+                  <Tag key={s} size="lg" selected={parsed.salary_range === s} onClick={() => set("salary_range", s)}>{s}</Tag>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          {/* Actions */}
+          <div className="animate-in-delay-3" style={{ display: "flex", justifyContent: "space-between", paddingBottom: 48 }}>
             <Button variant="outline" onClick={onBack}>{Icons.arrowLeft} Start Over</Button>
-            <Button variant="coral" onClick={() => onComplete(extractedProfile, extractedSummary)}>{Icons.spark} Find Matches</Button>
+            <Button variant="coral" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : <>{Icons.spark} Save & Find Matches</>}
+            </Button>
           </div>
         </div>
       </div>
@@ -672,11 +884,17 @@ const ResumeUpload = ({ onComplete, onBack }) => {
         <h1 className="animate-in" style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700, marginBottom: 12 }}>Upload your resume</h1>
         <p className="animate-in-delay-1" style={{ color: "var(--text-secondary)", marginBottom: 40 }}>Our AI extracts your skills, experience, and preferences instantly</p>
 
+        {error && (
+          <div className="animate-in" style={{ padding: "12px 16px", marginBottom: 20, borderRadius: 12, background: "rgba(220, 38, 38, 0.08)", color: "#dc2626", fontSize: 14, fontWeight: 500 }}>
+            {error}
+          </div>
+        )}
+
         <div
           className="animate-in-delay-2"
           onDragOver={e => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
-          onDrop={e => { e.preventDefault(); setDragOver(false); startParsing(e.dataTransfer.files[0]?.name); }}
+          onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files[0]) startParsing(e.dataTransfer.files[0]); }}
           onClick={() => fileRef.current?.click()}
           style={{
             padding: "64px 48px",
@@ -688,10 +906,10 @@ const ResumeUpload = ({ onComplete, onBack }) => {
             marginBottom: 24,
           }}
         >
-          <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{ display: "none" }} onChange={e => startParsing(e.target.files[0]?.name)} />
+          <input ref={fileRef} type="file" accept=".pdf,.docx" style={{ display: "none" }} onChange={e => { if (e.target.files[0]) startParsing(e.target.files[0]); }} />
           <div style={{ color: dragOver ? "var(--coral)" : "var(--text-muted)", marginBottom: 16 }}>{Icons.upload}</div>
           <div style={{ fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>{dragOver ? "Drop it here!" : "Drag & drop your resume"}</div>
-          <div style={{ fontSize: 14, color: "var(--text-muted)" }}>or click to browse · PDF, DOC, DOCX</div>
+          <div style={{ fontSize: 14, color: "var(--text-muted)" }}>or click to browse · PDF, DOCX</div>
         </div>
 
         <Button variant="ghost" onClick={onBack}>{Icons.arrowLeft} Back</Button>

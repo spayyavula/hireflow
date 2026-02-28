@@ -270,6 +270,18 @@ class TestResumeToApplicationChain:
         )
         assert resp.status_code == 200
 
+        # Explicitly save profile to DB after upload
+        resp = client.post("/api/seeker/profile", headers=headers, json={
+            "name": "Test User",
+            "skills": ["React", "TypeScript", "Python", "Docker", "AWS"],
+            "desired_roles": ["Full Stack Developer"],
+            "experience_level": "Senior (6-9 yrs)",
+            "work_preferences": ["Remote"],
+            "experience": [{"title": "Engineer", "company": "Acme", "duration": "2020 - Present"}],
+            "education": [{"school": "MIT", "degree": "B.S. CS", "year": "2020"}],
+        })
+        assert resp.status_code == 201
+
         resp = client.get("/api/seeker/profile", headers=headers)
         assert resp.status_code == 200
         assert len(resp.json()["skills"]) > 0

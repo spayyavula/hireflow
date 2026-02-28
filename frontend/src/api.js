@@ -65,7 +65,7 @@ class HireFlowAPI {
 
   async updateProfile(profile) {
     return this._fetch('/api/seeker/profile', {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(profile),
     });
   }
@@ -78,7 +78,10 @@ class HireFlowAPI {
       headers: { Authorization: `Bearer ${this.token}` },
       body: formData,
     });
-    if (!res.ok) throw new Error('Upload failed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Upload failed (${res.status})`);
+    }
     return res.json();
   }
 

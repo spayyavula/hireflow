@@ -25,14 +25,26 @@ class TestSeekerFullJourney:
         token = r.json()["access_token"]
         headers = auth_header(token)
 
-        # 2. Upload resume
+        # 2. Upload resume (now returns parsed data without saving to DB)
         r = seeded_client.post("/api/seeker/resume/upload",
                                files={"file": ("resume.pdf", b"content", "application/pdf")},
                                headers=headers)
         assert r.status_code == 200
-        assert r.json()["skills_extracted"] > 0
+        assert isinstance(r.json()["skills_extracted"], int)
 
-        # 3. Profile should now exist
+        # 3. Save profile explicitly (upload no longer auto-saves)
+        r = seeded_client.post("/api/seeker/profile", json={
+            "name": "Journey Tester",
+            "skills": ["React", "TypeScript", "Python", "Docker", "AWS"],
+            "desired_roles": ["Full Stack Developer"],
+            "experience_level": "Senior (6-9 yrs)",
+            "work_preferences": ["Remote"],
+            "experience": [{"title": "Engineer", "company": "Acme", "duration": "2020 - Present"}],
+            "education": [{"school": "MIT", "degree": "B.S. CS", "year": "2020"}],
+        }, headers={**headers, "Content-Type": "application/json"})
+        assert r.status_code == 201
+
+        # 4. Profile should now exist
         r = seeded_client.get("/api/seeker/profile", headers=headers)
         assert r.status_code == 200
         profile = r.json()
