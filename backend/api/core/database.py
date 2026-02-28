@@ -43,13 +43,13 @@ supabase = _SupabaseProxy()
 #  USERS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_user_by_id(user_id: str) -> Optional[dict]:
-    res = supabase.table("users").select("*").eq("id", user_id).maybe_single().execute()
-    return _parse_jsonb_fields_user(res.data) if res.data else None
+    res = supabase.table("users").select("*").eq("id", user_id).limit(1).execute()
+    return _parse_jsonb_fields_user(res.data[0]) if res.data else None
 
 
 def get_user_by_email(email: str) -> Optional[dict]:
-    res = supabase.table("users").select("*").eq("email", email).maybe_single().execute()
-    return _parse_jsonb_fields_user(res.data) if res.data else None
+    res = supabase.table("users").select("*").eq("email", email).limit(1).execute()
+    return _parse_jsonb_fields_user(res.data[0]) if res.data else None
 
 
 def create_user(user: dict) -> dict:
@@ -87,8 +87,8 @@ def get_seekers_with_skills() -> list[dict]:
 #  JOBS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_job_by_id(job_id: str) -> Optional[dict]:
-    res = supabase.table("jobs").select("*").eq("id", job_id).maybe_single().execute()
-    return _parse_jsonb_fields_job(res.data) if res.data else None
+    res = supabase.table("jobs").select("*").eq("id", job_id).limit(1).execute()
+    return _parse_jsonb_fields_job(res.data[0]) if res.data else None
 
 
 def get_active_jobs() -> list[dict]:
@@ -147,8 +147,8 @@ def close_job(job_id: str):
 #  APPLICATIONS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_application_by_id(app_id: str) -> Optional[dict]:
-    res = supabase.table("applications").select("*").eq("id", app_id).maybe_single().execute()
-    return res.data
+    res = supabase.table("applications").select("*").eq("id", app_id).limit(1).execute()
+    return res.data[0] if res.data else None
 
 
 def get_applications_by_job(job_id: str) -> list[dict]:
@@ -167,10 +167,10 @@ def get_application_by_job_and_seeker(job_id: str, seeker_id: str) -> Optional[d
         .select("*")
         .eq("job_id", job_id)
         .eq("seeker_id", seeker_id)
-        .maybe_single()
+        .limit(1)
         .execute()
     )
-    return res.data
+    return res.data[0] if res.data else None
 
 
 def create_application(app: dict) -> dict:
