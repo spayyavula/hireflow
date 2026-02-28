@@ -395,8 +395,314 @@ const StatCard = ({ label, value, sub, icon, accent }) => (
 );
 
 // ─── Auth Screen ────────────────────────────────────────────────────
-const AuthScreen = ({ onAuth }) => {
-  const [mode, setMode] = useState("login"); // "login" | "register"
+// ─── Landing Page ────────────────────────────────────────────────────
+const LandingPage = ({ onGetStarted, onSignIn }) => {
+  const featuredJobs = JOBS.slice(0, 3);
+
+  const steps = [
+    { num: "01", icon: Icons.user, title: "Create Your Profile", desc: "Upload your resume or build one with our AI assistant — it takes under two minutes." },
+    { num: "02", icon: Icons.spark, title: "AI Matching", desc: "Our intelligent scoring algorithm analyzes skills, experience, and preferences to find perfect fits." },
+    { num: "03", icon: Icons.briefcase, title: "Get Hired", desc: "Connect directly with recruiters and companies through real-time chat and one-click applications." },
+  ];
+
+  const roles = [
+    {
+      title: "Job Seekers", accent: "var(--coral)", icon: Icons.user,
+      points: ["AI-powered resume builder", "Smart job matching scores", "One-click applications"],
+    },
+    {
+      title: "Recruiters", accent: "var(--sage)", icon: Icons.users,
+      points: ["Candidate pipeline management", "AI scoring & ranking", "Real-time chat with talent"],
+    },
+    {
+      title: "Companies", accent: "var(--lavender)", icon: Icons.building,
+      points: ["Easy job posting", "Analytics dashboard", "Curated talent pool"],
+    },
+  ];
+
+  const stats = [
+    { value: "10,000+", label: "Matches Made" },
+    { value: "500+", label: "Companies" },
+    { value: "96%", label: "Satisfaction" },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)", overflow: "hidden" }}>
+      <GlobalStyles />
+
+      {/* ── Nav ── */}
+      <header style={{
+        padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between",
+        position: "sticky", top: 0, background: "rgba(250,248,245,0.85)", backdropFilter: "blur(12px)",
+        zIndex: 100, borderBottom: "1px solid var(--border)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
+          {Icons.logo}
+          <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+        </div>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button onClick={onSignIn} style={{
+            padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
+            background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
+            color: "var(--text-primary)", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+          }}>Sign In</button>
+          <button onClick={onGetStarted} style={{
+            padding: "10px 24px", borderRadius: 10, border: "none",
+            background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+          }}>Get Started</button>
+        </div>
+      </header>
+
+      {/* ── Hero ── */}
+      <section style={{ position: "relative", padding: "100px 48px 80px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
+        {/* Decorative orbs */}
+        <div style={{
+          position: "absolute", top: -40, right: -80, width: 260, height: 260, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(255,107,91,0.12) 0%, transparent 70%)",
+          animation: "float 6s ease-in-out infinite", pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", bottom: -20, left: -60, width: 200, height: 200, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(155,143,212,0.10) 0%, transparent 70%)",
+          animation: "float 8s ease-in-out infinite 1s", pointerEvents: "none",
+        }} />
+
+        <div className="animate-in" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{
+            display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+            background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 24, letterSpacing: "0.02em",
+          }}>
+            AI-Powered Job Marketplace
+          </div>
+          <h1 style={{
+            fontFamily: "'Clash Display', sans-serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 700,
+            lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 20,
+          }}>
+            Where talent meets<br />opportunity
+          </h1>
+          <p style={{
+            fontSize: 18, color: "var(--text-secondary)", maxWidth: 540, margin: "0 auto 40px",
+            lineHeight: 1.7,
+          }}>
+            The three-sided marketplace connecting job seekers, recruiters, and companies
+            with intelligent matching and real-time collaboration.
+          </p>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+            <button onClick={onGetStarted} style={{
+              padding: "14px 36px", borderRadius: 12, border: "none",
+              background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
+              cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+              boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+            }}>Get Started Free</button>
+            <button onClick={onSignIn} style={{
+              padding: "14px 36px", borderRadius: 12, border: "1.5px solid var(--border-strong)",
+              background: "transparent", fontSize: 16, fontWeight: 600,
+              cursor: "pointer", color: "var(--text-primary)", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            }}>Sign In</button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats Bar ── */}
+      <section className="animate-in-delay-1" style={{
+        display: "flex", justifyContent: "center", gap: 0, padding: "0 48px 64px",
+      }}>
+        <div style={{
+          display: "flex", gap: 0, background: "white", borderRadius: 16,
+          border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+          overflow: "hidden",
+        }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{
+              padding: "24px 48px", textAlign: "center",
+              borderRight: i < stats.length - 1 ? "1px solid var(--border)" : "none",
+            }}>
+              <div style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{s.value}</div>
+              <div style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500, marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
+        <div className="animate-in-delay-2" style={{ textAlign: "center", marginBottom: 56 }}>
+          <h2 style={{
+            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
+          }}>How it works</h2>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+            From profile to placement in three simple steps
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+          {steps.map((step, i) => (
+            <div key={i} className={`animate-in-delay-${i + 1}`} style={{
+              background: "white", borderRadius: 20, padding: 32,
+              border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+              transition: "all 0.2s ease",
+            }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 12, marginBottom: 20,
+              }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "rgba(255,107,91,0.08)", color: "var(--coral)",
+                }}>
+                  {step.icon}
+                </div>
+                <span style={{
+                  fontFamily: "'Clash Display', sans-serif", fontSize: 14, fontWeight: 700,
+                  color: "var(--text-muted)", letterSpacing: "0.04em",
+                }}>{step.num}</span>
+              </div>
+              <h3 style={{
+                fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 700,
+                color: "var(--ink)", marginBottom: 8,
+              }}>{step.title}</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Role Cards ── */}
+      <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <h2 style={{
+            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
+          }}>Built for everyone</h2>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+            Whether you're hiring or looking — HireFlow has you covered
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+          {roles.map((r, i) => (
+            <div key={i} className={`animate-in-delay-${i + 1}`} style={{
+              background: "white", borderRadius: 20, padding: 28,
+              border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+              transition: "all 0.25s ease", cursor: "default",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,13,15,0.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
+            >
+              <div style={{
+                width: 44, height: 44, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center",
+                background: `${r.accent}14`, color: r.accent, marginBottom: 20,
+              }}>
+                {r.icon}
+              </div>
+              <h3 style={{
+                fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700,
+                color: "var(--ink)", marginBottom: 16,
+              }}>{r.title}</h3>
+              <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+                {r.points.map((pt, j) => (
+                  <li key={j} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
+                    <span style={{ color: r.accent, flexShrink: 0 }}>{Icons.check}</span>
+                    {pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Featured Jobs ── */}
+      <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <h2 style={{
+            fontFamily: "'Clash Display', sans-serif", fontSize: 36, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
+          }}>Featured opportunities</h2>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+            Top roles from companies using HireFlow right now
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+          {featuredJobs.map((job, i) => (
+            <div key={job.id} className={`animate-in-delay-${i + 1}`} style={{
+              background: "white", borderRadius: 20, padding: 24,
+              border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+              transition: "all 0.25s ease", cursor: "default",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,13,15,0.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 10, background: "var(--ink)", color: "var(--cream)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "'Clash Display', sans-serif", fontSize: 14, fontWeight: 700,
+                }}>
+                  {job.company.slice(0, 2).toUpperCase()}
+                </div>
+                <div style={{
+                  padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+                  background: "rgba(255,107,91,0.08)", color: "var(--coral)",
+                }}>
+                  {job.match}% match
+                </div>
+              </div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{job.title}</h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 14 }}>{job.company} · {job.location}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {job.tags.map(tag => (
+                  <span key={tag} style={{
+                    padding: "4px 10px", borderRadius: 6, fontSize: 12, fontWeight: 500,
+                    background: "var(--cream)", color: "var(--text-secondary)",
+                  }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA Footer ── */}
+      <section style={{
+        padding: "80px 48px", textAlign: "center",
+        background: "var(--ink)", color: "var(--cream)", margin: "64px 0 0",
+      }}>
+        <h2 style={{
+          fontFamily: "'Clash Display', sans-serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
+          letterSpacing: "-0.02em", marginBottom: 16,
+        }}>Ready to transform your hiring?</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
+          Join thousands of professionals already using HireFlow to find their perfect match.
+        </p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+          <button onClick={onGetStarted} style={{
+            padding: "14px 36px", borderRadius: 12, border: "none",
+            background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
+            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+            boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+          }}>Create Free Account</button>
+          <button onClick={onSignIn} style={{
+            padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
+            background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Satoshi', sans-serif", transition: "all 0.2s",
+          }}>Sign In</button>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        © 2024 HireFlow. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
+// ─── Auth Screen ─────────────────────────────────────────────────────
+const AuthScreen = ({ onAuth, onBack, initialMode }) => {
+  const [mode, setMode] = useState(initialMode || "login"); // "login" | "register"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -444,7 +750,15 @@ const AuthScreen = ({ onAuth }) => {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--cream)" }}>
       <GlobalStyles />
 
-      <header style={{ padding: "24px 48px", display: "flex", alignItems: "center" }}>
+      <header style={{ padding: "24px 48px", display: "flex", alignItems: "center", gap: 16 }}>
+        {onBack && (
+          <button onClick={onBack} style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: 36, height: 36, borderRadius: 10, border: "1px solid var(--border)",
+            background: "white", cursor: "pointer", color: "var(--text-secondary)",
+            transition: "all 0.15s",
+          }}>{Icons.arrowLeft}</button>
+        )}
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
           <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
@@ -1104,11 +1418,15 @@ const ResumeUpload = ({ onComplete, onBack }) => {
 // ─── Resume Builder ──────────────────────────────────────────────────
 const ResumeBuilder = ({ onComplete, existingProfile }) => {
   const [step, setStep] = useState(0);
-  const [profile, setProfile] = useState(existingProfile || {
+  const defaults = {
     name: "", email: "", headline: "", location: "",
     skills: [], desiredRoles: [], experienceLevel: "", workPrefs: [], salaryRange: "",
     experience: [], education: [],
-  });
+  };
+  const [profile, setProfile] = useState(existingProfile
+    ? { ...defaults, ...existingProfile, skills: existingProfile.skills || [], desiredRoles: existingProfile.desiredRoles || existingProfile.desired_roles || [], workPrefs: existingProfile.workPrefs || existingProfile.work_prefs || [], experience: existingProfile.experience || [], education: existingProfile.education || [] }
+    : defaults
+  );
   const [aiSummary, setAiSummary] = useState("");
   const [generating, setGenerating] = useState(false);
   const [skillSearch, setSkillSearch] = useState("");
@@ -1383,7 +1701,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
       </div>
 
       <nav style={{ flex: 1, marginTop: 16 }}>
-        {navItems[role].map(item => (
+        {(navItems[role] || []).map(item => (
           <div
             key={item.key}
             onClick={() => setActiveTab(item.key)}
@@ -1425,7 +1743,9 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
 
 // ─── Job Card ────────────────────────────────────────────────────────
 const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
-  const matchingSkills = job.requiredSkills.filter(s => profile.skills.map(sk => sk.toLowerCase()).includes(s.toLowerCase()));
+  const reqSkills = job.requiredSkills || [];
+  const matchingSkills = reqSkills.filter(s => (profile.skills || []).map(sk => sk.toLowerCase()).includes(s.toLowerCase()));
+  const isExternal = job.source === "jsearch";
 
   return (
     <Card hover style={{ marginBottom: 16 }}>
@@ -1435,10 +1755,10 @@ const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
             <div>
               <h3 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{job.title}</h3>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "var(--text-muted)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "var(--text-muted)", flexWrap: "wrap" }}>
                 <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{job.company}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>{Icons.mapPin} {job.location}</span>
-                <span style={{ color: "var(--coral)", fontWeight: 600 }}>{job.salary}</span>
+                {job.salary && <span style={{ color: "var(--coral)", fontWeight: 600 }}>{job.salary}</span>}
               </div>
             </div>
             <button onClick={onSave} style={{ background: "none", border: "none", cursor: "pointer", color: saved ? "var(--coral)" : "var(--text-muted)", padding: 8 }}>
@@ -1448,26 +1768,54 @@ const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
 
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 12, lineHeight: 1.6 }}>{job.desc}</p>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-            {job.requiredSkills.map(s => (
-              <Tag key={s} variant={matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) ? "coral" : "outline"}>
-                {matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) && <span>{Icons.check}</span>} {s}
-              </Tag>
-            ))}
-          </div>
+          {reqSkills.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+              {reqSkills.map(s => (
+                <Tag key={s} variant={matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) ? "coral" : "outline"}>
+                  {matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) && <span>{Icons.check}</span>} {s}
+                </Tag>
+              ))}
+            </div>
+          )}
+
+          {job.matchReasons && job.matchReasons.length > 0 && (
+            <div style={{ fontSize: 13, color: "var(--sage)", marginBottom: 8 }}>
+              {job.matchReasons[0]}
+            </div>
+          )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-              {matchingSkills.length}/{job.requiredSkills.length} skills match · {job.posted}
+              {reqSkills.length > 0 ? `${matchingSkills.length}/${reqSkills.length} skills match` : ""}
+              {job.posted ? ` · ${job.posted}` : ""}
+              {isExternal && <span style={{ marginLeft: 6, color: "var(--sage)" }}>via JSearch</span>}
             </div>
-            <Button size="sm" variant={applied ? "outline" : "coral"} onClick={onApply} disabled={applied}>
-              {applied ? <>{Icons.check} Applied</> : <>Apply {Icons.arrow}</>}
-            </Button>
+            {isExternal && job.applyLink ? (
+              <Button size="sm" variant="coral" onClick={onApply}>
+                Apply {Icons.arrow}
+              </Button>
+            ) : (
+              <Button size="sm" variant={applied ? "outline" : "coral"} onClick={onApply} disabled={applied}>
+                {applied ? <>{Icons.check} Applied</> : <>Apply {Icons.arrow}</>}
+              </Button>
+            )}
           </div>
         </div>
       </div>
     </Card>
   );
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────
+const formatTimeAgo = (dateStr) => {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / 3600000);
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return `${Math.floor(days / 7)}w ago`;
 };
 
 // ─── Seeker Dashboard ────────────────────────────────────────────────
@@ -1476,16 +1824,80 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
   const [saved, setSaved] = useState(new Set());
   const [applied, setApplied] = useState(new Set());
 
-  // Compute matches
-  const matchedJobs = JOBS.map(job => {
-    const uSkills = profile.skills.map(s => s.toLowerCase());
+  // External job search state
+  const [searchInput, setSearchInput] = useState("software engineer");
+  const [locationInput, setLocationInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("software engineer");
+  const [searchLocation, setSearchLocation] = useState("");
+  const [realJobs, setRealJobs] = useState(null);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [jobsError, setJobsError] = useState("");
+
+  // Fetch real jobs from JSearch API
+  useEffect(() => {
+    let cancelled = false;
+    const fetchJobs = async () => {
+      setJobsLoading(true);
+      setJobsError("");
+      try {
+        const data = await api.searchExternalJobs(searchQuery, searchLocation);
+        if (!cancelled) {
+          setRealJobs(data.jobs || []);
+        }
+      } catch {
+        if (!cancelled) {
+          setJobsError("");
+          setRealJobs(null);
+        }
+      } finally {
+        if (!cancelled) setJobsLoading(false);
+      }
+    };
+    fetchJobs();
+    return () => { cancelled = true; };
+  }, [searchQuery, searchLocation]);
+
+  const handleJobSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+    setSearchLocation(locationInput);
+  };
+
+  // Transform external jobs to match JobCard format
+  const transformedJobs = realJobs ? realJobs.map(job => ({
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    salary: job.salary_min && job.salary_max
+      ? `$${Math.round(job.salary_min / 1000)}k–$${Math.round(job.salary_max / 1000)}k`
+      : "",
+    match: job.match_score || 50,
+    tags: job.required_skills || [],
+    posted: formatTimeAgo(job.posted_at),
+    remote: job.remote,
+    applicants: 0,
+    desc: (job.description || "").slice(0, 200) + ((job.description || "").length > 200 ? "..." : ""),
+    requiredSkills: job.required_skills || [],
+    niceSkills: job.nice_skills || [],
+    applyLink: job.apply_link || "",
+    matchReasons: job.match_reasons || [],
+    source: "jsearch",
+  })).sort((a, b) => b.match - a.match) : null;
+
+  // Fallback: compute matches against hardcoded JOBS
+  const fallbackJobs = JOBS.map(job => {
+    const uSkills = (profile.skills || []).map(s => s.toLowerCase());
     const reqMatch = job.requiredSkills.filter(s => uSkills.includes(s.toLowerCase())).length;
     const niceMatch = job.niceSkills.filter(s => uSkills.includes(s.toLowerCase())).length;
     let score = (reqMatch / job.requiredSkills.length) * 60 + (niceMatch / job.niceSkills.length) * 20;
-    if (profile.desiredRoles.some(r => job.title.toLowerCase().includes(r.toLowerCase().split(" ")[0]))) score += 15;
-    if (profile.workPrefs.includes("Remote") && job.remote) score += 5;
+    if ((profile.desiredRoles || []).some(r => job.title.toLowerCase().includes(r.toLowerCase().split(" ")[0]))) score += 15;
+    if ((profile.workPrefs || []).includes("Remote") && job.remote) score += 5;
     return { ...job, match: Math.min(99, Math.max(40, Math.round(score))) };
   }).sort((a, b) => b.match - a.match);
+
+  const matchedJobs = transformedJobs || fallbackJobs;
+  const usingRealJobs = transformedJobs !== null;
 
   const filtered = matchedJobs.filter(j =>
     j.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -1547,7 +1959,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
         <Card>
           <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 20 }}>Skill Demand</div>
           {profile.skills.slice(0, 5).map(skill => {
-            const demand = JOBS.filter(j => [...j.requiredSkills, ...j.niceSkills].map(s => s.toLowerCase()).includes(skill.toLowerCase())).length;
+            const demand = matchedJobs.filter(j => [...(j.requiredSkills || []), ...(j.niceSkills || [])].map(s => s.toLowerCase()).includes(skill.toLowerCase())).length;
             return (
               <div key={skill} style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -1555,7 +1967,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
                   <span style={{ color: "var(--coral)", fontWeight: 700 }}>{demand} jobs</span>
                 </div>
                 <div style={{ height: 6, borderRadius: 3, background: "var(--cream-dark)" }}>
-                  <div style={{ height: "100%", borderRadius: 3, width: `${(demand / JOBS.length) * 100}%`, background: "var(--coral)" }} />
+                  <div style={{ height: "100%", borderRadius: 3, width: `${(demand / Math.max(matchedJobs.length, 1)) * 100}%`, background: "var(--coral)" }} />
                 </div>
               </div>
             );
@@ -1570,7 +1982,11 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
     <div>
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Welcome back, {profile.name?.split(" ")[0]}!</h1>
-        <p style={{ color: "var(--text-secondary)" }}>AI found <span style={{ color: "var(--coral)", fontWeight: 700 }}>{matchedJobs.filter(j => j.match >= 70).length} strong matches</span> for you</p>
+        <p style={{ color: "var(--text-secondary)" }}>
+          {jobsLoading ? "Searching for jobs..." : (
+            <>AI found <span style={{ color: "var(--coral)", fontWeight: 700 }}>{matchedJobs.filter(j => j.match >= 70).length} strong matches</span> for you{usingRealJobs ? " from real postings" : ""}</>
+          )}
+        </p>
       </div>
 
       <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 32 }}>
@@ -1579,17 +1995,39 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
         <StatCard label="Applied" value={applied.size} icon={Icons.briefcase} accent="var(--lavender)" />
       </div>
 
-      <Input icon={Icons.search} placeholder="Search jobs..." value={search} onChange={setSearch} style={{ marginBottom: 24, maxWidth: 400 }} />
+      {/* External job search form */}
+      <form onSubmit={handleJobSearch} style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+        <div style={{ flex: "1 1 200px", maxWidth: 300 }}>
+          <Input icon={Icons.search} placeholder="Job title or keyword..." value={searchInput} onChange={setSearchInput} />
+        </div>
+        <div style={{ flex: "1 1 160px", maxWidth: 240 }}>
+          <Input icon={Icons.mapPin} placeholder="Location..." value={locationInput} onChange={setLocationInput} />
+        </div>
+        <Button variant="coral" onClick={handleJobSearch}>Search Jobs</Button>
+      </form>
 
-      <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>{filtered.length} jobs ranked by match score</div>
+      <Input icon={Icons.search} placeholder="Filter results..." value={search} onChange={setSearch} style={{ marginBottom: 24, maxWidth: 400 }} />
 
-      {filtered.map(job => (
+      <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
+        {jobsLoading ? "Loading..." : `${filtered.length} jobs ranked by match score`}
+        {usingRealJobs && !jobsLoading && <span style={{ marginLeft: 8, color: "var(--sage)", fontWeight: 600 }}>Live results</span>}
+        {!usingRealJobs && !jobsLoading && <span style={{ marginLeft: 8, color: "var(--text-muted)" }}>(sample data)</span>}
+      </div>
+
+      {jobsLoading && (
+        <Card style={{ textAlign: "center", padding: 48 }}>
+          <div style={{ width: 32, height: 32, border: "3px solid var(--border)", borderTopColor: "var(--coral)", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
+          <p style={{ color: "var(--text-muted)" }}>Searching real job postings...</p>
+        </Card>
+      )}
+
+      {!jobsLoading && filtered.map(job => (
         <JobCard
           key={job.id}
           job={job}
           profile={profile}
           applied={applied.has(job.id)}
-          onApply={() => setApplied(a => new Set([...a, job.id]))}
+          onApply={() => job.applyLink ? window.open(job.applyLink, "_blank", "noopener") : setApplied(a => new Set([...a, job.id]))}
           saved={saved.has(job.id)}
           onSave={() => setSaved(s => { const n = new Set(s); n.has(job.id) ? n.delete(job.id) : n.add(job.id); return n; })}
         />
@@ -1868,6 +2306,8 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [aiSummary, setAiSummary] = useState("");
   const [activeTab, setActiveTab] = useState("home");
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
 
   // Rehydrate session from stored token on mount
   useEffect(() => {
@@ -1946,8 +2386,9 @@ export default function App() {
     );
   }
 
-  // Auth gate — show login/register if not authenticated
-  if (!user) return <AuthScreen onAuth={handleAuth} />;
+  // Auth gate — show landing page or login/register
+  if (!user && showAuth) return <AuthScreen onAuth={handleAuth} onBack={() => setShowAuth(false)} initialMode={authMode} />;
+  if (!user) return <LandingPage onGetStarted={() => { setAuthMode("register"); setShowAuth(true); }} onSignIn={() => { setAuthMode("login"); setShowAuth(true); }} />;
 
   // Render based on phase
   if (phase === "role-select") return <RoleSelect onSelect={handleRoleSelect} />;

@@ -96,6 +96,16 @@ class HireFlowAPI {
   }
 
   // ─── Jobs ─────────────────────────────────────────────
+  async searchExternalJobs(query = '', location = '', remoteOnly = false, page = 1) {
+    const params = new URLSearchParams({
+      query,
+      location,
+      remote_only: remoteOnly,
+      page,
+    });
+    return this._fetch(`/api/jobs/search?${params}`);
+  }
+
   async getJobs(params = {}) {
     const qs = new URLSearchParams(params).toString();
     return this._fetch(`/api/jobs${qs ? '?' + qs : ''}`);

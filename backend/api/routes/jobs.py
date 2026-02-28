@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from api.core.config import require_user
+from api.core.config import require_user, get_current_user
 from api.core.database import (
     get_user_by_id,
     get_job_by_id,
@@ -67,6 +67,46 @@ async def list_jobs(
     """List all active jobs with optional filtering."""
     jobs = search_jobs(search=search, remote_only=remote_only, job_type=job_type, limit=limit)
     return [_format_job(j) for j in jobs]
+
+
+# ── External Job Search (JSearch API) ────────────────────
+@router.get("/search")
+async def search_external_jobs(
+    query: str = Query("software engineer", description="Job search query"),
+    location: str = Query("", description="Location filter"),
+    remote_only: bool = Query(False),
+    page: int = Query(1, ge=1),
+    user=Depends(get_current_user),
+):
+    """Search real job postings from JSearch and optionally match against user profile."""
+    from api.services.jobs_api import search_jsearch
+    from api.core.config import RAPIDAPI_KEY
+
+    if not RAPIDAPI_KEY:
+        raise HTTPException(400, "External job search not configured. Set RAPIDAPI_KEY env var.")
+
+    jobs = await search_jsearch(query, location, remote_only, page, api_key=RAPIDAPI_KEY)
+
+    # If authenticated seeker, compute match scores
+    if user and user.get("role") == "seeker":
+        from api.services.ai import compute_job_match
+        profile = get_user_by_id(user["id"])
+        if profile:
+            for job in jobs:
+                match_result = compute_job_match(
+                    user_skills=profile.get("skills", []),
+                    desired_roles=profile.get("desired_roles", []),
+                    work_preferences=profile.get("work_preferences", []),
+                    salary_range=profile.get("salary_range"),
+                    experience_level=profile.get("experience_level"),
+                    job=job,
+                )
+                job["match_score"] = match_result["match_score"]
+                job["match_reasons"] = match_result["match_reasons"]
+                job["matched_required"] = match_result["matched_required"]
+                job["matched_nice"] = match_result["matched_nice"]
+
+    return {"jobs": jobs, "count": len(jobs)}
 
 
 # ── My Applications (Seeker) — must be before /{job_id} ──
