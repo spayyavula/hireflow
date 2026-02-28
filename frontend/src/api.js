@@ -33,10 +33,12 @@ class HireFlowAPI {
   }
 
   // ─── Auth ─────────────────────────────────────────────
-  async register(email, password, role, name) {
+  async register(email, password, role, name, companyName = null) {
+    const body = { email, password, role, name };
+    if (companyName) body.company_name = companyName;
     const data = await this._fetch('/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, password, role, name }),
+      body: JSON.stringify(body),
     });
     this.token = data.access_token;
     localStorage.setItem('hireflow_token', this.token);
