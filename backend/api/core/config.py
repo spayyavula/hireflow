@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 # ─── Settings ─────────────────────────────────────────────
 SECRET_KEY = os.environ.get("SECRET_KEY", "hireflow-dev-secret-change-in-production")
-RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
+RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "").strip()
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
