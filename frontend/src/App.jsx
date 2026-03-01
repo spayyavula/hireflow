@@ -393,9 +393,54 @@ const StatCard = ({ label, value, sub, icon, accent }) => (
   </Card>
 );
 
-// ─── Auth Screen ────────────────────────────────────────────────────
+// ─── Public Nav ─────────────────────────────────────────────────────
+const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const navLinks = [
+    { key: "features", label: "Features" },
+    { key: "pricing", label: "Pricing" },
+    { key: "about", label: "About" },
+  ];
+
+  return (
+    <header style={{
+      padding: "16px 48px", display: "flex", alignItems: "center", justifyContent: "space-between",
+      position: "sticky", top: 0, background: "rgba(250,248,245,0.85)", backdropFilter: "blur(12px)",
+      zIndex: 100, borderBottom: "1px solid var(--border)",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+        <div onClick={() => onNavigate("home")} style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer" }}>
+          {Icons.logo}
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+        </div>
+        <nav style={{ display: "flex", gap: 8 }}>
+          {navLinks.map(link => (
+            <button key={link.key} onClick={() => onNavigate(link.key)} style={{
+              padding: "8px 16px", borderRadius: 8, border: "none", background: "transparent",
+              fontSize: 14, fontWeight: 600, cursor: "pointer", color: currentPage === link.key ? "var(--coral)" : "var(--text-secondary)",
+              fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s", position: "relative",
+              borderBottom: currentPage === link.key ? "2px solid var(--coral)" : "2px solid transparent",
+            }}>{link.label}</button>
+          ))}
+        </nav>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        <button onClick={onSignIn} style={{
+          padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
+          background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
+          color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+        }}>Sign In</button>
+        <button onClick={onGetStarted} style={{
+          padding: "10px 24px", borderRadius: 10, border: "none",
+          background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
+          cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+        }}>Get Started</button>
+      </div>
+    </header>
+  );
+};
+
 // ─── Landing Page ────────────────────────────────────────────────────
-const LandingPage = ({ onGetStarted, onSignIn }) => {
+const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
   const featuredJobs = JOBS.slice(0, 3);
 
   const steps = [
@@ -430,28 +475,7 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
       <GlobalStyles />
 
       {/* ── Nav ── */}
-      <header style={{
-        padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between",
-        position: "sticky", top: 0, background: "rgba(250,248,245,0.85)", backdropFilter: "blur(12px)",
-        zIndex: 100, borderBottom: "1px solid var(--border)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
-          {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
-        </div>
-        <div style={{ display: "flex", gap: 12 }}>
-          <button onClick={onSignIn} style={{
-            padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
-            background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
-            color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
-          }}>Sign In</button>
-          <button onClick={onGetStarted} style={{
-            padding: "10px 24px", borderRadius: 10, border: "none",
-            background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
-          }}>Get Started</button>
-        </div>
-      </header>
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
 
       {/* ── Hero ── */}
       <section style={{ position: "relative", padding: "100px 48px 80px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
@@ -680,11 +704,11 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
             cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
             boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
           }}>Create Free Account</button>
-          <button onClick={onSignIn} style={{
+          <button onClick={() => onNavigate("features")} style={{
             padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
             background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
             cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
-          }}>Sign In</button>
+          }}>See Features</button>
         </div>
       </section>
 
@@ -693,7 +717,559 @@ const LandingPage = ({ onGetStarted, onSignIn }) => {
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        © 2024 HireFlow. Built with AI.
+        © 2026 HireFlow. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
+// ─── Features Page ──────────────────────────────────────────────────
+const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const [featureTab, setFeatureTab] = useState("seekers");
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const tabs = [
+    { key: "seekers", label: "Job Seekers", accent: "var(--coral)" },
+    { key: "recruiters", label: "Recruiters", accent: "var(--sage)" },
+    { key: "companies", label: "Companies", accent: "var(--lavender)" },
+  ];
+
+  const features = {
+    seekers: [
+      { icon: Icons.spark, title: "AI Match Scoring", desc: "Get a 0-99 compatibility score for every job based on your skills, experience, and preferences." },
+      { icon: Icons.doc, title: "Resume Builder & Analyzer", desc: "Build a professional resume or upload yours for AI-powered feedback and optimization." },
+      { icon: Icons.search, title: "Smart Job Search", desc: "Filter by role, location, salary, and remote preference with intelligent suggestions." },
+      { icon: Icons.zap, title: "One-Click Apply", desc: "Apply to jobs instantly with your saved profile — no repetitive forms." },
+      { icon: Icons.chat, title: "Real-Time Chat", desc: "Message recruiters and hiring managers directly within the platform." },
+    ],
+    recruiters: [
+      { icon: Icons.spark, title: "AI Candidate Ranking", desc: "Candidates automatically scored and ranked by fit for each open role." },
+      { icon: Icons.chart, title: "Pipeline Management", desc: "Track candidates through 5 stages: Applied, Screening, Interview, Offer, Hired." },
+      { icon: Icons.search, title: "Candidate Search", desc: "Search the full talent pool by skills, experience, location, and availability." },
+      { icon: Icons.chat, title: "Direct Messaging", desc: "Reach out to candidates in real-time to schedule interviews or answer questions." },
+      { icon: Icons.chart, title: "Analytics Dashboard", desc: "Track time-to-hire, pipeline health, conversion rates, and team performance." },
+    ],
+    companies: [
+      { icon: Icons.briefcase, title: "Job Posting", desc: "Create and manage job listings with required skills, salary ranges, and descriptions." },
+      { icon: Icons.users, title: "Curated Talent Pool", desc: "Access pre-scored candidates matched to your company's open roles." },
+      { icon: Icons.user, title: "Multi-Role Management", desc: "Manage recruiters, hiring managers, and admins under one company account." },
+      { icon: Icons.chart, title: "Hiring Analytics", desc: "Company-wide dashboards showing hiring velocity, DEI metrics, and cost-per-hire." },
+      { icon: Icons.users, title: "Team Collaboration", desc: "Share candidate notes, interview feedback, and pipeline updates across your team." },
+    ],
+  };
+
+  const comparisonFeatures = [
+    { name: "AI Match Scoring", seekers: true, recruiters: true, companies: true },
+    { name: "Resume Builder", seekers: true, recruiters: false, companies: false },
+    { name: "One-Click Apply", seekers: true, recruiters: false, companies: false },
+    { name: "Pipeline Management", seekers: false, recruiters: true, companies: true },
+    { name: "Candidate Search", seekers: false, recruiters: true, companies: true },
+    { name: "Analytics Dashboard", seekers: false, recruiters: true, companies: true },
+    { name: "Real-Time Chat", seekers: true, recruiters: true, companies: true },
+    { name: "Job Posting", seekers: false, recruiters: false, companies: true },
+    { name: "Team Collaboration", seekers: false, recruiters: true, companies: true },
+  ];
+
+  const activeAccent = tabs.find(t => t.key === featureTab)?.accent || "var(--coral)";
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      {/* Hero */}
+      <section style={{ padding: "80px 48px 60px", textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
+        <div style={{
+          display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+          background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 24, letterSpacing: "0.02em",
+        }}>Platform Features</div>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 4.5vw, 56px)", fontWeight: 700,
+          lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
+        }}>Everything you need to hire and get hired</h1>
+        <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
+          Powerful tools for every side of the hiring equation — whether you're searching, recruiting, or building a team.
+        </p>
+      </section>
+
+      {/* Tabbed Features */}
+      <section style={{ padding: "0 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 48 }}>
+          {tabs.map(tab => (
+            <button key={tab.key} onClick={() => setFeatureTab(tab.key)} style={{
+              padding: "10px 24px", borderRadius: 10, border: "none", fontSize: 14, fontWeight: 600,
+              cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+              background: featureTab === tab.key ? tab.accent : "transparent",
+              color: featureTab === tab.key ? "white" : "var(--text-secondary)",
+            }}>{tab.label}</button>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+          {features[featureTab].map((f, i) => (
+            <Card key={i} hover style={{ padding: 28 }}>
+              <div style={{ color: activeAccent, marginBottom: 16, opacity: 0.9 }}>{f.icon}</div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>{f.title}</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{f.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Core Technology Strip */}
+      <section style={{ background: "var(--ink)", padding: "56px 48px" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", justifyContent: "center", gap: 64, flexWrap: "wrap" }}>
+          {[
+            { icon: Icons.spark, title: "AI Matching Engine", desc: "Rule-based scoring analyzing skills, roles, and preferences" },
+            { icon: Icons.chat, title: "Real-Time Collaboration", desc: "Instant messaging between all parties on the platform" },
+            { icon: Icons.target, title: "Privacy by Design", desc: "Row-level security and encrypted data at every layer" },
+          ].map((item, i) => (
+            <div key={i} style={{ textAlign: "center", maxWidth: 240 }}>
+              <div style={{ color: "var(--coral)", marginBottom: 12 }}>{item.icon}</div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "var(--cream)", marginBottom: 8 }}>{item.title}</h3>
+              <p style={{ fontSize: 14, color: "rgba(250,248,245,0.6)", lineHeight: 1.6 }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Feature Comparison Table */}
+      <section style={{ padding: "80px 48px", maxWidth: 800, margin: "0 auto" }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
+          color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
+        }}>Feature comparison</h2>
+        <div style={{ background: "white", borderRadius: 20, border: "1px solid var(--border)", overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                <th style={{ padding: "16px 24px", textAlign: "left", fontWeight: 600, color: "var(--text-secondary)" }}>Feature</th>
+                <th style={{ padding: "16px 24px", textAlign: "center", fontWeight: 600, color: "var(--coral)" }}>Seekers</th>
+                <th style={{ padding: "16px 24px", textAlign: "center", fontWeight: 600, color: "var(--sage)" }}>Recruiters</th>
+                <th style={{ padding: "16px 24px", textAlign: "center", fontWeight: 600, color: "var(--lavender)" }}>Companies</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonFeatures.map((row, i) => (
+                <tr key={i} style={{ borderBottom: i < comparisonFeatures.length - 1 ? "1px solid var(--border)" : "none" }}>
+                  <td style={{ padding: "14px 24px", fontWeight: 500, color: "var(--ink)" }}>{row.name}</td>
+                  {["seekers", "recruiters", "companies"].map(role => (
+                    <td key={role} style={{ padding: "14px 24px", textAlign: "center" }}>
+                      {row[role] ? <span style={{ color: "var(--coral)" }}>{Icons.check}</span> : <span style={{ color: "var(--border-strong)" }}>—</span>}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section style={{
+        padding: "80px 48px", textAlign: "center",
+        background: "var(--ink)", color: "var(--cream)",
+      }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
+          letterSpacing: "-0.02em", marginBottom: 16,
+        }}>Ready to get started?</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
+          Create your free account and experience intelligent hiring today.
+        </p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+          <button onClick={onGetStarted} style={{
+            padding: "14px 36px", borderRadius: 12, border: "none",
+            background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+          }}>Start for Free</button>
+          <button onClick={() => onNavigate("pricing")} style={{
+            padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
+            background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+          }}>See Pricing</button>
+        </div>
+      </section>
+
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        © 2026 HireFlow. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
+// ─── Pricing Page ───────────────────────────────────────────────────
+const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const [billingCycle, setBillingCycle] = useState("monthly");
+  const [openFaq, setOpenFaq] = useState(null);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const plans = [
+    {
+      name: "Seeker Free", price: 0, annual: 0, accent: "var(--coral)", badge: null,
+      desc: "Everything you need to land your next role",
+      features: ["20 AI matches per week", "1 resume profile", "Unlimited applications", "5 active chat threads", "Basic job search filters"],
+    },
+    {
+      name: "Recruiter Starter", price: 49, annual: 39, accent: "var(--sage)", badge: "Most Popular",
+      desc: "Essential tools for growing recruiting teams",
+      features: ["Full candidate database access", "3 active job roles", "50 pipeline candidates", "Unlimited chat", "Basic analytics"],
+    },
+    {
+      name: "Recruiter Pro", price: 129, annual: 103, accent: "var(--lavender)", badge: null,
+      desc: "Advanced features for high-volume hiring",
+      features: ["Unlimited job roles", "Advanced analytics & reports", "Automation workflows", "Priority support", "Custom pipeline stages"],
+    },
+    {
+      name: "Company Enterprise", price: -1, annual: -1, accent: "var(--gold)", badge: null,
+      desc: "Tailored solutions for large organizations",
+      features: ["Unlimited seats & roles", "SSO & SAML integration", "API access", "Dedicated account manager", "99.9% SLA guarantee"],
+    },
+  ];
+
+  const faqs = [
+    { q: "Can I switch plans at any time?", a: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle, and we'll prorate any differences." },
+    { q: "Is there a free trial for paid plans?", a: "All paid plans come with a 14-day free trial. No credit card required to start — you'll only be charged when the trial ends and you choose to continue." },
+    { q: "What are the limits on the free plan?", a: "The Seeker Free plan includes 20 AI match scores per week, 1 resume profile, unlimited job applications, and up to 5 active chat conversations." },
+    { q: "Do you offer nonprofit or education discounts?", a: "Yes, we offer a 30% discount for registered nonprofits and educational institutions. Contact our sales team to get set up." },
+    { q: "How do you handle data security?", a: "All data is encrypted at rest and in transit. We use Supabase with Row Level Security, and our infrastructure is SOC 2 Type II compliant." },
+    { q: "What's your cancellation policy?", a: "You can cancel at any time from your account settings. You'll retain access to paid features through the end of your current billing period." },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      {/* Hero */}
+      <section style={{ padding: "80px 48px 40px", textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 4.5vw, 56px)", fontWeight: 700,
+          lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
+        }}>The right plan for every team</h1>
+        <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 520, margin: "0 auto 36px", lineHeight: 1.7 }}>
+          Start free and scale as you grow. No hidden fees, no surprises.
+        </p>
+
+        {/* Billing Toggle */}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 16, background: "white", padding: "6px 8px", borderRadius: 12, border: "1px solid var(--border)" }}>
+          <button onClick={() => setBillingCycle("monthly")} style={{
+            padding: "8px 20px", borderRadius: 8, border: "none", fontSize: 14, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            background: billingCycle === "monthly" ? "var(--ink)" : "transparent",
+            color: billingCycle === "monthly" ? "var(--cream)" : "var(--text-secondary)",
+          }}>Monthly</button>
+          <button onClick={() => setBillingCycle("annual")} style={{
+            padding: "8px 20px", borderRadius: 8, border: "none", fontSize: 14, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            background: billingCycle === "annual" ? "var(--ink)" : "transparent",
+            color: billingCycle === "annual" ? "var(--cream)" : "var(--text-secondary)",
+          }}>Annual <span style={{ color: "var(--coral)", fontWeight: 700, fontSize: 12 }}>-20%</span></button>
+        </div>
+      </section>
+
+      {/* Pricing Cards */}
+      <section style={{ padding: "40px 48px 80px", maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24 }}>
+          {plans.map((plan, i) => {
+            const displayPrice = plan.price === -1 ? null : billingCycle === "annual" ? plan.annual : plan.price;
+            return (
+              <div key={i} style={{
+                background: "white", borderRadius: 20, border: plan.badge ? `2px solid ${plan.accent}` : "1px solid var(--border)",
+                padding: 32, display: "flex", flexDirection: "column", position: "relative",
+                transition: "all 0.25s ease",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 20px 40px rgba(13,13,15,0.08)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                {plan.badge && (
+                  <div style={{
+                    position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
+                    padding: "4px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700,
+                    background: plan.accent, color: "white",
+                  }}>{plan.badge}</div>
+                )}
+                <div style={{ fontSize: 13, fontWeight: 600, color: plan.accent, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>{plan.name}</div>
+                <div style={{ marginBottom: 8 }}>
+                  {displayPrice !== null ? (
+                    <>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 44, fontWeight: 700, color: "var(--ink)" }}>${displayPrice}</span>
+                      {displayPrice > 0 && <span style={{ fontSize: 15, color: "var(--text-muted)" }}>/mo</span>}
+                      {displayPrice === 0 && <span style={{ fontSize: 15, color: "var(--text-muted)", marginLeft: 4 }}>forever</span>}
+                    </>
+                  ) : (
+                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, color: "var(--ink)" }}>Custom</span>
+                  )}
+                </div>
+                <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.5 }}>{plan.desc}</p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+                  {plan.features.map((feat, j) => (
+                    <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
+                      <span style={{ color: plan.accent, flexShrink: 0, marginTop: 2 }}>{Icons.check}</span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={displayPrice === null ? undefined : onGetStarted} style={{
+                  width: "100%", padding: "12px 24px", borderRadius: 10, border: "none",
+                  background: plan.badge ? plan.accent : "var(--ink)", color: "white",
+                  fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+                  transition: "all 0.2s",
+                }}>{displayPrice === null ? "Contact Sales" : displayPrice === 0 ? "Get Started Free" : "Start Free Trial"}</button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* FAQ Accordion */}
+      <section style={{ padding: "0 48px 80px", maxWidth: 700, margin: "0 auto" }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
+          color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
+        }}>Frequently asked questions</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {faqs.map((faq, i) => (
+            <div key={i} style={{
+              background: "white", borderRadius: 16, border: "1px solid var(--border)", overflow: "hidden",
+              transition: "all 0.2s",
+            }}>
+              <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
+                width: "100%", padding: "20px 24px", border: "none", background: "transparent",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+              }}>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "var(--ink)", textAlign: "left" }}>{faq.q}</span>
+                <span style={{
+                  color: "var(--text-muted)", transition: "transform 0.2s", flexShrink: 0, marginLeft: 16,
+                  transform: openFaq === i ? "rotate(45deg)" : "rotate(0deg)",
+                }}>{Icons.plus}</span>
+              </button>
+              {openFaq === i && (
+                <div style={{ padding: "0 24px 20px", fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section style={{
+        padding: "80px 48px", textAlign: "center",
+        background: "var(--ink)", color: "var(--cream)",
+      }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
+          letterSpacing: "-0.02em", marginBottom: 16,
+        }}>Start free today</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
+          Join thousands of professionals finding their perfect match with HireFlow.
+        </p>
+        <button onClick={onGetStarted} style={{
+          padding: "14px 36px", borderRadius: 12, border: "none",
+          background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
+          cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+          boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+        }}>Create Free Account</button>
+      </section>
+
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        © 2026 HireFlow. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
+// ─── About Page ─────────────────────────────────────────────────────
+const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const values = [
+    { icon: Icons.target, title: "Transparency", desc: "Clear match scores, honest pricing, and open communication at every step." },
+    { icon: Icons.zap, title: "Speed", desc: "From profile to interview in 48 hours — because great talent doesn't wait." },
+    { icon: Icons.check, title: "Fairness", desc: "AI that evaluates skills and fit, removing bias from the hiring process." },
+    { icon: Icons.doc, title: "Privacy", desc: "Your data belongs to you. Row-level security and encryption by default." },
+    { icon: Icons.spark, title: "Intelligence", desc: "Matching algorithms that get smarter with every interaction on the platform." },
+    { icon: Icons.users, title: "Community", desc: "A marketplace that works for everyone — seekers, recruiters, and companies alike." },
+  ];
+
+  const team = [
+    { name: "Alex Rivera", role: "CEO & Co-founder", initials: "AR", bio: "Former VP of Talent at a Fortune 500. Spent a decade frustrated by broken hiring tools." },
+    { name: "Jamie Chen", role: "CTO & Co-founder", initials: "JC", bio: "Ex-Google engineer who built ML systems at scale. Believes AI should serve people, not replace them." },
+    { name: "Morgan Hayes", role: "Head of Product", initials: "MH", bio: "Product leader from LinkedIn and Indeed. Obsessed with making complex workflows feel simple." },
+    { name: "Sam Patel", role: "Head of Growth", initials: "SP", bio: "Growth veteran from Stripe and Notion. Focused on building a platform people genuinely love." },
+  ];
+
+  const stats = [
+    { value: "10,000+", label: "Matches Made" },
+    { value: "500+", label: "Companies" },
+    { value: "96%", label: "Satisfaction" },
+    { value: "48h", label: "Avg First Interview" },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      {/* Hero */}
+      <section style={{ padding: "80px 48px 60px", textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
+        <div style={{
+          display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+          background: "rgba(155,143,212,0.1)", color: "var(--lavender)", marginBottom: 24, letterSpacing: "0.02em",
+        }}>Our Story</div>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 4.5vw, 56px)", fontWeight: 700,
+          lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
+        }}>Built by people who've been on both sides of the table</h1>
+        <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
+          We've been the candidate refreshing our inbox, the recruiter drowning in spreadsheets, and the hiring manager struggling to find signal in the noise. HireFlow exists because we knew there had to be a better way.
+        </p>
+      </section>
+
+      {/* Mission Quote */}
+      <section style={{ padding: "40px 48px 80px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+        <blockquote style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 500,
+          color: "var(--ink)", lineHeight: 1.4, fontStyle: "italic", letterSpacing: "-0.01em",
+          borderLeft: "4px solid var(--coral)", paddingLeft: 32, textAlign: "left", margin: "0 auto", maxWidth: 700,
+        }}>
+          "Hiring should feel like a conversation, not a transaction. We're building the platform that makes that possible."
+        </blockquote>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 20, textAlign: "left", paddingLeft: 32, maxWidth: 700, margin: "20px auto 0" }}>
+          — Alex Rivera, CEO
+        </p>
+      </section>
+
+      {/* How It Works */}
+      <section style={{ padding: "64px 48px", background: "white", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 56,
+          }}>How it works</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: 24, alignItems: "center" }}>
+            {/* Job Seekers */}
+            <div style={{ textAlign: "center", padding: 24 }}>
+              <div style={{ color: "var(--coral)", marginBottom: 16, display: "flex", justifyContent: "center" }}>{Icons.user}</div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>Job Seekers</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>Create profiles, get matched, apply with one click</p>
+            </div>
+            <div style={{ color: "var(--coral)", fontSize: 24 }}>→</div>
+            {/* Platform */}
+            <div style={{ textAlign: "center", padding: 32, background: "var(--cream)", borderRadius: 20, border: "1px solid var(--border)" }}>
+              <div style={{ color: "var(--ink)", marginBottom: 16, display: "flex", justifyContent: "center" }}>{Icons.logo}</div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>HireFlow Platform</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>AI matching, real-time chat, analytics</p>
+            </div>
+            <div style={{ color: "var(--lavender)", fontSize: 24 }}>←</div>
+            {/* Companies */}
+            <div style={{ textAlign: "center", padding: 24 }}>
+              <div style={{ color: "var(--lavender)", marginBottom: 16, display: "flex", justifyContent: "center" }}>{Icons.building}</div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>Companies</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>Post roles, review candidates, hire faster</p>
+            </div>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 32 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "12px 24px", borderRadius: 12, background: "rgba(126,184,158,0.1)", border: "1px solid rgba(126,184,158,0.2)" }}>
+              <span style={{ color: "var(--sage)" }}>{Icons.users}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "var(--sage)" }}>Recruiters bridge both sides</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section style={{ padding: "64px 48px", maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+          {stats.map((stat, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 40, fontWeight: 700, color: "var(--ink)", letterSpacing: "-0.02em" }}>{stat.value}</div>
+              <div style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Values Grid */}
+      <section style={{ padding: "0 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
+          color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
+        }}>What we stand for</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+          {values.map((v, i) => (
+            <Card key={i} hover style={{ padding: 28 }}>
+              <div style={{ color: "var(--coral)", marginBottom: 16, opacity: 0.9 }}>{v.icon}</div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>{v.title}</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{v.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Team */}
+      <section style={{ padding: "64px 48px", background: "white", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
+          }}>The team behind HireFlow</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
+            {team.map((person, i) => (
+              <div key={i} style={{ textAlign: "center", padding: 24 }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+                  <Avatar initials={person.initials} size={64} />
+                </div>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{person.name}</h3>
+                <p style={{ fontSize: 13, color: "var(--coral)", fontWeight: 600, marginBottom: 12 }}>{person.role}</p>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>{person.bio}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section style={{
+        padding: "80px 48px", textAlign: "center",
+        background: "var(--ink)", color: "var(--cream)",
+      }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
+          letterSpacing: "-0.02em", marginBottom: 16,
+        }}>Join the HireFlow community</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
+          Whether you're hiring or looking, we're building the future of work together.
+        </p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+          <button onClick={onGetStarted} style={{
+            padding: "14px 36px", borderRadius: 12, border: "none",
+            background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+          }}>Get Started Free</button>
+          <button onClick={() => onNavigate("features")} style={{
+            padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
+            background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+          }}>See How It Works</button>
+        </div>
+      </section>
+
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        © 2026 HireFlow. Built with AI.
       </footer>
     </div>
   );
@@ -2307,6 +2883,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
+  const [currentPage, setCurrentPage] = useState("home");
 
   // Rehydrate session from stored token on mount
   useEffect(() => {
@@ -2370,6 +2947,7 @@ export default function App() {
     setProfile(null);
     setAiSummary("");
     setActiveTab("home");
+    setCurrentPage("home");
   };
 
   // Loading state while checking token
@@ -2385,9 +2963,23 @@ export default function App() {
     );
   }
 
-  // Auth gate — show landing page or login/register
+  // Auth gate — show landing page, content pages, or login/register
+  const navProps = {
+    onGetStarted: () => { setAuthMode("register"); setShowAuth(true); },
+    onSignIn: () => { setAuthMode("login"); setShowAuth(true); },
+    onNavigate: (page) => setCurrentPage(page),
+    currentPage,
+  };
+
   if (!user && showAuth) return <AuthScreen onAuth={handleAuth} onBack={() => setShowAuth(false)} initialMode={authMode} />;
-  if (!user) return <LandingPage onGetStarted={() => { setAuthMode("register"); setShowAuth(true); }} onSignIn={() => { setAuthMode("login"); setShowAuth(true); }} />;
+  if (!user) {
+    switch (currentPage) {
+      case "features": return <FeaturesPage {...navProps} />;
+      case "pricing": return <PricingPage {...navProps} />;
+      case "about": return <AboutPage {...navProps} />;
+      default: return <LandingPage {...navProps} />;
+    }
+  }
 
   // Render based on phase
   if (phase === "role-select") return <RoleSelect onSelect={handleRoleSelect} />;
