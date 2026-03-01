@@ -11,6 +11,8 @@ Deployed on Vercel as a serverless Python function.
 Database: Supabase (PostgreSQL)
 """
 
+import os
+
 # Load .env for local development (no-op on Vercel)
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,17 +32,17 @@ app = FastAPI(
 )
 
 # ─── CORS (allow frontend origins) ───────────────────────
+ALLOWED_ORIGINS = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://localhost:5173,https://hireflow-ui.vercel.app",
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://*.vercel.app",
-        "*",  # tighten in production
-    ],
+    allow_origins=[o.strip() for o in ALLOWED_ORIGINS if o.strip()],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # ─── Register Routers ────────────────────────────────────
