@@ -20,7 +20,7 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features
+from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog
 
 # ─── App Setup ────────────────────────────────────────────
 app = FastAPI(
@@ -54,6 +54,7 @@ app.include_router(company.router)
 app.include_router(chat.router)
 app.include_router(matcher.router)
 app.include_router(features.router)
+app.include_router(blog.router)
 
 
 # ─── Health Check ─────────────────────────────────────────

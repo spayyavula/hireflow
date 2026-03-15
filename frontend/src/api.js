@@ -211,6 +211,24 @@ class JobsSearchAPI {
     });
   }
 
+  // ─── Blog ──────────────────────────────────────────────
+  async getBlogPosts(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return this._fetch(`/api/blog${qs ? '?' + qs : ''}`);
+  }
+
+  async getBlogPost(slug) {
+    return this._fetch(`/api/blog/${slug}`);
+  }
+
+  async getBlogCategories() {
+    return this._fetch('/api/blog/categories');
+  }
+
+  async getRelatedJobsForPost(slug) {
+    return this._fetch(`/api/blog/${slug}/related-jobs`);
+  }
+
   // ─── Chat ─────────────────────────────────────────────
   async sendMessage(recipientId, content) {
     return this._fetch('/api/chat/send', {

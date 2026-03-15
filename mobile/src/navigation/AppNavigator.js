@@ -15,6 +15,8 @@ import ChatScreen from '../screens/ChatScreen';
 import AnalyticsScreen from '../screens/AnalyticsScreen';
 import CandidatesScreen from '../screens/CandidatesScreen';
 import DashboardScreen from '../screens/DashboardScreen';
+import BlogScreen from '../screens/BlogScreen';
+import BlogPostScreen from '../screens/BlogPostScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,7 +26,7 @@ const TabIcon = ({ name, color, size }) => {
   const icons = {
     jobs: '💼', resume: '📄', chat: '💬', analytics: '📊',
     ideas: '💡', matcher: '🎯', candidates: '👥', pipeline: '📋',
-    dashboard: '🏠', profile: '👤',
+    dashboard: '🏠', profile: '👤', blog: '📰',
   };
   return <Text style={{ fontSize: size - 4 }}>{icons[name] || '•'}</Text>;
 };
@@ -56,8 +58,8 @@ function SeekerTabs() {
       <Tab.Screen name="Chat" component={ChatScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="chat" color={color} size={size} /> }}
       />
-      <Tab.Screen name="Ideas" component={IdeasScreen}
-        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="ideas" color={color} size={size} /> }}
+      <Tab.Screen name="Blog" component={BlogScreen}
+        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="blog" color={color} size={size} /> }}
       />
       <Tab.Screen name="Analytics" component={AnalyticsScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="analytics" color={color} size={size} /> }}
@@ -90,8 +92,8 @@ function RecruiterTabs() {
       <Tab.Screen name="Chat" component={ChatScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="chat" color={color} size={size} /> }}
       />
-      <Tab.Screen name="Ideas" component={IdeasScreen}
-        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="ideas" color={color} size={size} /> }}
+      <Tab.Screen name="Blog" component={BlogScreen}
+        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="blog" color={color} size={size} /> }}
       />
       <Tab.Screen name="Analytics" component={AnalyticsScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="analytics" color={color} size={size} /> }}
@@ -127,8 +129,8 @@ function CompanyTabs() {
       <Tab.Screen name="Chat" component={ChatScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="chat" color={color} size={size} /> }}
       />
-      <Tab.Screen name="Ideas" component={IdeasScreen}
-        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="ideas" color={color} size={size} /> }}
+      <Tab.Screen name="Blog" component={BlogScreen}
+        options={{ tabBarIcon: ({ color, size }) => <TabIcon name="blog" color={color} size={size} /> }}
       />
       <Tab.Screen name="Analytics" component={AnalyticsScreen}
         options={{ tabBarIcon: ({ color, size }) => <TabIcon name="analytics" color={color} size={size} /> }}
@@ -173,12 +175,16 @@ export default function AppNavigator() {
     return <AuthStack />;
   }
 
-  switch (user.role) {
-    case 'recruiter':
-      return <RecruiterTabs />;
-    case 'company':
-      return <CompanyTabs />;
-    default:
-      return <SeekerTabs />;
-  }
+  const TabsComponent = user.role === 'recruiter' ? RecruiterTabs
+    : user.role === 'company' ? CompanyTabs
+    : SeekerTabs;
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={TabsComponent} />
+      <Stack.Screen name="BlogPost" component={BlogPostScreen}
+        options={{ headerShown: true, headerTitle: 'Blog', headerBackTitle: 'Back' }}
+      />
+    </Stack.Navigator>
+  );
 }

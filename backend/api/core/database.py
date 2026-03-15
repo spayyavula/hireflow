@@ -445,6 +445,118 @@ def _parse_jsonb_fields_matcher(data: dict) -> dict:
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  BLOG POSTS (Pressroom CMS)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+_BLOG_JSONB_FIELDS = ["tags", "related_skills", "seo_keywords"]
+
+
+def _parse_blog_jsonb(data: dict) -> dict:
+    if not data:
+        return data
+    for field in _BLOG_JSONB_FIELDS:
+        val = data.get(field)
+        if val is None:
+            data[field] = []
+        elif isinstance(val, str):
+            import json as _json
+            try:
+                data[field] = _json.loads(val)
+            except (ValueError, TypeError):
+                data[field] = []
+    return data
+
+
+def create_blog_post(row: dict) -> dict:
+    res = supabase.table("blog_posts").insert(row).execute()
+    return _parse_blog_jsonb(res.data[0])
+
+
+def get_blog_post_by_slug(slug: str) -> Optional[dict]:
+    res = supabase.table("blog_posts").select("*").eq("slug", slug).limit(1).execute()
+    return _parse_blog_jsonb(res.data[0]) if res.data else None
+
+
+def get_blog_post_by_id(post_id: str) -> Optional[dict]:
+    res = supabase.table("blog_posts").select("*").eq("id", post_id).limit(1).execute()
+    return _parse_blog_jsonb(res.data[0]) if res.data else None
+
+
+def list_blog_posts(
+    category: Optional[str] = None,
+    tag: Optional[str] = None,
+    featured: Optional[bool] = None,
+    status: str = "published",
+    limit: int = 20,
+    offset: int = 0,
+) -> list[dict]:
+    q = supabase.table("blog_posts").select("*").eq("status", status)
+    if category:
+        q = q.eq("category", category)
+    if featured is not None:
+        q = q.eq("featured", featured)
+    q = q.order("published_at", desc=True).range(offset, offset + limit - 1)
+    res = q.execute()
+    posts = [_parse_blog_jsonb(p) for p in (res.data or [])]
+    # Client-side tag filter (Supabase free tier lacks jsonb contains)
+    if tag:
+        posts = [p for p in posts if tag in p.get("tags", [])]
+    return posts
+
+
+def count_blog_posts(status: str = "published", category: Optional[str] = None) -> int:
+    q = supabase.table("blog_posts").select("id", count="exact").eq("status", status)
+    if category:
+        q = q.eq("category", category)
+    res = q.execute()
+    return res.count or 0
+
+
+def update_blog_post(post_id: str, data: dict) -> dict:
+    data.pop("id", None)
+    res = supabase.table("blog_posts").update(data).eq("id", post_id).execute()
+    return _parse_blog_jsonb(res.data[0]) if res.data else {}
+
+
+def increment_blog_view(post_id: str):
+    """Increment view count. Uses raw RPC or read-modify-write."""
+    post = get_blog_post_by_id(post_id)
+    if post:
+        new_count = (post.get("view_count") or 0) + 1
+        supabase.table("blog_posts").update({"view_count": new_count}).eq("id", post_id).execute()
+
+
+def delete_blog_post(post_id: str):
+    supabase.table("blog_posts").delete().eq("id", post_id).execute()
+
+
+def get_blog_categories_with_counts() -> list[dict]:
+    """Get all categories with their published post counts."""
+    res = supabase.table("blog_posts").select("category").eq("status", "published").execute()
+    counts: dict[str, int] = {}
+    for r in (res.data or []):
+        cat = r["category"]
+        counts[cat] = counts.get(cat, 0) + 1
+    return [{"category": k, "count": v} for k, v in sorted(counts.items(), key=lambda x: -x[1])]
+
+
+def get_related_jobs_for_skills(skills: list[str], limit: int = 5) -> list[dict]:
+    """Find active jobs whose required_skills overlap with the given skills."""
+    if not skills:
+        return []
+    jobs = get_active_jobs()
+    scored = []
+    skills_lower = {s.lower() for s in skills}
+    for job in jobs:
+        req = {s.lower() for s in job.get("required_skills", [])}
+        nice = {s.lower() for s in job.get("nice_skills", [])}
+        overlap = len(skills_lower & (req | nice))
+        if overlap > 0:
+            scored.append((overlap, job))
+    scored.sort(key=lambda x: -x[0])
+    return [j for _, j in scored[:limit]]
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  HELPERS — JSONB field serialization
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Supabase stores jsonb natively, but we ensure lists are

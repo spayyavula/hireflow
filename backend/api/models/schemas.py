@@ -424,3 +424,125 @@ class PaginatedResponse(BaseModel):
     total: int
     page: int = 1
     per_page: int = 20
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  BLOG (Pressroom CMS)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class BlogCategory(str, Enum):
+    CAREER_PLAYBOOK = "career-playbook"
+    RESUME_LAB = "resume-lab"
+    INTERVIEW_DECODED = "interview-decoded"
+    HIRING_SIGNALS = "hiring-signals"
+    COMPANY_SPOTLIGHT = "company-spotlight"
+    ENGINEERING_CULTURE = "engineering-culture"
+    REMOTE_WORK = "remote-work"
+    AI_FUTURE_WORK = "ai-future-work"
+    SALARY_COMPASS = "salary-compass"
+    RECRUITER_CRAFT = "recruiter-craft"
+
+
+class BlogStatus(str, Enum):
+    DRAFT = "draft"
+    SCHEDULED = "scheduled"
+    PUBLISHED = "published"
+    ARCHIVED = "archived"
+
+
+class BlogPostCreate(BaseModel):
+    slug: str = Field(min_length=3, max_length=200)
+    title: str = Field(min_length=3, max_length=300)
+    subtitle: Optional[str] = None
+    body_markdown: str = Field(min_length=10)
+    body_html: str = Field(min_length=10)
+    excerpt: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    author_name: str
+    author_bio: Optional[str] = None
+    category: BlogCategory
+    tags: list[str] = []
+    related_skills: list[str] = []
+    seo_title: Optional[str] = None
+    seo_description: Optional[str] = None
+    seo_keywords: list[str] = []
+    reading_time_min: int = 5
+    status: BlogStatus = BlogStatus.DRAFT
+    featured: bool = False
+    published_at: Optional[str] = None
+    scheduled_for: Optional[str] = None
+
+
+class BlogPostUpdate(BaseModel):
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    body_markdown: Optional[str] = None
+    body_html: Optional[str] = None
+    excerpt: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    category: Optional[BlogCategory] = None
+    tags: Optional[list[str]] = None
+    related_skills: Optional[list[str]] = None
+    seo_title: Optional[str] = None
+    seo_description: Optional[str] = None
+    seo_keywords: Optional[list[str]] = None
+    reading_time_min: Optional[int] = None
+    status: Optional[BlogStatus] = None
+    featured: Optional[bool] = None
+    published_at: Optional[str] = None
+    scheduled_for: Optional[str] = None
+
+
+class BlogPostResponse(BaseModel):
+    id: str
+    slug: str
+    title: str
+    subtitle: Optional[str] = None
+    body_html: str
+    excerpt: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    author_id: Optional[str] = None
+    author_name: str
+    author_bio: Optional[str] = None
+    category: str
+    tags: list[str] = []
+    related_skills: list[str] = []
+    seo_title: Optional[str] = None
+    seo_description: Optional[str] = None
+    reading_time_min: int = 5
+    status: str
+    featured: bool = False
+    view_count: int = 0
+    published_at: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class BlogPostListItem(BaseModel):
+    id: str
+    slug: str
+    title: str
+    subtitle: Optional[str] = None
+    excerpt: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    author_name: str
+    category: str
+    tags: list[str] = []
+    reading_time_min: int = 5
+    featured: bool = False
+    view_count: int = 0
+    published_at: Optional[str] = None
+
+
+class BlogEnrichRequest(BaseModel):
+    title: str
+    body_markdown: str
+    category: BlogCategory
+
+
+class BlogEnrichResponse(BaseModel):
+    excerpt: str
+    seo_title: str
+    seo_description: str
+    seo_keywords: list[str] = []
+    suggested_tags: list[str] = []
+    related_skills: list[str] = []
+    reading_time_min: int

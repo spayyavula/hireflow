@@ -403,6 +403,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
     { key: "pricing", label: "Pricing" },
     { key: "about", label: "About" },
     { key: "ideas", label: "Ideas" },
+    { key: "blog", label: "Blog" },
   ];
 
   return (
@@ -3714,6 +3715,372 @@ const CompanyDashboard = ({ activeTab }) => {
   );
 };
 
+// ─── Blog List Page ──────────────────────────────────────────────────
+const BlogListPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { window.scrollTo(0, 0); loadBlog(); }, []);
+
+  const loadBlog = async (category = null) => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (category) params.category = category;
+      const [postData, catData] = await Promise.all([
+        api.getBlogPosts(params),
+        api.getBlogCategories(),
+      ]);
+      setPosts(postData);
+      setCategories(catData);
+    } catch (e) { console.error("Failed to load blog:", e); }
+    setLoading(false);
+  };
+
+  const handleCategoryClick = (cat) => {
+    const next = cat === activeCategory ? null : cat;
+    setActiveCategory(next);
+    loadBlog(next);
+  };
+
+  const CATEGORY_LABELS = {
+    "career-playbook": "Career Playbook", "resume-lab": "Resume Lab",
+    "interview-decoded": "Interview Decoded", "hiring-signals": "Hiring Signals",
+    "company-spotlight": "Company Spotlight", "engineering-culture": "Engineering Culture",
+    "remote-work": "Remote Work", "ai-future-work": "AI & Future of Work",
+    "salary-compass": "Salary Compass", "recruiter-craft": "Recruiter Craft",
+  };
+
+  const featured = posts.filter(p => p.featured);
+  const regular = posts.filter(p => !p.featured);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      {/* Hero */}
+      <section style={{ padding: "80px 48px 40px", textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
+        <div style={{
+          display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+          background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 24, letterSpacing: "0.02em",
+        }}>Pressroom</div>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 4.5vw, 52px)", fontWeight: 700,
+          lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
+        }}>Insights for your career journey</h1>
+        <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
+          Expert advice on job search, interviews, hiring trends, and the future of work.
+        </p>
+      </section>
+
+      {/* Category Filters */}
+      {categories.length > 0 && (
+        <section style={{ padding: "0 48px 32px", maxWidth: 1000, margin: "0 auto" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
+            <button onClick={() => handleCategoryClick(null)} style={{
+              padding: "8px 18px", borderRadius: 20, border: "1px solid var(--border)",
+              background: !activeCategory ? "var(--ink)" : "white", color: !activeCategory ? "white" : "var(--text-secondary)",
+              fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+            }}>All</button>
+            {categories.map(c => (
+              <button key={c.category} onClick={() => handleCategoryClick(c.category)} style={{
+                padding: "8px 18px", borderRadius: 20, border: "1px solid var(--border)",
+                background: activeCategory === c.category ? "var(--ink)" : "white",
+                color: activeCategory === c.category ? "white" : "var(--text-secondary)",
+                fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+              }}>{c.label || CATEGORY_LABELS[c.category] || c.category} ({c.count})</button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Featured Post */}
+      {featured.length > 0 && (
+        <section style={{ padding: "0 48px 48px", maxWidth: 1000, margin: "0 auto" }}>
+          {featured.slice(0, 1).map(post => (
+            <div key={post.id} onClick={() => onNavigate("blog-post:" + post.slug)} style={{
+              background: "white", borderRadius: 20, border: "1px solid var(--border)", overflow: "hidden",
+              cursor: "pointer", transition: "all 0.2s", display: "flex", minHeight: 280,
+            }}>
+              {post.cover_image_url && (
+                <div style={{ width: "45%", background: `url(${post.cover_image_url}) center/cover`, minHeight: 280 }} />
+              )}
+              <div style={{ padding: 40, flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{
+                  display: "inline-block", padding: "4px 12px", borderRadius: 12, fontSize: 12, fontWeight: 600,
+                  background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 16, alignSelf: "flex-start",
+                }}>Featured</div>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: "var(--ink)", marginBottom: 12, letterSpacing: "-0.02em" }}>
+                  {post.title}
+                </h2>
+                {post.excerpt && <p style={{ fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 16 }}>{post.excerpt}</p>}
+                <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 13, color: "var(--text-muted)" }}>
+                  <span style={{ fontWeight: 600, color: "var(--ink)" }}>{post.author_name}</span>
+                  <span>{post.reading_time_min} min read</span>
+                  {post.published_at && <span>{new Date(post.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* Post Grid */}
+      <section style={{ padding: "0 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: 60, color: "var(--text-muted)" }}>Loading posts...</div>
+        ) : regular.length === 0 && featured.length === 0 ? (
+          <div style={{ textAlign: "center", padding: 60 }}>
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, color: "var(--ink)", marginBottom: 8 }}>No posts yet</h3>
+            <p style={{ color: "var(--text-muted)" }}>Check back soon for career insights and hiring trends.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 24 }}>
+            {regular.map(post => (
+              <div key={post.id} onClick={() => onNavigate("blog-post:" + post.slug)} style={{
+                background: "white", borderRadius: 16, border: "1px solid var(--border)", overflow: "hidden",
+                cursor: "pointer", transition: "all 0.2s",
+              }}>
+                {post.cover_image_url && (
+                  <div style={{ height: 180, background: `url(${post.cover_image_url}) center/cover` }} />
+                )}
+                <div style={{ padding: 24 }}>
+                  <div style={{
+                    display: "inline-block", padding: "3px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                    background: "rgba(126,184,158,0.1)", color: "var(--sage)", marginBottom: 12,
+                  }}>{CATEGORY_LABELS[post.category] || post.category}</div>
+                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 700, color: "var(--ink)", marginBottom: 8, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+                    {post.title}
+                  </h3>
+                  {post.excerpt && <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 16 }}>
+                    {post.excerpt.length > 120 ? post.excerpt.slice(0, 120) + "..." : post.excerpt}
+                  </p>}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                    <span style={{ fontWeight: 600 }}>{post.author_name}</span>
+                    <div style={{ display: "flex", gap: 12 }}>
+                      <span>{post.reading_time_min} min</span>
+                      {post.published_at && <span>{new Date(post.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        &copy; 2026 JobsSearch. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
+// ─── Blog Post Page ──────────────────────────────────────────────────
+const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const [post, setPost] = useState(null);
+  const [relatedJobs, setRelatedJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { window.scrollTo(0, 0); loadPost(); }, [slug]);
+
+  const loadPost = async () => {
+    try {
+      const [postData, jobsData] = await Promise.all([
+        api.getBlogPost(slug),
+        api.getRelatedJobsForPost(slug).catch(() => []),
+      ]);
+      setPost(postData);
+      setRelatedJobs(jobsData);
+      if (postData.seo_title) document.title = postData.seo_title + " | JobsSearch";
+      else document.title = postData.title + " | JobsSearch Blog";
+    } catch (e) {
+      console.error("Failed to load post:", e);
+    }
+    setLoading(false);
+  };
+
+  const CATEGORY_LABELS = {
+    "career-playbook": "Career Playbook", "resume-lab": "Resume Lab",
+    "interview-decoded": "Interview Decoded", "hiring-signals": "Hiring Signals",
+    "company-spotlight": "Company Spotlight", "engineering-culture": "Engineering Culture",
+    "remote-work": "Remote Work", "ai-future-work": "AI & Future of Work",
+    "salary-compass": "Salary Compass", "recruiter-craft": "Recruiter Craft",
+  };
+
+  if (loading) return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+      <div style={{ textAlign: "center", padding: 120, color: "var(--text-muted)" }}>Loading...</div>
+    </div>
+  );
+
+  if (!post) return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+      <div style={{ textAlign: "center", padding: 120 }}>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: "var(--ink)", marginBottom: 12 }}>Post not found</h2>
+        <button onClick={() => onNavigate("blog")} style={{
+          padding: "10px 24px", borderRadius: 10, border: "none", background: "var(--coral)", color: "white",
+          fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+        }}>Back to Blog</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      {/* Hero Image */}
+      {post.cover_image_url && (
+        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 48px 0" }}>
+          <div style={{ height: 400, borderRadius: 20, overflow: "hidden", background: `url(${post.cover_image_url}) center/cover` }} />
+        </div>
+      )}
+
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "48px 48px 80px", display: "flex", gap: 48 }}>
+        {/* Main Content */}
+        <article style={{ flex: 1, minWidth: 0 }}>
+          {/* Back link */}
+          <button onClick={() => onNavigate("blog")} style={{
+            background: "none", border: "none", color: "var(--coral)", fontSize: 14, fontWeight: 600,
+            cursor: "pointer", marginBottom: 24, padding: 0, fontFamily: "'Source Sans 3', sans-serif",
+          }}>&larr; Back to Blog</button>
+
+          {/* Category + Reading time */}
+          <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
+            <span style={{
+              padding: "4px 12px", borderRadius: 12, fontSize: 12, fontWeight: 600,
+              background: "rgba(126,184,158,0.1)", color: "var(--sage)",
+            }}>{CATEGORY_LABELS[post.category] || post.category}</span>
+            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{post.reading_time_min} min read</span>
+            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{post.view_count} views</span>
+          </div>
+
+          {/* Title */}
+          <h1 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 700,
+            lineHeight: 1.15, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 12,
+          }}>{post.title}</h1>
+
+          {post.subtitle && (
+            <p style={{ fontSize: 20, color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 24 }}>{post.subtitle}</p>
+          )}
+
+          {/* Author + Date */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40, paddingBottom: 32, borderBottom: "1px solid var(--border)" }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 22, background: "var(--ink)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "var(--cream)", fontSize: 16, fontWeight: 700,
+            }}>{post.author_name.split(" ").map(n => n[0]).join("").slice(0, 2)}</div>
+            <div>
+              <div style={{ fontWeight: 700, color: "var(--ink)", fontSize: 15 }}>{post.author_name}</div>
+              {post.published_at && (
+                <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                  {new Date(post.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Body */}
+          <div
+            className="blog-content"
+            style={{
+              fontSize: 17, lineHeight: 1.8, color: "var(--text-primary)",
+              fontFamily: "'Source Sans 3', sans-serif",
+            }}
+            dangerouslySetInnerHTML={{ __html: post.body_html }}
+          />
+
+          {/* Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div style={{ marginTop: 48, paddingTop: 32, borderTop: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {post.tags.map(tag => (
+                  <span key={tag} style={{
+                    padding: "6px 14px", borderRadius: 20, background: "rgba(13,13,15,0.04)",
+                    fontSize: 13, fontWeight: 600, color: "var(--text-secondary)",
+                  }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </article>
+
+        {/* Sidebar */}
+        <aside style={{ width: 280, flexShrink: 0 }}>
+          {/* Related Jobs */}
+          {relatedJobs.length > 0 && (
+            <div style={{
+              background: "white", borderRadius: 16, border: "1px solid var(--border)",
+              padding: 24, marginBottom: 24, position: "sticky", top: 80,
+            }}>
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700,
+                color: "var(--ink)", marginBottom: 16, letterSpacing: "-0.01em",
+              }}>Related Jobs</h3>
+              {relatedJobs.map(job => (
+                <div key={job.id} style={{
+                  padding: "14px 0", borderBottom: "1px solid var(--border)",
+                }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{job.title}</div>
+                  <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 6 }}>{job.company_name}</div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {job.location && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{job.location}</span>}
+                    {job.remote && <span style={{ fontSize: 11, color: "var(--sage)", fontWeight: 600 }}>Remote</span>}
+                  </div>
+                </div>
+              ))}
+              <button onClick={onGetStarted} style={{
+                width: "100%", marginTop: 16, padding: "10px 20px", borderRadius: 10, border: "none",
+                background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
+                cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+              }}>View All Jobs</button>
+            </div>
+          )}
+
+          {/* Skills from post */}
+          {post.related_skills && post.related_skills.length > 0 && (
+            <div style={{
+              background: "white", borderRadius: 16, border: "1px solid var(--border)", padding: 24,
+            }}>
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700,
+                color: "var(--ink)", marginBottom: 12,
+              }}>Skills Mentioned</h3>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {post.related_skills.map(skill => (
+                  <span key={skill} style={{
+                    padding: "4px 12px", borderRadius: 12, background: "rgba(255,107,91,0.08)",
+                    fontSize: 12, fontWeight: 600, color: "var(--coral)",
+                  }}>{skill}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+
+      <footer style={{
+        padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+        background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+      }}>
+        &copy; 2026 JobsSearch. Built with AI.
+      </footer>
+    </div>
+  );
+};
+
 // ─── Main App ────────────────────────────────────────────────────────
 export default function App() {
   const [user, setUser] = useState(null);
@@ -3820,7 +4187,13 @@ export default function App() {
       case "pricing": return <PricingPage {...navProps} />;
       case "about": return <AboutPage {...navProps} />;
       case "ideas": return <IdeasBoard {...navProps} user={null} />;
-      default: return <LandingPage {...navProps} />;
+      case "blog": return <BlogListPage {...navProps} />;
+      default:
+        if (currentPage.startsWith("blog-post:")) {
+          const slug = currentPage.replace("blog-post:", "");
+          return <BlogPostPage slug={slug} {...navProps} />;
+        }
+        return <LandingPage {...navProps} />;
     }
   }
 
