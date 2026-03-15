@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator,
-  useWindowDimensions,
+  useWindowDimensions, Share, Linking,
 } from 'react-native';
 import { colors, spacing, radii } from '../constants/theme';
 import api from '../services/api';
@@ -156,6 +156,40 @@ export default function BlogPostScreen({ route, navigation }) {
         </View>
       )}
 
+      {/* Share Buttons */}
+      <View style={styles.shareSection}>
+        <Text style={styles.shareTitle}>Share this article</Text>
+        <View style={styles.shareRow}>
+          <TouchableOpacity
+            style={[styles.shareBtn, { backgroundColor: '#0A66C2' }]}
+            onPress={() => Linking.openURL(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}`)}
+          >
+            <Text style={styles.shareBtnText}>LinkedIn</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.shareBtn, { backgroundColor: '#0F1419' }]}
+            onPress={() => Linking.openURL(`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}&text=${encodeURIComponent(post.title)}`)}
+          >
+            <Text style={styles.shareBtnText}>X</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.shareBtn, { backgroundColor: '#1877F2' }]}
+            onPress={() => Linking.openURL(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}`)}
+          >
+            <Text style={styles.shareBtnText}>Facebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.shareBtn, { backgroundColor: colors.coral }]}
+            onPress={() => Share.share({
+              message: `${post.title} — https://jobssearch.work/blog/${slug}`,
+              url: `https://jobssearch.work/blog/${slug}`,
+            })}
+          >
+            <Text style={styles.shareBtnText}>More...</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {/* Related Jobs */}
       {relatedJobs.length > 0 && (
         <View style={styles.relatedSection}>
@@ -218,4 +252,9 @@ const styles = StyleSheet.create({
   jobCompany: { fontSize: 13, color: colors.textSecondary, marginBottom: 4 },
   jobMeta: { fontSize: 12, color: colors.textMuted },
   errorText: { fontSize: 18, fontWeight: '700', color: colors.ink, marginBottom: 12 },
+  shareSection: { marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderTopColor: colors.border },
+  shareTitle: { fontSize: 16, fontWeight: '700', color: colors.ink, marginBottom: 12 },
+  shareRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  shareBtn: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10 },
+  shareBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
 });

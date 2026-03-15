@@ -21,42 +21,58 @@ HireFlow is a full-stack AI-powered hiring platform with three distinct user exp
 
 ### Key Features
 
-- 🤖 **AI Resume Builder** — 6-step guided wizard with AI-generated summaries, headlines, and skill suggestions
-- 📊 **Smart Matching** — Scoring algorithm (0–99) based on skills, role, experience, and remote preferences
-- 📄 **Resume Parsing** — PDF/DOCX upload with automatic profile extraction
-- 💬 **Real-time Chat** — In-app messaging between seekers, recruiters, and companies
-- 📈 **Analytics Dashboards** — Role-specific insights and hiring metrics
+- **AI Resume Builder** — 6-step guided wizard with AI-generated summaries, headlines, and skill suggestions
+- **Smart Matching** — Scoring algorithm (0-99) based on skills, role, experience, and remote preferences
+- **Resume Parsing** — PDF/DOCX upload with automatic profile extraction
+- **AI Job Matcher** — LLM-powered resume-to-JD analysis, cover letter generation, and gap detection
+- **Real-time Chat** — In-app messaging between seekers, recruiters, and companies
+- **Analytics Dashboards** — Role-specific insights and hiring metrics
+- **Feature Requests Board** — Community-driven idea voting, comments, and status tracking
+- **Pressroom CMS** — Browserless blog system with CLI authoring, AI content enrichment, and SEO optimization
+- **Related Jobs Engine** — Blog posts auto-link to matching job listings via skill extraction
+- **Social Sharing** — Share blog posts to LinkedIn, X, Facebook, and copy link
+- **Mobile App** — React Native (Expo) app for Android/iOS with full feature parity
+- **External Job Search** — Aggregated job listings from RapidAPI alongside internal postings
 
 ## Architecture
 
 ```
 hireflow/
-├── frontend/          → Vite + React SPA
-│   ├── src/App.jsx    → Single-file React app (1200+ lines)
-│   ├── src/api.js     → API client for backend communication
-│   └── vercel.json    → Vercel SPA deployment config
+├── frontend/              → Vite + React SPA
+│   ├── src/App.jsx        → Single-file React app (4000+ lines)
+│   ├── src/api.js         → API client for backend communication
+│   └── vercel.json        → Vercel SPA deployment config
 │
-├── backend/           → FastAPI + Supabase
+├── backend/               → FastAPI + Supabase
 │   ├── api/
-│   │   ├── index.py           → App entrypoint + CORS + routers
-│   │   ├── core/config.py     → JWT auth, bcrypt hashing
-│   │   ├── core/database.py   → 30 Supabase DB functions
-│   │   ├── models/schemas.py  → Pydantic request/response models
-│   │   ├── routes/            → 6 route modules (auth, seeker, jobs, recruiter, company, chat)
-│   │   └── services/ai.py    → Match scoring, resume parsing, AI generation
-│   ├── supabase/migrations/   → Schema + seed SQL
-│   ├── tests/                 → 128+ pytest tests (unit/integration/regression)
-│   └── vercel.json            → Serverless Python deployment config
+│   │   ├── index.py               → App entrypoint + CORS + routers
+│   │   ├── core/config.py         → JWT auth, bcrypt hashing
+│   │   ├── core/database.py       → 40+ Supabase DB functions
+│   │   ├── models/schemas.py      → Pydantic request/response models
+│   │   ├── routes/                → 9 route modules (auth, seeker, jobs, recruiter, company, chat, matcher, features, blog)
+│   │   └── services/              → AI matching, LLM client, blog AI enrichment
+│   ├── tools/pressroom.py         → Browserless CMS CLI tool
+│   ├── supabase/migrations/       → Schema + seed SQL (5 migrations)
+│   ├── tests/                     → 128+ pytest tests (unit/integration/regression)
+│   └── vercel.json                → Serverless Python deployment config
+│
+├── mobile/                → React Native (Expo) app
+│   ├── src/screens/       → 10 screens (Jobs, Blog, Chat, Analytics, etc.)
+│   ├── src/services/      → API client + auth context
+│   └── src/navigation/    → Role-based tab navigation
 ```
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18, Vite, DM Sans |
+| Frontend | React 18, Vite, Playfair Display + Source Sans 3 |
 | Backend | FastAPI, Pydantic v2, python-jose (JWT) |
-| Database | Supabase (PostgreSQL) with RLS |
+| Database | Supabase (PostgreSQL) with Row Level Security |
 | Auth | bcrypt + JWT tokens (7-day expiry) |
+| AI/LLM | OpenAI / Anthropic (provider-agnostic) |
+| Mobile | React Native 0.83, Expo 55 |
+| CMS | Pressroom CLI (Python, markdown + YAML frontmatter) |
 | Deployment | Vercel (serverless) |
 | Testing | pytest (backend), Vitest + RTL (frontend) |
 
@@ -117,6 +133,16 @@ App runs at [http://localhost:5173](http://localhost:5173) with API proxy to loc
 | GET | `/api/recruiter/candidates` | Search candidates |
 | GET | `/api/company/dashboard` | Company hiring dashboard |
 | POST | `/api/chat/send` | Send message |
+| POST | `/api/matcher/analyze` | AI resume-to-JD match analysis |
+| POST | `/api/matcher/generate` | AI cover letter generation |
+| GET | `/api/features` | List feature requests |
+| POST | `/api/features` | Submit feature request |
+| POST | `/api/features/{id}/vote` | Vote/unvote on feature |
+| GET | `/api/blog` | List published blog posts |
+| GET | `/api/blog/{slug}` | Get blog post by slug |
+| GET | `/api/blog/{slug}/related-jobs` | Jobs matching post skills |
+| POST | `/api/blog/admin/posts` | Create blog post (CLI) |
+| POST | `/api/blog/admin/enrich` | AI-enrich blog content |
 
 Full Swagger docs available at `/docs` when running.
 
@@ -166,7 +192,7 @@ chmod +x deploy.sh
 
 ## Database Schema
 
-6 tables with Row Level Security:
+10 tables with Row Level Security:
 
 - **users** — All three roles (seeker, recruiter, company) with profile fields
 - **jobs** — Postings with required/nice-to-have skills
@@ -174,6 +200,9 @@ chmod +x deploy.sh
 - **conversations** — Chat threads
 - **conversation_participants** — Many-to-many user ↔ conversation
 - **messages** — Individual chat messages
+- **matcher_analyses** — AI resume-to-JD match results
+- **feature_requests** / **feature_votes** / **feature_comments** — Community feature board
+- **blog_posts** — Pressroom CMS content with SEO, tags, and related skills
 
 ## License
 
