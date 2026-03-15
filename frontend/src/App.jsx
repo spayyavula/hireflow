@@ -146,7 +146,10 @@ const Icons = {
   logo: (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
       <rect width="32" height="32" rx="8" fill="currentColor"/>
-      <path d="M8 12h6v2H8v-2zm0 4h10v2H8v-2zm0 4h6v2H8v-2zm12-6h4v8h-4v-8z" fill="var(--cream)"/>
+      <rect x="8" y="12" width="12" height="9" rx="1.5" stroke="var(--cream)" strokeWidth="1.8" fill="none"/>
+      <path d="M13 12V10.5a2.5 2.5 0 0 1 5 0V12" stroke="var(--cream)" strokeWidth="1.8" fill="none"/>
+      <circle cx="20" cy="19" r="4" stroke="var(--coral)" strokeWidth="2" fill="rgba(255,107,91,0.15)"/>
+      <path d="M23 22l3 3" stroke="var(--coral)" strokeWidth="2" strokeLinecap="round"/>
     </svg>
   ),
   search: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
@@ -399,6 +402,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
     { key: "features", label: "Features" },
     { key: "pricing", label: "Pricing" },
     { key: "about", label: "About" },
+    { key: "ideas", label: "Ideas" },
   ];
 
   return (
@@ -410,7 +414,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
         <div onClick={() => onNavigate("home")} style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
         </div>
         <nav style={{ display: "flex", gap: 8 }}>
           {navLinks.map(link => (
@@ -598,7 +602,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>Built for everyone</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
-            Whether you're hiring or looking — HireFlow has you covered
+            Whether you're hiring or looking — JobsSearch has you covered
           </p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
@@ -642,7 +646,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>Featured opportunities</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
-            Top roles from companies using HireFlow right now
+            Top roles from companies using JobsSearch right now
           </p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
@@ -695,7 +699,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           letterSpacing: "-0.02em", marginBottom: 16,
         }}>Ready to transform your hiring?</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
-          Join thousands of professionals already using HireFlow to find their perfect match.
+          Join thousands of professionals already using JobsSearch to find their perfect match.
         </p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
           <button onClick={onGetStarted} style={{
@@ -717,7 +721,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        © 2026 HireFlow. Built with AI.
+        © 2026 JobsSearch. Built with AI.
       </footer>
     </div>
   );
@@ -895,7 +899,7 @@ const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        © 2026 HireFlow. Built with AI.
+        © 2026 JobsSearch. Built with AI.
       </footer>
     </div>
   );
@@ -1068,7 +1072,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           letterSpacing: "-0.02em", marginBottom: 16,
         }}>Start free today</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
-          Join thousands of professionals finding their perfect match with HireFlow.
+          Join thousands of professionals finding their perfect match with JobsSearch.
         </p>
         <button onClick={onGetStarted} style={{
           padding: "14px 36px", borderRadius: 12, border: "none",
@@ -1082,7 +1086,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        © 2026 HireFlow. Built with AI.
+        © 2026 JobsSearch. Built with AI.
       </footer>
     </div>
   );
@@ -1131,7 +1135,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
         }}>Built by people who've been on both sides of the table</h1>
         <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-          We've been the candidate refreshing our inbox, the recruiter drowning in spreadsheets, and the hiring manager struggling to find signal in the noise. HireFlow exists because we knew there had to be a better way.
+          We've been the candidate refreshing our inbox, the recruiter drowning in spreadsheets, and the hiring manager struggling to find signal in the noise. JobsSearch exists because we knew there had to be a better way.
         </p>
       </section>
 
@@ -1167,7 +1171,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             {/* Platform */}
             <div style={{ textAlign: "center", padding: 32, background: "var(--cream)", borderRadius: 20, border: "1px solid var(--border)" }}>
               <div style={{ color: "var(--ink)", marginBottom: 16, display: "flex", justifyContent: "center" }}>{Icons.logo}</div>
-              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>HireFlow Platform</h3>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>JobsSearch Platform</h3>
               <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>AI matching, real-time chat, analytics</p>
             </div>
             <div style={{ color: "var(--lavender)", fontSize: 24 }}>←</div>
@@ -1222,7 +1226,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           <h2 style={{
             fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
-          }}>The team behind HireFlow</h2>
+          }}>The team behind JobsSearch</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
             {team.map((person, i) => (
               <div key={i} style={{ textAlign: "center", padding: 24 }}>
@@ -1246,7 +1250,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         <h2 style={{
           fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
           letterSpacing: "-0.02em", marginBottom: 16,
-        }}>Join the HireFlow community</h2>
+        }}>Join the JobsSearch community</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
           Whether you're hiring or looking, we're building the future of work together.
         </p>
@@ -1269,8 +1273,466 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        © 2026 HireFlow. Built with AI.
+        © 2026 JobsSearch. Built with AI.
       </footer>
+    </div>
+  );
+};
+
+// ─── Ideas Board (Feature Requests) ─────────────────────────────────
+const FEATURE_CATEGORIES = ["All", "Job Search", "Resume Tools", "Recruiter Tools", "Company Dashboard", "Chat & Messaging", "AI Features", "General"];
+const FEATURE_STATUSES = ["All", "submitted", "under_review", "planned", "in_progress", "shipped"];
+const STATUS_CONFIG = {
+  submitted: { label: "Submitted", color: "var(--text-muted)", bg: "rgba(138,138,150,0.1)" },
+  under_review: { label: "Under Review", color: "var(--gold)", bg: "rgba(212,168,83,0.1)" },
+  planned: { label: "Planned", color: "var(--lavender)", bg: "rgba(155,143,212,0.1)" },
+  in_progress: { label: "In Progress", color: "var(--coral)", bg: "rgba(255,107,91,0.1)" },
+  shipped: { label: "Shipped", color: "var(--sage)", bg: "rgba(126,184,158,0.1)" },
+};
+const CATEGORY_COLORS = {
+  "Job Search": "var(--coral)", "Resume Tools": "var(--sage)", "Recruiter Tools": "var(--lavender)",
+  "Company Dashboard": "var(--gold)", "Chat & Messaging": "#5b9bd5", "AI Features": "#e06090", "General": "var(--text-muted)",
+};
+const ROLE_BADGES = {
+  seeker: { label: "Seeker", color: "var(--coral)", bg: "rgba(255,107,91,0.08)" },
+  recruiter: { label: "Recruiter", color: "var(--sage)", bg: "rgba(126,184,158,0.08)" },
+  company: { label: "Company", color: "var(--lavender)", bg: "rgba(155,143,212,0.08)" },
+};
+
+const IdeasBoard = ({ onGetStarted, onSignIn, onNavigate, currentPage, user }) => {
+  const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [sort, setSort] = useState("votes");
+  const [showSubmit, setShowSubmit] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
+  const [comments, setComments] = useState({});
+  const [commentText, setCommentText] = useState("");
+  const [submitForm, setSubmitForm] = useState({ title: "", description: "", category: "General" });
+  const [submitting, setSubmitting] = useState(false);
+  const [voting, setVoting] = useState({});
+  const [error, setError] = useState("");
+
+  const isPublic = !!onNavigate; // public page has nav props
+  const isLoggedIn = !!api.token;
+
+  const loadFeatures = async () => {
+    try {
+      const params = {};
+      if (category !== "All") params.category = category;
+      if (statusFilter !== "All") params.status = statusFilter;
+      params.sort = sort;
+      const data = await api.listFeatures(params);
+      setFeatures(data);
+    } catch (e) {
+      console.error("Failed to load features:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadFeatures(); }, [category, statusFilter, sort]);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const handleVote = async (id) => {
+    if (!isLoggedIn) {
+      if (onGetStarted) onGetStarted();
+      return;
+    }
+    setVoting(v => ({ ...v, [id]: true }));
+    try {
+      await api.voteFeature(id);
+      await loadFeatures();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setVoting(v => ({ ...v, [id]: false }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!submitForm.title.trim() || !submitForm.description.trim()) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      await api.createFeature(submitForm);
+      setShowSubmit(false);
+      setSubmitForm({ title: "", description: "", category: "General" });
+      await loadFeatures();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const loadComments = async (id) => {
+    try {
+      const data = await api.getFeatureComments(id);
+      setComments(c => ({ ...c, [id]: data }));
+    } catch (e) {
+      console.error("Failed to load comments:", e);
+    }
+  };
+
+  const handleExpand = (id) => {
+    if (expandedId === id) {
+      setExpandedId(null);
+    } else {
+      setExpandedId(id);
+      if (!comments[id]) loadComments(id);
+    }
+  };
+
+  const handleComment = async (featureId) => {
+    if (!commentText.trim()) return;
+    try {
+      await api.addFeatureComment(featureId, commentText);
+      setCommentText("");
+      await loadComments(featureId);
+      await loadFeatures();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  const totalVotes = features.reduce((s, f) => s + f.vote_count, 0);
+  const shippedCount = features.filter(f => f.status === "shipped").length;
+
+  const content = (
+    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{
+          display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+          background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 20, letterSpacing: "0.02em",
+        }}>Community Driven</div>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 700,
+          lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 12,
+        }}>Ideas Board</h1>
+        <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 520, margin: "0 auto 28px", lineHeight: 1.7 }}>
+          Shape the future of JobsSearch. Submit ideas, vote on what matters, and watch features come to life.
+        </p>
+
+        {/* Stats row */}
+        <div style={{ display: "flex", gap: 32, justifyContent: "center", marginBottom: 32 }}>
+          {[
+            { value: features.length, label: "Ideas" },
+            { value: totalVotes, label: "Votes Cast" },
+            { value: shippedCount, label: "Shipped" },
+          ].map((s, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{s.value}</div>
+              <div style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 600 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Submit CTA */}
+        {isLoggedIn ? (
+          <button onClick={() => setShowSubmit(true)} style={{
+            padding: "12px 28px", borderRadius: 12, border: "none", background: "var(--coral)", color: "white",
+            fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+            display: "inline-flex", alignItems: "center", gap: 8, transition: "all 0.2s",
+            boxShadow: "0 4px 16px rgba(255,107,91,0.25)",
+          }}>{Icons.plus} Submit an Idea</button>
+        ) : (
+          <button onClick={onGetStarted || (() => {})} style={{
+            padding: "12px 28px", borderRadius: 12, border: "none", background: "var(--ink)", color: "var(--cream)",
+            fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+            transition: "all 0.2s",
+          }}>Sign in to submit & vote</button>
+        )}
+      </div>
+
+      {/* Filters */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+        {FEATURE_CATEGORIES.map(c => (
+          <button key={c} onClick={() => setCategory(c)} style={{
+            padding: "6px 14px", borderRadius: 20, border: "1px solid",
+            borderColor: category === c ? "var(--coral)" : "var(--border)",
+            background: category === c ? "rgba(255,107,91,0.08)" : "white",
+            color: category === c ? "var(--coral)" : "var(--text-secondary)",
+            fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+            transition: "all 0.15s",
+          }}>{c}</button>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 12, marginBottom: 32, alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 6 }}>
+          {FEATURE_STATUSES.map(s => {
+            const cfg = s === "All" ? { label: "All", color: "var(--text-secondary)", bg: "white" } : STATUS_CONFIG[s];
+            return (
+              <button key={s} onClick={() => setStatusFilter(s)} style={{
+                padding: "5px 12px", borderRadius: 16, border: "1px solid",
+                borderColor: statusFilter === s ? cfg.color : "var(--border)",
+                background: statusFilter === s ? cfg.bg : "transparent",
+                color: statusFilter === s ? cfg.color : "var(--text-muted)",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+                transition: "all 0.15s",
+              }}>{cfg.label}</button>
+            );
+          })}
+        </div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 6, alignItems: "center" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>Sort:</span>
+          {[{ key: "votes", label: "Top Voted" }, { key: "newest", label: "Newest" }].map(s => (
+            <button key={s.key} onClick={() => setSort(s.key)} style={{
+              padding: "5px 12px", borderRadius: 16, border: "1px solid",
+              borderColor: sort === s.key ? "var(--ink)" : "var(--border)",
+              background: sort === s.key ? "var(--ink)" : "transparent",
+              color: sort === s.key ? "var(--cream)" : "var(--text-muted)",
+              fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+            }}>{s.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 16, fontSize: 14, fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {error}
+          <span onClick={() => setError("")} style={{ cursor: "pointer" }}>{Icons.x}</span>
+        </div>
+      )}
+
+      {/* Feature Cards */}
+      {loading ? (
+        <div style={{ textAlign: "center", padding: 60 }}>
+          <div style={{ width: 40, height: 40, margin: "0 auto 16px", borderRadius: 20, border: "3px solid var(--cream-dark)", borderTopColor: "var(--coral)", animation: "spin 1s linear infinite" }} />
+          <p style={{ color: "var(--text-muted)" }}>Loading ideas...</p>
+        </div>
+      ) : features.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px 20px", background: "white", borderRadius: 20, border: "1px solid var(--border)" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>💡</div>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, marginBottom: 8 }}>No ideas yet</h3>
+          <p style={{ color: "var(--text-secondary)", marginBottom: 20 }}>Be the first to submit a feature request!</p>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {features.map(f => {
+            const statusCfg = STATUS_CONFIG[f.status] || STATUS_CONFIG.submitted;
+            const catColor = CATEGORY_COLORS[f.category] || "var(--text-muted)";
+            const roleBadge = ROLE_BADGES[f.user_role];
+            const isExpanded = expandedId === f.id;
+            const featureComments = comments[f.id] || [];
+
+            return (
+              <div key={f.id} style={{
+                background: "white", borderRadius: 20, border: "1px solid var(--border)",
+                overflow: "hidden", transition: "all 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,13,15,0.06)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+              >
+                <div style={{ display: "flex", gap: 0 }}>
+                  {/* Vote column */}
+                  <div style={{
+                    padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center",
+                    justifyContent: "center", borderRight: "1px solid var(--border)", minWidth: 72,
+                    background: f.user_has_voted ? "rgba(255,107,91,0.04)" : "transparent",
+                  }}>
+                    <button onClick={() => handleVote(f.id)} disabled={voting[f.id]} style={{
+                      width: 44, height: 44, borderRadius: 12, border: "1.5px solid",
+                      borderColor: f.user_has_voted ? "var(--coral)" : "var(--border-strong)",
+                      background: f.user_has_voted ? "var(--coral)" : "transparent",
+                      color: f.user_has_voted ? "white" : "var(--text-muted)",
+                      cursor: voting[f.id] ? "wait" : "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                      transition: "all 0.2s", flexDirection: "column", fontSize: 10,
+                    }}>
+                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                    </button>
+                    <span style={{
+                      fontSize: 18, fontWeight: 800, color: f.user_has_voted ? "var(--coral)" : "var(--ink)", marginTop: 4,
+                      fontFamily: "'Playfair Display', serif",
+                    }}>{f.vote_count}</span>
+                  </div>
+
+                  {/* Content */}
+                  <div style={{ flex: 1, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+                      <span style={{
+                        padding: "3px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700,
+                        background: catColor, color: "white", opacity: 0.9,
+                      }}>{f.category}</span>
+                      <span style={{
+                        padding: "3px 10px", borderRadius: 12, fontSize: 11, fontWeight: 600,
+                        background: statusCfg.bg, color: statusCfg.color,
+                      }}>{statusCfg.label}</span>
+                      {roleBadge && (
+                        <span style={{
+                          padding: "3px 10px", borderRadius: 12, fontSize: 11, fontWeight: 600,
+                          background: roleBadge.bg, color: roleBadge.color,
+                        }}>{roleBadge.label}</span>
+                      )}
+                    </div>
+                    <h3 style={{
+                      fontSize: 17, fontWeight: 700, color: "var(--ink)", marginBottom: 6, lineHeight: 1.3,
+                      fontFamily: "'Source Sans 3', sans-serif",
+                    }}>{f.title}</h3>
+                    <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
+                      {f.description.length > 200 && !isExpanded ? f.description.slice(0, 200) + "..." : f.description}
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 13, color: "var(--text-muted)" }}>
+                      <span style={{ fontWeight: 600 }}>by {f.user_name}</span>
+                      <span>·</span>
+                      <span>{f.created_at ? new Date(f.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</span>
+                      <button onClick={() => handleExpand(f.id)} style={{
+                        background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center",
+                        gap: 4, color: isExpanded ? "var(--coral)" : "var(--text-muted)", fontWeight: 600, fontSize: 13,
+                        fontFamily: "'Source Sans 3', sans-serif", padding: 0,
+                      }}>
+                        {Icons.chat} {f.comment_count} {f.comment_count === 1 ? "comment" : "comments"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expanded Comments */}
+                {isExpanded && (
+                  <div style={{ borderTop: "1px solid var(--border)", padding: "20px 24px", background: "var(--cream)" }}>
+                    {featureComments.length === 0 ? (
+                      <p style={{ fontSize: 14, color: "var(--text-muted)", textAlign: "center", padding: "12px 0" }}>No comments yet. Start the conversation!</p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 20 }}>
+                        {featureComments.map(c => {
+                          const cRole = ROLE_BADGES[c.user_role];
+                          return (
+                            <div key={c.id} style={{ display: "flex", gap: 12 }}>
+                              <div style={{
+                                width: 36, height: 36, borderRadius: 18, background: cRole ? cRole.bg : "var(--cream-dark)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontSize: 13, fontWeight: 700, color: cRole ? cRole.color : "var(--text-muted)", flexShrink: 0,
+                              }}>{(c.user_name || "?").charAt(0).toUpperCase()}</div>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>{c.user_name}</span>
+                                  {cRole && <span style={{ fontSize: 10, fontWeight: 600, color: cRole.color, background: cRole.bg, padding: "1px 6px", borderRadius: 8 }}>{cRole.label}</span>}
+                                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{c.created_at ? new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</span>
+                                </div>
+                                <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>{c.content}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {isLoggedIn && (
+                      <div style={{ display: "flex", gap: 10 }}>
+                        <input
+                          value={commentText} onChange={e => setCommentText(e.target.value)}
+                          onKeyDown={e => e.key === "Enter" && handleComment(f.id)}
+                          placeholder="Add a comment..."
+                          style={{
+                            flex: 1, padding: "10px 16px", borderRadius: 12, border: "1px solid var(--border-strong)",
+                            fontSize: 14, fontFamily: "'Source Sans 3', sans-serif", outline: "none",
+                            background: "white",
+                          }}
+                        />
+                        <button onClick={() => handleComment(f.id)} style={{
+                          padding: "10px 18px", borderRadius: 12, border: "none", background: "var(--ink)",
+                          color: "var(--cream)", fontSize: 13, fontWeight: 600, cursor: "pointer",
+                          fontFamily: "'Source Sans 3', sans-serif",
+                        }}>{Icons.send}</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Submit Modal */}
+      {showSubmit && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(13,13,15,0.5)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200,
+        }} onClick={() => setShowSubmit(false)}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: "white", borderRadius: 24, padding: 36, width: "100%", maxWidth: 520,
+            boxShadow: "0 24px 48px rgba(13,13,15,0.15)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700 }}>Submit an Idea</h2>
+              <button onClick={() => setShowSubmit(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>{Icons.x}</button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <div>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 6 }}>Title</label>
+                <input value={submitForm.title} onChange={e => setSubmitForm(f => ({ ...f, title: e.target.value }))}
+                  placeholder="A short, descriptive title..."
+                  style={{
+                    width: "100%", padding: "12px 16px", borderRadius: 12, border: "1.5px solid var(--border-strong)",
+                    fontSize: 15, fontFamily: "'Source Sans 3', sans-serif", outline: "none",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 6 }}>Category</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {FEATURE_CATEGORIES.filter(c => c !== "All").map(c => (
+                    <button key={c} onClick={() => setSubmitForm(f => ({ ...f, category: c }))} style={{
+                      padding: "6px 14px", borderRadius: 16, border: "1.5px solid",
+                      borderColor: submitForm.category === c ? CATEGORY_COLORS[c] : "var(--border)",
+                      background: submitForm.category === c ? CATEGORY_COLORS[c] : "transparent",
+                      color: submitForm.category === c ? "white" : "var(--text-secondary)",
+                      fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+                    }}>{c}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 6 }}>Description</label>
+                <textarea value={submitForm.description} onChange={e => setSubmitForm(f => ({ ...f, description: e.target.value }))}
+                  placeholder="Describe your idea in detail — what problem does it solve?"
+                  rows={5}
+                  style={{
+                    width: "100%", padding: "12px 16px", borderRadius: 12, border: "1.5px solid var(--border-strong)",
+                    fontSize: 14, fontFamily: "'Source Sans 3', sans-serif", outline: "none", resize: "vertical",
+                    lineHeight: 1.6,
+                  }}
+                />
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, textAlign: "right" }}>
+                  {submitForm.description.length}/2000
+                </div>
+              </div>
+              {error && <div style={{ fontSize: 13, color: "var(--coral)", fontWeight: 600 }}>{error}</div>}
+              <button onClick={handleSubmit} disabled={submitting || submitForm.title.length < 5 || submitForm.description.length < 10} style={{
+                padding: "14px 24px", borderRadius: 12, border: "none", background: "var(--coral)", color: "white",
+                fontSize: 15, fontWeight: 700, cursor: submitting ? "wait" : "pointer",
+                fontFamily: "'Source Sans 3', sans-serif", opacity: (submitForm.title.length < 5 || submitForm.description.length < 10) ? 0.5 : 1,
+                transition: "all 0.2s",
+              }}>{submitting ? "Submitting..." : "Submit Idea"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // Public page wraps with nav; dashboard page is just the content
+  if (isPublic) {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+        <GlobalStyles />
+        <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+        <section style={{ padding: "60px 48px 80px" }}>{content}</section>
+        <footer style={{
+          padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+          background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+        }}>© 2026 JobsSearch. Built with AI.</footer>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Ideas Board</h1>
+      {content}
     </div>
   );
 };
@@ -1336,7 +1798,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
         )}
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
         </div>
       </header>
 
@@ -1354,7 +1816,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
               {mode === "login" ? "Welcome back" : "Create account"}
             </h1>
             <p style={{ fontSize: 15, color: "var(--text-secondary)" }}>
-              {mode === "login" ? "Sign in to your HireFlow account" : "Get started with HireFlow"}
+              {mode === "login" ? "Sign in to your JobsSearch account" : "Get started with JobsSearch"}
             </p>
           </div>
 
@@ -1460,7 +1922,7 @@ const AuthScreen = ({ onAuth, onBack, initialMode }) => {
       </main>
 
       <footer style={{ padding: "24px 48px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
-        © 2024 HireFlow. Built with AI.
+        © 2024 JobsSearch. Built with AI.
       </footer>
     </div>
   );
@@ -1484,7 +1946,7 @@ const RoleSelect = ({ onSelect }) => {
       <header style={{ padding: "24px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
         </div>
         <Button variant="ghost" size="sm">Sign In</Button>
       </header>
@@ -1549,7 +2011,7 @@ const RoleSelect = ({ onSelect }) => {
 
       {/* Footer */}
       <footer style={{ padding: "24px 48px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
-        © 2024 HireFlow. Built with AI.
+        © 2024 JobsSearch. Built with AI.
       </footer>
     </div>
   );
@@ -1566,7 +2028,7 @@ const SeekerChoice = ({ onUpload, onBuild, onBack }) => {
       <header style={{ padding: "24px 48px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
         </div>
       </header>
 
@@ -1750,7 +2212,7 @@ const ResumeUpload = ({ onComplete, onBack }) => {
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
           </header>
 
           <div className="animate-in" style={{ marginBottom: 32 }}>
@@ -1950,7 +2412,7 @@ const ResumeUpload = ({ onComplete, onBack }) => {
       <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
         </div>
 
         <h1 className="animate-in" style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, marginBottom: 12 }}>Upload your resume</h1>
@@ -2206,7 +2668,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 48 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>HireFlow</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             {Array.from({ length: totalSteps }, (_, i) => (
@@ -2247,17 +2709,21 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
       { key: "resume", icon: Icons.doc, label: "My Resume" },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
+      { key: "matcher", icon: Icons.target, label: "JD Matcher" },
+      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
     ],
     recruiter: [
       { key: "home", icon: Icons.users, label: "Candidates" },
       { key: "pipeline", icon: Icons.target, label: "Pipeline" },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
+      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
     ],
     company: [
       { key: "home", icon: Icons.building, label: "Dashboard" },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
+      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
     ],
   };
 
@@ -2269,7 +2735,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px", marginBottom: 8, color: "var(--ink)" }}>
         {Icons.logo}
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>HireFlow</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>JobsSearch</span>
       </div>
       <div style={{ padding: "8px", fontSize: 11, color: roleColors[role], fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
         {roleLabels[role]}
@@ -2381,6 +2847,377 @@ const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
   );
 };
 
+// ─── JD Matcher View ─────────────────────────────────────────────────
+const MatcherView = ({ profile }) => {
+  const [mode, setMode] = useState("analyze");
+  const [resumeSource, setResumeSource] = useState("profile");
+  const [resumeText, setResumeText] = useState("");
+  const [jdSource, setJdSource] = useState("external");
+  const [jdText, setJdText] = useState("");
+  const [selectedJobId, setSelectedJobId] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [result, setResult] = useState(null);
+  const [generatedCL, setGeneratedCL] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [step, setStep] = useState("input"); // input | loading | result
+
+  const inputStyle = { width: "100%", padding: "14px 16px", borderRadius: 12, border: "1.5px solid var(--border)", background: "white", fontSize: 15, outline: "none", fontFamily: "inherit" };
+  const labelStyle = { fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", display: "block", marginBottom: 8 };
+  const radioRow = { display: "flex", gap: 12, marginBottom: 16 };
+
+  // Fetch internal jobs for selector
+  useEffect(() => {
+    api.getJobs().then(setJobs).catch(() => {});
+  }, []);
+
+  // Fetch history
+  useEffect(() => {
+    api.getMatcherHistory().then(setHistory).catch(() => {});
+  }, []);
+
+  const handleSubmit = async () => {
+    setError("");
+    setLoading(true);
+    setStep("loading");
+
+    const payload = {
+      mode,
+      resume_source: resumeSource,
+      resume_text: resumeSource === "upload" ? resumeText : undefined,
+      jd_source: jdSource,
+      job_id: jdSource === "internal" ? selectedJobId : undefined,
+      jd_text: jdSource === "external" ? jdText : undefined,
+      cover_letter: coverLetter || undefined,
+    };
+
+    try {
+      let data;
+      if (mode === "analyze") {
+        data = await api.analyzeMatch(payload);
+        setResult(data.analysis);
+        setGeneratedCL("");
+      } else {
+        data = await api.generateCoverLetter(payload);
+        setGeneratedCL(data.generated_cover_letter || "");
+        setResult(null);
+      }
+      setStep("result");
+      // Refresh history
+      api.getMatcherHistory().then(setHistory).catch(() => {});
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+      setStep("input");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(generatedCL);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleReset = () => {
+    setStep("input");
+    setResult(null);
+    setGeneratedCL("");
+    setError("");
+  };
+
+  const canSubmit = () => {
+    if (resumeSource === "upload" && !resumeText.trim()) return false;
+    if (jdSource === "external" && !jdText.trim()) return false;
+    if (jdSource === "internal" && !selectedJobId) return false;
+    if (mode === "improve" && !coverLetter.trim()) return false;
+    return true;
+  };
+
+  const scoreColor = (score) => {
+    if (score >= 80) return "var(--sage)";
+    if (score >= 60) return "var(--gold)";
+    return "var(--coral)";
+  };
+
+  // Loading state
+  if (step === "loading") {
+    return (
+      <div style={{ textAlign: "center", padding: "80px 0" }}>
+        <div style={{ width: 48, height: 48, margin: "0 auto 24px", borderRadius: 24, border: "3px solid var(--cream-dark)", borderTopColor: "var(--coral)", animation: "spin 1s linear infinite" }} />
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
+          {mode === "analyze" ? "Analyzing Match..." : mode === "generate" ? "Generating Cover Letter..." : "Improving Cover Letter..."}
+        </h2>
+        <p style={{ color: "var(--text-muted)" }}>AI is working — this takes 5–10 seconds</p>
+      </div>
+    );
+  }
+
+  // Result state
+  if (step === "result") {
+    return (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>
+            {mode === "analyze" ? "Match Analysis" : "Generated Cover Letter"}
+          </h1>
+          <Button variant="outline" size="sm" onClick={handleReset}>{Icons.arrowLeft} New Analysis</Button>
+        </div>
+
+        {mode === "analyze" && result && (
+          <div className="animate-in">
+            {/* Score */}
+            <Card style={{ marginBottom: 20, textAlign: "center", padding: 32 }}>
+              <div style={{ fontSize: 64, fontWeight: 700, fontFamily: "'Playfair Display', serif", color: scoreColor(result.overall_score), lineHeight: 1 }}>
+                {result.overall_score}%
+              </div>
+              <div style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>Overall Match Score</div>
+              {result.summary && <p style={{ marginTop: 16, color: "var(--text-secondary)", maxWidth: 600, margin: "16px auto 0", lineHeight: 1.7 }}>{result.summary}</p>}
+            </Card>
+
+            {/* Strengths & Gaps */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+              <Card>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--sage)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Strengths</div>
+                {(result.strengths || []).map((s, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
+                    <span style={{ color: "var(--sage)", marginTop: 2, flexShrink: 0 }}>{Icons.check}</span>
+                    <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{s}</span>
+                  </div>
+                ))}
+                {(result.strengths || []).length === 0 && <p style={{ color: "var(--text-muted)", fontSize: 14 }}>No specific strengths identified</p>}
+              </Card>
+              <Card>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Gaps to Address</div>
+                {(result.gaps || []).map((g, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
+                    <span style={{ color: "var(--coral)", marginTop: 2, flexShrink: 0 }}>{Icons.x}</span>
+                    <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{g}</span>
+                  </div>
+                ))}
+                {(result.gaps || []).length === 0 && <p style={{ color: "var(--text-muted)", fontSize: 14 }}>No gaps identified</p>}
+              </Card>
+            </div>
+
+            {/* Keywords */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+              <Card>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Keywords Found</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {(result.keyword_matches || []).map((k, i) => <Tag key={i} variant="sage">{k}</Tag>)}
+                  {(result.keyword_matches || []).length === 0 && <span style={{ color: "var(--text-muted)", fontSize: 14 }}>None</span>}
+                </div>
+              </Card>
+              <Card>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Keywords Missing</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {(result.keyword_misses || []).map((k, i) => <Tag key={i} variant="coral">{k}</Tag>)}
+                  {(result.keyword_misses || []).length === 0 && <span style={{ color: "var(--text-muted)", fontSize: 14 }}>None</span>}
+                </div>
+              </Card>
+            </div>
+
+            {/* Cover Letter Feedback */}
+            {result.cover_letter_score != null && (
+              <Card style={{ marginBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Cover Letter Score</div>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: scoreColor(result.cover_letter_score) }}>{result.cover_letter_score}%</span>
+                </div>
+                {result.cover_letter_feedback && <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7 }}>{result.cover_letter_feedback}</p>}
+              </Card>
+            )}
+          </div>
+        )}
+
+        {(mode === "generate" || mode === "improve") && generatedCL && (
+          <div className="animate-in">
+            <Card style={{ marginBottom: 20 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--coral)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  {mode === "generate" ? "Generated Cover Letter" : "Improved Cover Letter"}
+                </div>
+                <Button variant="outline" size="sm" onClick={handleCopy}>
+                  {copied ? <>{Icons.check} Copied!</> : "Copy to Clipboard"}
+                </Button>
+              </div>
+              <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.8, color: "var(--text-secondary)", fontSize: 15, padding: 20, background: "var(--cream)", borderRadius: 12 }}>
+                {generatedCL}
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Input state (default)
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 4 }}>JD Matcher</h1>
+          <p style={{ color: "var(--text-secondary)" }}>Analyze your resume against a job description or generate a tailored cover letter</p>
+        </div>
+        {history.length > 0 && (
+          <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
+            {Icons.clock} History ({history.length})
+          </Button>
+        )}
+      </div>
+
+      {error && (
+        <div className="animate-in" style={{ padding: "12px 16px", marginBottom: 20, borderRadius: 12, background: "rgba(220, 38, 38, 0.08)", color: "#dc2626", fontSize: 14, fontWeight: 500 }}>
+          {error}
+        </div>
+      )}
+
+      {/* History panel */}
+      {showHistory && history.length > 0 && (
+        <Card className="animate-in" style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Recent Analyses</div>
+          {history.map(h => (
+            <div key={h.id} onClick={async () => {
+              try {
+                const data = await api.getMatcherAnalysis(h.id);
+                if (data.analysis) { setResult(data.analysis); setGeneratedCL(""); }
+                if (data.generated_cover_letter) { setGeneratedCL(data.generated_cover_letter); setResult(null); }
+                setMode(data.mode);
+                setStep("result");
+              } catch {}
+            }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderRadius: 8, cursor: "pointer", marginBottom: 4 }}
+              onMouseEnter={e => e.currentTarget.style.background = "var(--cream)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <div>
+                <span style={{ fontWeight: 600, fontSize: 14 }}>{h.job_title || "External JD"}</span>
+                <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: 8 }}>{h.mode}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                {h.overall_score != null && <span style={{ fontWeight: 700, color: scoreColor(h.overall_score) }}>{h.overall_score}%</span>}
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{new Date(h.created_at).toLocaleDateString()}</span>
+              </div>
+            </div>
+          ))}
+        </Card>
+      )}
+
+      {/* Mode selector */}
+      <Card className="animate-in" style={{ marginBottom: 20 }}>
+        <div style={labelStyle}>What would you like to do?</div>
+        <div style={{ display: "flex", gap: 12 }}>
+          {[
+            { key: "analyze", label: "Analyze Match", icon: Icons.chart },
+            { key: "generate", label: "Generate Cover Letter", icon: Icons.spark },
+            { key: "improve", label: "Improve Cover Letter", icon: Icons.edit },
+          ].map(m => (
+            <div key={m.key} onClick={() => setMode(m.key)} style={{
+              flex: 1, padding: "16px", borderRadius: 12, cursor: "pointer", textAlign: "center",
+              border: `2px solid ${mode === m.key ? "var(--coral)" : "var(--border)"}`,
+              background: mode === m.key ? "rgba(255, 107, 91, 0.04)" : "white",
+              transition: "all 0.15s",
+            }}>
+              <div style={{ color: mode === m.key ? "var(--coral)" : "var(--text-muted)", marginBottom: 8 }}>{m.icon}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: mode === m.key ? "var(--coral)" : "var(--text-primary)" }}>{m.label}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Resume source */}
+      <Card className="animate-in-delay-1" style={{ marginBottom: 20 }}>
+        <div style={labelStyle}>Resume Source</div>
+        <div style={radioRow}>
+          {[
+            { key: "profile", label: `Use saved profile${profile?.name ? ` (${profile.name})` : ""}` },
+            { key: "upload", label: "Paste resume text" },
+          ].map(opt => (
+            <label key={opt.key} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 14, fontWeight: 500 }}>
+              <input type="radio" name="resumeSource" checked={resumeSource === opt.key} onChange={() => setResumeSource(opt.key)} />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+        {resumeSource === "upload" && (
+          <textarea
+            style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
+            placeholder="Paste your resume text here..."
+            value={resumeText}
+            onChange={e => setResumeText(e.target.value)}
+          />
+        )}
+        {resumeSource === "profile" && profile?.skills?.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+            {profile.skills.slice(0, 8).map(s => <Tag key={s} variant="sage">{s}</Tag>)}
+            {profile.skills.length > 8 && <Tag>+{profile.skills.length - 8} more</Tag>}
+          </div>
+        )}
+      </Card>
+
+      {/* JD source */}
+      <Card className="animate-in-delay-1" style={{ marginBottom: 20 }}>
+        <div style={labelStyle}>Job Description</div>
+        <div style={radioRow}>
+          {[
+            { key: "external", label: "Paste job description" },
+            { key: "internal", label: "Select from jobs" },
+          ].map(opt => (
+            <label key={opt.key} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 14, fontWeight: 500 }}>
+              <input type="radio" name="jdSource" checked={jdSource === opt.key} onChange={() => setJdSource(opt.key)} />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+        {jdSource === "external" && (
+          <textarea
+            style={{ ...inputStyle, resize: "vertical", minHeight: 150 }}
+            placeholder="Paste the full job description here..."
+            value={jdText}
+            onChange={e => setJdText(e.target.value)}
+          />
+        )}
+        {jdSource === "internal" && (
+          <select
+            style={{ ...inputStyle, cursor: "pointer" }}
+            value={selectedJobId}
+            onChange={e => setSelectedJobId(e.target.value)}
+          >
+            <option value="">Select a job...</option>
+            {jobs.map(j => (
+              <option key={j.id} value={j.id}>{j.title} — {j.company_name || "Unknown"}</option>
+            ))}
+          </select>
+        )}
+      </Card>
+
+      {/* Cover letter input (for analyze and improve modes) */}
+      {(mode === "analyze" || mode === "improve") && (
+        <Card className="animate-in-delay-2" style={{ marginBottom: 20 }}>
+          <div style={labelStyle}>
+            Cover Letter {mode === "analyze" ? "(optional)" : "(required)"}
+          </div>
+          <textarea
+            style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
+            placeholder={mode === "improve" ? "Paste your existing cover letter to improve..." : "Paste your cover letter for feedback (optional)..."}
+            value={coverLetter}
+            onChange={e => setCoverLetter(e.target.value)}
+          />
+        </Card>
+      )}
+
+      {/* Submit */}
+      <div className="animate-in-delay-2" style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button variant="coral" onClick={handleSubmit} disabled={!canSubmit() || loading}>
+          {Icons.spark} {mode === "analyze" ? "Analyze Match" : mode === "generate" ? "Generate Cover Letter" : "Improve Cover Letter"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────
 const formatTimeAgo = (dateStr) => {
   if (!dateStr) return "";
@@ -2478,6 +3315,9 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
     j.title.toLowerCase().includes(search.toLowerCase()) ||
     j.company.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (activeTab === "matcher") return <MatcherView profile={profile} />;
+  if (activeTab === "ideas") return <IdeasBoard user={profile} />;
 
   if (activeTab === "resume") {
     return (
@@ -2686,6 +3526,7 @@ const ChatView = () => {
 const RecruiterDashboard = ({ activeTab }) => {
   const [search, setSearch] = useState("");
 
+  if (activeTab === "ideas") return <IdeasBoard user={null} />;
   if (activeTab === "chat") return <ChatView />;
 
   if (activeTab === "pipeline") {
@@ -2795,6 +3636,7 @@ const RecruiterDashboard = ({ activeTab }) => {
 
 // ─── Company Dashboard ───────────────────────────────────────────────
 const CompanyDashboard = ({ activeTab }) => {
+  if (activeTab === "ideas") return <IdeasBoard user={null} />;
   if (activeTab === "chat") return <ChatView />;
 
   if (activeTab === "analytics") {
@@ -2887,7 +3729,7 @@ export default function App() {
 
   // Rehydrate session from stored token on mount
   useEffect(() => {
-    const token = localStorage.getItem('hireflow_token');
+    const token = localStorage.getItem('jobssearch_token');
     if (token) {
       api.getProfile()
         .then(data => {
@@ -2977,6 +3819,7 @@ export default function App() {
       case "features": return <FeaturesPage {...navProps} />;
       case "pricing": return <PricingPage {...navProps} />;
       case "about": return <AboutPage {...navProps} />;
+      case "ideas": return <IdeasBoard {...navProps} user={null} />;
       default: return <LandingPage {...navProps} />;
     }
   }

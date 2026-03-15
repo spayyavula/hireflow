@@ -1,29 +1,62 @@
 /**
- * JobsSearch API Client
- * Connects the React frontend to the FastAPI backend.
- *
- * Usage:
- *   import api from './api';
- *   const { token } = await api.login('user@example.com', 'password');
- *   const jobs = await api.getJobs();
+ * JobsSearch Mobile API Client
+ * Mirrors the web api.js but uses expo-secure-store for token persistence.
  */
+import { Platform } from 'react-native';
+import { API_BASE_URL } from '../constants/config';
 
-const BASE_URL = import.meta.env.VITE_API_URL || '';
+let SecureStore = null;
+if (Platform.OS !== 'web') {
+  SecureStore = require('expo-secure-store');
+}
+
+const TOKEN_KEY = 'jobssearch_token';
 
 class JobsSearchAPI {
   constructor() {
-    this.token = localStorage.getItem('jobssearch_token') || null;
+    this.token = null;
+    this._ready = this._loadToken();
   }
 
-  // ─── Internal ─────────────────────────────────────────
-  _headers(extra = {}) {
-    const h = { 'Content-Type': 'application/json', ...extra };
+  async _loadToken() {
+    try {
+      if (SecureStore) {
+        this.token = await SecureStore.getItemAsync(TOKEN_KEY);
+      } else {
+        this.token = localStorage.getItem(TOKEN_KEY);
+      }
+    } catch {
+      this.token = null;
+    }
+  }
+
+  async _saveToken(token) {
+    this.token = token;
+    if (SecureStore) {
+      await SecureStore.setItemAsync(TOKEN_KEY, token);
+    } else {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+  }
+
+  async _clearToken() {
+    this.token = null;
+    if (SecureStore) {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  }
+
+  _headers() {
+    const h = { 'Content-Type': 'application/json' };
     if (this.token) h['Authorization'] = `Bearer ${this.token}`;
     return h;
   }
 
   async _fetch(path, opts = {}) {
-    const url = `${BASE_URL}${path}`;
+    await this._ready;
+    const url = `${API_BASE_URL}${path}`;
     const res = await fetch(url, { headers: this._headers(), ...opts });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
@@ -40,8 +73,7 @@ class JobsSearchAPI {
       method: 'POST',
       body: JSON.stringify(body),
     });
-    this.token = data.access_token;
-    localStorage.setItem('jobssearch_token', this.token);
+    await this._saveToken(data.access_token);
     return data;
   }
 
@@ -50,14 +82,16 @@ class JobsSearchAPI {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    this.token = data.access_token;
-    localStorage.setItem('jobssearch_token', this.token);
+    await this._saveToken(data.access_token);
     return data;
   }
 
-  logout() {
-    this.token = null;
-    localStorage.removeItem('jobssearch_token');
+  async logout() {
+    await this._clearToken();
+  }
+
+  isLoggedIn() {
+    return !!this.token;
   }
 
   // ─── Seeker ───────────────────────────────────────────
@@ -72,21 +106,6 @@ class JobsSearchAPI {
     });
   }
 
-  async uploadResume(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch(`${BASE_URL}/api/seeker/resume/upload`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${this.token}` },
-      body: formData,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || `Upload failed (${res.status})`);
-    }
-    return res.json();
-  }
-
   async getMatches(minScore = 0) {
     return this._fetch(`/api/seeker/matches?min_score=${minScore}`);
   }
@@ -97,29 +116,13 @@ class JobsSearchAPI {
 
   // ─── Jobs ─────────────────────────────────────────────
   async searchExternalJobs(query = '', location = '', remoteOnly = false, page = 1) {
-    const params = new URLSearchParams({
-      query,
-      location,
-      remote_only: remoteOnly,
-      page,
-    });
+    const params = new URLSearchParams({ query, location, remote_only: remoteOnly, page });
     return this._fetch(`/api/jobs/search?${params}`);
   }
 
   async getJobs(params = {}) {
     const qs = new URLSearchParams(params).toString();
     return this._fetch(`/api/jobs${qs ? '?' + qs : ''}`);
-  }
-
-  async getJob(id) {
-    return this._fetch(`/api/jobs/${id}`);
-  }
-
-  async createJob(job) {
-    return this._fetch('/api/jobs', {
-      method: 'POST',
-      body: JSON.stringify(job),
-    });
   }
 
   async applyToJob(jobId, coverLetter = '') {
@@ -156,7 +159,7 @@ class JobsSearchAPI {
     return this._fetch('/api/company/analytics');
   }
 
-  // ─── Matcher ────────────────────────────────────────────
+  // ─── Matcher ──────────────────────────────────────────
   async analyzeMatch(payload) {
     return this._fetch('/api/matcher/analyze', {
       method: 'POST',
@@ -171,22 +174,10 @@ class JobsSearchAPI {
     });
   }
 
-  async getMatcherHistory(limit = 10) {
-    return this._fetch(`/api/matcher/history?limit=${limit}`);
-  }
-
-  async getMatcherAnalysis(analysisId) {
-    return this._fetch(`/api/matcher/history/${analysisId}`);
-  }
-
   // ─── Feature Requests ─────────────────────────────────
   async listFeatures(params = {}) {
     const qs = new URLSearchParams(params).toString();
     return this._fetch(`/api/features${qs ? '?' + qs : ''}`);
-  }
-
-  async getFeature(id) {
-    return this._fetch(`/api/features/${id}`);
   }
 
   async createFeature(payload) {

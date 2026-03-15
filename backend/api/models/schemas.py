@@ -296,6 +296,122 @@ class MatchRequest(BaseModel):
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  MATCHER
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class MatcherMode(str, Enum):
+    ANALYZE = "analyze"
+    GENERATE = "generate"
+    IMPROVE = "improve"
+
+
+class ResumeSource(str, Enum):
+    PROFILE = "profile"
+    UPLOAD = "upload"
+
+
+class JDSource(str, Enum):
+    INTERNAL = "internal"
+    EXTERNAL = "external"
+
+
+class MatcherRequest(BaseModel):
+    mode: MatcherMode
+    resume_source: ResumeSource
+    resume_text: Optional[str] = Field(None, max_length=8000)
+    jd_source: JDSource
+    job_id: Optional[str] = None
+    jd_text: Optional[str] = Field(None, max_length=8000)
+    cover_letter: Optional[str] = Field(None, max_length=5000)
+
+
+class MatcherAnalysis(BaseModel):
+    overall_score: int = 0
+    summary: str = ""
+    strengths: list[str] = []
+    gaps: list[str] = []
+    keyword_matches: list[str] = []
+    keyword_misses: list[str] = []
+    cover_letter_score: Optional[int] = None
+    cover_letter_feedback: Optional[str] = None
+
+
+class MatcherResponse(BaseModel):
+    id: str
+    mode: MatcherMode
+    analysis: Optional[MatcherAnalysis] = None
+    generated_cover_letter: Optional[str] = None
+    created_at: str
+
+
+class MatcherHistoryItem(BaseModel):
+    id: str
+    mode: MatcherMode
+    job_title: Optional[str] = None
+    overall_score: Optional[int] = None
+    created_at: str
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  FEATURE REQUESTS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class FeatureCategory(str, Enum):
+    JOB_SEARCH = "Job Search"
+    RESUME_TOOLS = "Resume Tools"
+    RECRUITER_TOOLS = "Recruiter Tools"
+    COMPANY_DASHBOARD = "Company Dashboard"
+    CHAT_MESSAGING = "Chat & Messaging"
+    AI_FEATURES = "AI Features"
+    GENERAL = "General"
+
+
+class FeatureStatus(str, Enum):
+    SUBMITTED = "submitted"
+    UNDER_REVIEW = "under_review"
+    PLANNED = "planned"
+    IN_PROGRESS = "in_progress"
+    SHIPPED = "shipped"
+
+
+class FeatureRequestCreate(BaseModel):
+    title: str = Field(min_length=5, max_length=200)
+    description: str = Field(min_length=10, max_length=2000)
+    category: FeatureCategory
+
+
+class FeatureRequestResponse(BaseModel):
+    id: str
+    user_id: str
+    user_name: Optional[str] = None
+    user_role: Optional[str] = None
+    title: str
+    description: str
+    category: FeatureCategory
+    status: FeatureStatus = FeatureStatus.SUBMITTED
+    vote_count: int = 0
+    user_has_voted: bool = False
+    comment_count: int = 0
+    created_at: str
+
+
+class FeatureStatusUpdate(BaseModel):
+    status: FeatureStatus
+
+
+class FeatureCommentCreate(BaseModel):
+    content: str = Field(min_length=1, max_length=1000)
+
+
+class FeatureCommentResponse(BaseModel):
+    id: str
+    feature_id: str
+    user_id: str
+    user_name: Optional[str] = None
+    user_role: Optional[str] = None
+    content: str
+    created_at: str
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  GENERIC
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class SuccessResponse(BaseModel):

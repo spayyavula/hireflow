@@ -20,7 +20,7 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import auth, seeker, jobs, recruiter, company, chat
+from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features
 
 # ─── App Setup ────────────────────────────────────────────
 app = FastAPI(
@@ -34,7 +34,7 @@ app = FastAPI(
 # ─── CORS (allow frontend origins) ───────────────────────
 ALLOWED_ORIGINS = os.environ.get(
     "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://localhost:5173,https://hireflow-ui.vercel.app",
+    "http://localhost:3000,http://localhost:5173,http://localhost:8081,http://localhost:8082,http://localhost:19006,http://192.168.1.47:8081,http://192.168.1.47:8082,https://hireflow-ui.vercel.app,https://jobssearch.work,https://www.jobssearch.work",
 ).split(",")
 
 app.add_middleware(
@@ -52,6 +52,8 @@ app.include_router(jobs.router)
 app.include_router(recruiter.router)
 app.include_router(company.router)
 app.include_router(chat.router)
+app.include_router(matcher.router)
+app.include_router(features.router)
 
 
 # ─── Health Check ─────────────────────────────────────────

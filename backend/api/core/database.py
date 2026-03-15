@@ -305,6 +305,146 @@ def mark_messages_read(conversation_id: str, reader_id: str):
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  FEATURE REQUESTS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def create_feature_request(row: dict) -> dict:
+    res = supabase.table("feature_requests").insert(row).execute()
+    return res.data[0]
+
+
+def get_feature_requests(
+    category: Optional[str] = None,
+    status: Optional[str] = None,
+    sort_by: str = "votes",
+    limit: int = 50,
+) -> list[dict]:
+    q = supabase.table("feature_requests").select("*")
+    if category:
+        q = q.eq("category", category)
+    if status:
+        q = q.eq("status", status)
+    if sort_by == "newest":
+        q = q.order("created_at", desc=True)
+    else:
+        q = q.order("vote_count", desc=True)
+    res = q.limit(limit).execute()
+    return res.data or []
+
+
+def get_feature_request_by_id(feature_id: str) -> Optional[dict]:
+    res = supabase.table("feature_requests").select("*").eq("id", feature_id).limit(1).execute()
+    return res.data[0] if res.data else None
+
+
+def update_feature_request(feature_id: str, data: dict) -> dict:
+    res = supabase.table("feature_requests").update(data).eq("id", feature_id).execute()
+    return res.data[0] if res.data else {}
+
+
+def get_feature_vote(feature_id: str, user_id: str) -> Optional[dict]:
+    res = (
+        supabase.table("feature_votes")
+        .select("*")
+        .eq("feature_id", feature_id)
+        .eq("user_id", user_id)
+        .limit(1)
+        .execute()
+    )
+    return res.data[0] if res.data else None
+
+
+def create_feature_vote(row: dict) -> dict:
+    res = supabase.table("feature_votes").insert(row).execute()
+    return res.data[0]
+
+
+def delete_feature_vote(feature_id: str, user_id: str):
+    supabase.table("feature_votes").delete().eq("feature_id", feature_id).eq("user_id", user_id).execute()
+
+
+def get_user_votes(user_id: str) -> set[str]:
+    """Get all feature IDs a user has voted for."""
+    res = supabase.table("feature_votes").select("feature_id").eq("user_id", user_id).execute()
+    return {r["feature_id"] for r in (res.data or [])}
+
+
+def get_feature_comments(feature_id: str) -> list[dict]:
+    res = (
+        supabase.table("feature_comments")
+        .select("*")
+        .eq("feature_id", feature_id)
+        .order("created_at")
+        .execute()
+    )
+    return res.data or []
+
+
+def create_feature_comment(row: dict) -> dict:
+    res = supabase.table("feature_comments").insert(row).execute()
+    return res.data[0]
+
+
+def get_comment_counts(feature_ids: list[str]) -> dict[str, int]:
+    """Get comment counts for a list of feature IDs."""
+    if not feature_ids:
+        return {}
+    res = supabase.table("feature_comments").select("feature_id").in_("feature_id", feature_ids).execute()
+    counts: dict[str, int] = {}
+    for r in (res.data or []):
+        fid = r["feature_id"]
+        counts[fid] = counts.get(fid, 0) + 1
+    return counts
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  MATCHER ANALYSES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def create_matcher_analysis(row: dict) -> dict:
+    """Insert a new matcher analysis row."""
+    import json as _json
+    if isinstance(row.get("result"), dict):
+        row = {**row, "result": _json.dumps(row["result"])}
+    res = supabase.table("matcher_analyses").insert(row).execute()
+    return _parse_jsonb_fields_matcher(res.data[0])
+
+
+def get_matcher_analyses_by_seeker(seeker_id: str, limit: int = 10) -> list[dict]:
+    res = (
+        supabase.table("matcher_analyses")
+        .select("id, seeker_id, mode, job_id, result, created_at")
+        .eq("seeker_id", seeker_id)
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return [_parse_jsonb_fields_matcher(r) for r in (res.data or [])]
+
+
+def get_matcher_analysis_by_id(analysis_id: str) -> Optional[dict]:
+    res = (
+        supabase.table("matcher_analyses")
+        .select("*")
+        .eq("id", analysis_id)
+        .limit(1)
+        .execute()
+    )
+    return _parse_jsonb_fields_matcher(res.data[0]) if res.data else None
+
+
+def _parse_jsonb_fields_matcher(data: dict) -> dict:
+    if not data:
+        return data
+    val = data.get("result")
+    if isinstance(val, str):
+        import json as _json
+        try:
+            data["result"] = _json.loads(val)
+        except (ValueError, TypeError):
+            data["result"] = {}
+    return data
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  HELPERS — JSONB field serialization
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Supabase stores jsonb natively, but we ensure lists are
