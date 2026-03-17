@@ -229,6 +229,47 @@ class JobsSearchAPI {
     return this._fetch(`/api/blog/${slug}/related-jobs`);
   }
 
+  // ─── Interview Bot ──────────────────────────────────────
+  async startInterview(jobDescription, jobTitle = '', companyName = '', interviewType = 'mixed', difficulty = 'mid') {
+    return this._fetch('/api/interview/start', {
+      method: 'POST',
+      body: JSON.stringify({
+        job_description: jobDescription,
+        job_title: jobTitle,
+        company_name: companyName,
+        interview_type: interviewType,
+        difficulty: difficulty,
+      }),
+    });
+  }
+
+  async transcribeAudio(audioBase64) {
+    return this._fetch('/api/interview/transcribe', {
+      method: 'POST',
+      body: JSON.stringify({ audio_base64: audioBase64 }),
+    });
+  }
+
+  async evaluateAnswer(question, answer, jobDescription, questionType = 'behavioral') {
+    return this._fetch('/api/interview/evaluate', {
+      method: 'POST',
+      body: JSON.stringify({
+        question,
+        answer,
+        job_description: jobDescription,
+        question_type: questionType,
+      }),
+    });
+  }
+
+  // ─── Scout AI ───────────────────────────────────────────
+  async scoutChat(message, conversationId = null) {
+    return this._fetch('/api/scout/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message, conversation_id: conversationId }),
+    });
+  }
+
   // ─── Chat ─────────────────────────────────────────────
   async sendMessage(recipientId, content) {
     return this._fetch('/api/chat/send', {

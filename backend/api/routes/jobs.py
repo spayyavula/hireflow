@@ -78,19 +78,19 @@ async def search_external_jobs(
     page: int = Query(1, ge=1),
     user=Depends(get_current_user),
 ):
-    """Search real job postings from JSearch and optionally match against user profile."""
-    from api.services.jobs_api import search_jsearch
+    """Search real job postings from JSearch + Jobs API and optionally match against user profile."""
+    from api.services.jobs_api import search_all_providers
     from api.core.config import RAPIDAPI_KEY
 
     if not RAPIDAPI_KEY:
         raise HTTPException(400, "External job search not configured. Set RAPIDAPI_KEY env var.")
 
     try:
-        jobs = await search_jsearch(query, location, remote_only, page, api_key=RAPIDAPI_KEY)
+        jobs = await search_all_providers(query, location, remote_only, page, api_key=RAPIDAPI_KEY)
     except ValueError as e:
         raise HTTPException(401, str(e))
     except Exception as e:
-        raise HTTPException(502, f"Failed to fetch jobs from external provider: {e}")
+        raise HTTPException(502, f"Failed to fetch jobs from external providers: {e}")
 
     # If authenticated seeker, compute match scores
     if user and user.get("role") == "seeker":

@@ -1,7 +1,7 @@
 """
 HireFlow AI Services
-- Matching engine: computes compatibility scores between seekers and jobs
-- Resume parser: extracts structured data from uploaded resumes (simulated)
+- Matching engine: LLM-powered (OpenAI) with rule-based fallback
+- Resume parser: extracts structured data from uploaded resumes
 - Summary generator: creates AI-powered professional summaries
 """
 
@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
+import logging
 import re
 from datetime import datetime
 from typing import Optional
@@ -16,10 +18,13 @@ from typing import Optional
 import PyPDF2
 import docx
 
+logger = logging.getLogger(__name__)
+
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  MATCHING ENGINE
+#  MATCHING ENGINE — LLM-powered with rule-based fallback
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 def compute_job_match(
     user_skills: list[str],
     desired_roles: list[str],
@@ -30,43 +35,153 @@ def compute_job_match(
 ) -> dict:
     """
     Compute a match score (0-99) between a seeker profile and a job posting.
-
-    Scoring breakdown:
-    - Required skill overlap: up to 50 points
-    - Nice-to-have skill overlap: up to 15 points
-    - Role alignment: up to 15 points
-    - Work preference match: up to 10 points
-    - Experience level fit: up to 10 points
-
-    Returns dict with score, matched skills, and human-readable reasons.
+    Uses OpenAI LLM for semantic matching when available, falls back to rule-based.
     """
+    from api.core.config import OPENAI_API_KEY
+
+    if OPENAI_API_KEY:
+        try:
+            return _llm_match(
+                user_skills, desired_roles, work_preferences,
+                salary_range, experience_level, job, OPENAI_API_KEY,
+            )
+        except Exception as e:
+            logger.warning(f"LLM matching failed, falling back to rules: {e}")
+
+    return _rule_based_match(
+        user_skills, desired_roles, work_preferences,
+        salary_range, experience_level, job,
+    )
+
+
+def _llm_match(
+    user_skills: list[str],
+    desired_roles: list[str],
+    work_preferences: list[str],
+    salary_range: Optional[str],
+    experience_level: Optional[str],
+    job: dict,
+    api_key: str,
+) -> dict:
+    """Use OpenAI to semantically match a candidate to a job."""
+    from openai import OpenAI
+
+    client = OpenAI(api_key=api_key)
+
+    # Build concise profile and job summaries for the LLM
+    profile_summary = {
+        "skills": user_skills[:15],
+        "desired_roles": desired_roles[:5],
+        "work_preferences": work_preferences,
+        "salary_range": salary_range or "Not specified",
+        "experience_level": experience_level or "Not specified",
+    }
+
+    job_summary = {
+        "title": job.get("title", ""),
+        "company": job.get("company", ""),
+        "description": (job.get("description", "") or "")[:800],
+        "required_skills": job.get("required_skills", []),
+        "nice_skills": job.get("nice_skills", []),
+        "location": job.get("location", ""),
+        "remote": job.get("remote", False),
+        "employment_type": job.get("employment_type", ""),
+        "experience_level": job.get("experience_level", ""),
+        "salary_min": job.get("salary_min"),
+        "salary_max": job.get("salary_max"),
+    }
+
+    system_prompt = """You are an expert job matching AI. Analyze the candidate profile against the job posting and provide a detailed match assessment.
+
+Consider these factors with semantic understanding:
+1. **Skill Match (0-50 pts)**: Don't just match exact strings — understand that "React" relates to "Frontend", "Node.js" relates to "JavaScript", "AWS" relates to "Cloud". Recognize equivalent/related skills.
+2. **Role Alignment (0-15 pts)**: Does the job title align with the candidate's desired roles? Consider related titles (e.g., "Software Engineer" matches "Full Stack Developer").
+3. **Nice-to-have Skills (0-15 pts)**: Bonus for matching optional skills, including semantically related ones.
+4. **Work Preference (0-10 pts)**: Remote/hybrid/on-site alignment.
+5. **Experience Level (0-10 pts)**: Seniority match (exact = 10, adjacent = 5).
+
+Return ONLY valid JSON with this exact structure:
+{
+  "match_score": <integer 15-99>,
+  "matched_required": ["skill1", "skill2"],
+  "matched_nice": ["skill1"],
+  "match_reasons": ["reason1", "reason2", "reason3"],
+  "semantic_insights": ["insight about transferable skills or hidden matches"]
+}
+
+Be nuanced — a React expert with TypeScript is a strong match for a "Frontend Engineer" role even if the JD says "Vue.js" (transferable skills). But don't inflate scores — be honest about gaps."""
+
+    user_prompt = f"""**Candidate Profile:**
+{json.dumps(profile_summary, indent=2)}
+
+**Job Posting:**
+{json.dumps(job_summary, indent=2)}
+
+Analyze the match and return JSON."""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0.3,
+        max_tokens=500,
+        response_format={"type": "json_object"},
+    )
+
+    result = json.loads(response.choices[0].message.content)
+
+    # Validate and clamp
+    score = max(15, min(99, int(result.get("match_score", 50))))
+    reasons = result.get("match_reasons", [])
+    semantic = result.get("semantic_insights", [])
+    if semantic:
+        reasons.extend(semantic)
+
+    return {
+        "match_score": score,
+        "matched_required": result.get("matched_required", []),
+        "matched_nice": result.get("matched_nice", []),
+        "match_reasons": reasons[:6],
+    }
+
+
+def _rule_based_match(
+    user_skills: list[str],
+    desired_roles: list[str],
+    work_preferences: list[str],
+    salary_range: Optional[str],
+    experience_level: Optional[str],
+    job: dict,
+) -> dict:
+    """Original rule-based matching as fallback."""
     u_skills = {s.lower() for s in user_skills}
     req_skills = job.get("required_skills", [])
     nice_skills = job.get("nice_skills", [])
 
-    # ── Required skills (50 pts) ──────────────────────────
+    # ── Required skills (50 pts)
     req_matched = [s for s in req_skills if s.lower() in u_skills]
     req_ratio = len(req_matched) / max(len(req_skills), 1)
     req_score = req_ratio * 50
 
-    # ── Nice-to-have skills (15 pts) ─────────────────────
+    # ── Nice-to-have skills (15 pts)
     nice_matched = [s for s in nice_skills if s.lower() in u_skills]
     nice_ratio = len(nice_matched) / max(len(nice_skills), 1)
     nice_score = nice_ratio * 15
 
-    # ── Role alignment (15 pts) ──────────────────────────
+    # ── Role alignment (15 pts)
     role_score = 0
     reasons = []
     job_title_lower = job.get("title", "").lower()
     for role in desired_roles:
-        # Check if any significant word from desired role appears in job title
         role_words = [w.lower() for w in role.split() if len(w) > 2]
         if any(w in job_title_lower for w in role_words):
             role_score = 15
             reasons.append(f"Role matches your desired position: {role}")
             break
 
-    # ── Work preference (10 pts) ─────────────────────────
+    # ── Work preference (10 pts)
     work_score = 0
     if "Remote" in work_preferences and job.get("remote"):
         work_score = 10
@@ -74,16 +189,15 @@ def compute_job_match(
     elif "On-site" in work_preferences and not job.get("remote"):
         work_score = 10
     elif "Hybrid" in work_preferences:
-        work_score = 5  # partial match for hybrid
+        work_score = 5
 
-    # ── Experience level (10 pts) ────────────────────────
+    # ── Experience level (10 pts)
     exp_score = 0
     if experience_level and job.get("experience_level"):
         if experience_level == job["experience_level"]:
             exp_score = 10
             reasons.append("Experience level is an exact match")
         else:
-            # Partial credit for adjacent levels
             levels = ["Entry Level (0-2 yrs)", "Mid Level (3-5 yrs)", "Senior (6-9 yrs)", "Staff / Lead (10+ yrs)", "Executive / Director"]
             try:
                 u_idx = levels.index(experience_level)
@@ -93,16 +207,13 @@ def compute_job_match(
             except ValueError:
                 pass
 
-    # ── Aggregate ─────────────────────────────────────────
+    # ── Aggregate
     raw_score = req_score + nice_score + role_score + work_score + exp_score
-
-    # Add skill-match reasons
     if req_matched:
         reasons.insert(0, f"Matches {len(req_matched)}/{len(req_skills)} required skills")
     if nice_matched:
         reasons.insert(1, f"Matches {len(nice_matched)}/{len(nice_skills)} nice-to-have skills")
 
-    # Clamp and apply a small deterministic jitter so scores aren't identical
     jitter = int(hashlib.md5(f"{job.get('id', '')}".encode()).hexdigest(), 16) % 5
     final_score = min(99, max(15, int(raw_score + jitter)))
 

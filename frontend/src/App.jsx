@@ -176,6 +176,8 @@ const Icons = {
   target: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
   menu: <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
   external: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>,
+  scout: <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><defs><linearGradient id="scoutGrad" x1="0" y1="0" x2="24" y2="24"><stop offset="0%" stopColor="#ff6b5b"/><stop offset="100%" stopColor="#9b8fd4"/></linearGradient></defs><circle cx="12" cy="12" r="10" stroke="url(#scoutGrad)" strokeWidth="2" fill="none"/><path d="M12 6v2m0 8v2m-6-6h2m8 0h2" stroke="url(#scoutGrad)" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="12" r="3" fill="url(#scoutGrad)" opacity="0.3"/><circle cx="12" cy="12" r="1.5" fill="url(#scoutGrad)"/></svg>,
+  mic: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 18v4m-4 0h8"/></svg>,
 };
 
 // ─── UI Components ───────────────────────────────────────────────────
@@ -450,22 +452,44 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
 
   const steps = [
     { num: "01", icon: Icons.user, title: "Create Your Profile", desc: "Upload your resume or build one with our AI assistant — it takes under two minutes." },
-    { num: "02", icon: Icons.spark, title: "AI Matching", desc: "Our intelligent scoring algorithm analyzes skills, experience, and preferences to find perfect fits." },
-    { num: "03", icon: Icons.briefcase, title: "Get Hired", desc: "Connect directly with recruiters and companies through real-time chat and one-click applications." },
+    { num: "02", icon: Icons.spark, title: "AI Matching", desc: "Search jobs across multiple providers. Our AI scores every role against your skills, experience, and preferences." },
+    { num: "03", icon: Icons.scout, title: "Get Career Guidance", desc: "Scout AI coaches you on interviews, resumes, salary negotiation, career transitions, and more." },
+    { num: "04", icon: Icons.mic, title: "Practice & Get Hired", desc: "Run voice mock interviews with real-time feedback, then apply with confidence." },
   ];
 
   const roles = [
     {
       title: "Job Seekers", accent: "var(--coral)", icon: Icons.user,
-      points: ["AI-powered resume builder", "Smart job matching scores", "One-click applications"],
+      points: ["AI job matching across 5 providers", "Scout AI career counselor", "Voice mock interviews with feedback", "Resume builder & ATS optimization tips", "Salary negotiation coaching"],
     },
     {
       title: "Recruiters", accent: "var(--sage)", icon: Icons.users,
-      points: ["Candidate pipeline management", "AI scoring & ranking", "Real-time chat with talent"],
+      points: ["Candidate pipeline management", "AI scoring & ranking", "Real-time chat with talent", "Hiring analytics dashboard"],
     },
     {
       title: "Companies", accent: "var(--lavender)", icon: Icons.building,
-      points: ["Easy job posting", "Analytics dashboard", "Curated talent pool"],
+      points: ["Easy job posting", "Analytics dashboard", "Curated talent pool", "AI-matched candidates"],
+    },
+  ];
+
+  const aiFeatures = [
+    {
+      icon: Icons.scout, accent: "var(--coral)", accentBg: "rgba(255,107,91,0.08)",
+      title: "Scout AI — Career Counselor",
+      desc: "A full-spectrum AI career advisor that covers job search, interview prep, resume optimization, salary negotiation, career transitions, networking, burnout recovery, leadership coaching, and industry insights.",
+      tags: ["13 Career Domains", "Personalized Advice", "Skill Gap Analysis"],
+    },
+    {
+      icon: Icons.mic, accent: "var(--sage)", accentBg: "rgba(126,184,158,0.08)",
+      title: "Interview Bot — Voice Mock Interviews",
+      desc: "Practice with AI-generated questions tailored to the job description and your resume. Answer by voice with Wispr AI transcription, get instant scores and feedback on every answer.",
+      tags: ["Voice-Powered", "Wispr AI", "STAR Method Scoring"],
+    },
+    {
+      icon: Icons.search, accent: "var(--lavender)", accentBg: "rgba(155,143,212,0.08)",
+      title: "Multi-Provider Job Search",
+      desc: "Search across JSearch, Jobs API, LinkedIn, Indeed, and multi-board aggregators simultaneously. Jobs are deduplicated, scored against your profile, and ranked by match strength.",
+      tags: ["5 Job Sources", "AI Match Scoring", "Real-Time Results"],
     },
   ];
 
@@ -501,20 +525,20 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
             background: "rgba(255,107,91,0.08)", color: "var(--coral)", marginBottom: 24, letterSpacing: "0.02em",
           }}>
-            AI-Powered Job Marketplace
+            AI Career Platform
           </div>
           <h1 style={{
             fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 700,
             lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 20,
           }}>
-            Where talent meets<br />opportunity
+            Your AI-powered<br />career partner
           </h1>
           <p style={{
-            fontSize: 18, color: "var(--text-secondary)", maxWidth: 540, margin: "0 auto 40px",
+            fontSize: 18, color: "var(--text-secondary)", maxWidth: 580, margin: "0 auto 40px",
             lineHeight: 1.7,
           }}>
-            The three-sided marketplace connecting job seekers, recruiters, and companies
-            with intelligent matching and real-time collaboration.
+            Smart job search across multiple providers, AI career counseling, voice mock interviews
+            with real-time feedback, and everything you need to land your dream role.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
             <button onClick={onGetStarted} style={{
@@ -561,10 +585,10 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>How it works</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
-            From profile to placement in three simple steps
+            From profile to placement in four simple steps
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
           {steps.map((step, i) => (
             <div key={i} className={`animate-in-delay-${i + 1}`} style={{
               background: "white", borderRadius: 20, padding: 32,
@@ -639,6 +663,58 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         </div>
       </section>
 
+      {/* ── AI-Powered Features ── */}
+      <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{
+            display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+            background: "linear-gradient(135deg, rgba(255,107,91,0.08), rgba(155,143,212,0.08))",
+            color: "var(--coral)", marginBottom: 16,
+          }}>What makes us different</div>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
+          }}>AI that actually helps your career</h2>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 520, margin: "0 auto" }}>
+            Not just another job board — a complete career platform powered by AI
+          </p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {aiFeatures.map((f, i) => (
+            <div key={i} className={`animate-in-delay-${i + 1}`} style={{
+              background: "white", borderRadius: 20, padding: 32,
+              border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+              display: "flex", gap: 24, alignItems: "flex-start",
+              transition: "all 0.25s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(13,13,15,0.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
+            >
+              <div style={{
+                width: 56, height: 56, borderRadius: 16, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: f.accentBg, color: f.accent,
+              }}>{f.icon}</div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{
+                  fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700,
+                  color: "var(--ink)", marginBottom: 8,
+                }}>{f.title}</h3>
+                <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 14 }}>{f.desc}</p>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {f.tags.map(tag => (
+                    <span key={tag} style={{
+                      padding: "4px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                      background: f.accentBg, color: f.accent,
+                    }}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Featured Jobs ── */}
       <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
@@ -698,9 +774,9 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         <h2 style={{
           fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
           letterSpacing: "-0.02em", marginBottom: 16,
-        }}>Ready to transform your hiring?</h2>
-        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
-          Join thousands of professionals already using JobsSearch to find their perfect match.
+        }}>Ready to accelerate your career?</h2>
+        <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 520, margin: "0 auto 36px" }}>
+          AI career counseling, voice mock interviews, multi-provider job search, and smart matching — all free to start.
         </p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
           <button onClick={onGetStarted} style={{
@@ -741,9 +817,12 @@ const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
 
   const features = {
     seekers: [
+      { icon: Icons.scout, title: "Scout AI Career Counselor", desc: "Get guidance on interviews, resumes, salary negotiation, career transitions, burnout, leadership, and more — 13 career domains." },
+      { icon: Icons.mic, title: "Voice Mock Interviews", desc: "Practice with AI-generated questions based on the job description. Answer by voice, get scored on STAR method, quantification, and depth." },
       { icon: Icons.spark, title: "AI Match Scoring", desc: "Get a 0-99 compatibility score for every job based on your skills, experience, and preferences." },
+      { icon: Icons.search, title: "Multi-Provider Job Search", desc: "Search JSearch, Jobs API, LinkedIn, Indeed, and multi-board aggregators — deduplicated and match-scored." },
       { icon: Icons.doc, title: "Resume Builder & Analyzer", desc: "Build a professional resume or upload yours for AI-powered feedback and optimization." },
-      { icon: Icons.search, title: "Smart Job Search", desc: "Filter by role, location, salary, and remote preference with intelligent suggestions." },
+      { icon: Icons.target, title: "JD Matcher", desc: "Paste any job description and get a detailed match analysis with cover letter generation." },
       { icon: Icons.zap, title: "One-Click Apply", desc: "Apply to jobs instantly with your saved profile — no repetitive forms." },
       { icon: Icons.chat, title: "Real-Time Chat", desc: "Message recruiters and hiring managers directly within the platform." },
     ],
@@ -2699,6 +2778,805 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
   );
 };
 
+// ─── Interview Bot ───────────────────────────────────────────────────
+const InterviewBot = ({ profile }) => {
+  const [phase, setPhase] = useState("setup"); // setup, active, review
+  const [jd, setJd] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [interviewType, setInterviewType] = useState("mixed");
+  const [difficulty, setDifficulty] = useState("mid");
+  const [session, setSession] = useState(null);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [feedback, setFeedback] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const streamRef = useRef(null);
+
+  const speak = (text) => {
+    return new Promise((resolve) => {
+      if (!window.speechSynthesis) { resolve(); return; }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.name.includes("Google") && v.lang.startsWith("en")) || voices.find(v => v.lang.startsWith("en"));
+      if (preferred) utterance.voice = preferred;
+      setIsSpeaking(true);
+      utterance.onend = () => { setIsSpeaking(false); resolve(); };
+      utterance.onerror = () => { setIsSpeaking(false); resolve(); };
+      window.speechSynthesis.speak(utterance);
+    });
+  };
+
+  const startInterview = async () => {
+    if (!jd.trim()) return;
+    setLoading(true);
+    try {
+      const data = await api.startInterview(jd, jobTitle, companyName, interviewType, difficulty);
+      setSession(data);
+      setCurrentQ(0);
+      setAnswers([]);
+      setPhase("active");
+      setFeedback(null);
+      setTranscript("");
+      setTimeout(() => speak(data.questions[0].q), 500);
+    } catch (err) {
+      alert("Failed to start interview: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
+      streamRef.current = stream;
+      audioChunksRef.current = [];
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4" });
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+      mediaRecorder.start(100);
+      setIsRecording(true);
+      setTranscript("");
+      setFeedback(null);
+    } catch (err) {
+      alert("Microphone access denied. Please allow microphone access to use the interview bot.");
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!mediaRecorderRef.current) return;
+    return new Promise((resolve) => {
+      mediaRecorderRef.current.onstop = async () => {
+        if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
+        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        setIsRecording(false);
+        setIsTranscribing(true);
+        try {
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            const base64 = reader.result.split(",")[1];
+            try {
+              const result = await api.transcribeAudio(base64);
+              setTranscript(result.text || "(Could not transcribe audio)");
+            } catch (err) {
+              setTranscript("(Transcription failed — please type your answer instead)");
+            } finally {
+              setIsTranscribing(false);
+              resolve();
+            }
+          };
+          reader.readAsDataURL(blob);
+        } catch { setIsTranscribing(false); resolve(); }
+      };
+      mediaRecorderRef.current.stop();
+    });
+  };
+
+  const submitAnswer = async () => {
+    const answer = transcript.trim();
+    if (!answer || !session) return;
+    const q = session.questions[currentQ];
+    setIsEvaluating(true);
+    try {
+      const evalResult = await api.evaluateAnswer(q.q, answer, jd, q.type);
+      setFeedback(evalResult);
+      setAnswers(prev => [...prev, { question: q.q, answer, ...evalResult, type: q.type }]);
+    } catch {
+      setFeedback({ score: 0, feedback: "Couldn't evaluate — but your answer was recorded.", strengths: [], improvements: [] });
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
+  const nextQuestion = () => {
+    if (currentQ + 1 >= session.questions.length) {
+      setPhase("review");
+      return;
+    }
+    setCurrentQ(prev => prev + 1);
+    setTranscript("");
+    setFeedback(null);
+    setTimeout(() => speak(session.questions[currentQ + 1].q), 300);
+  };
+
+  const resetInterview = () => {
+    window.speechSynthesis?.cancel();
+    setPhase("setup");
+    setSession(null);
+    setCurrentQ(0);
+    setAnswers([]);
+    setTranscript("");
+    setFeedback(null);
+  };
+
+  const avgScore = answers.length ? Math.round(answers.reduce((a, b) => a + b.score, 0) / answers.length) : 0;
+  const scoreColor = (s) => s >= 80 ? "var(--coral)" : s >= 60 ? "var(--sage)" : "var(--gold)";
+
+  // ── Setup Phase ──
+  if (phase === "setup") {
+    return (
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 32 }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: 26,
+            background: "linear-gradient(135deg, #ff6b5b 0%, #d4a853 50%, #7eb89e 100%)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 4px 20px rgba(255,107,91,0.3)",
+          }}>
+            {Icons.mic}
+          </div>
+          <div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em" }}>Interview Bot</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>AI-powered voice mock interviews with real-time feedback</p>
+          </div>
+        </div>
+
+        <Card style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Job Description *</label>
+            <textarea value={jd} onChange={e => setJd(e.target.value)} placeholder="Paste the job description here..." rows={6} style={{
+              width: "100%", padding: 14, borderRadius: 12, border: "1.5px solid var(--border)", fontSize: 14,
+              fontFamily: "'Source Sans 3', sans-serif", resize: "vertical", outline: "none", lineHeight: 1.6,
+              transition: "border-color 0.2s",
+            }} onFocus={e => e.target.style.borderColor = "var(--coral)"} onBlur={e => e.target.style.borderColor = "var(--border)"} />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Job Title</label>
+              <input value={jobTitle} onChange={e => setJobTitle(e.target.value)} placeholder="e.g. Senior React Developer" style={{
+                width: "100%", padding: "12px 14px", borderRadius: 12, border: "1.5px solid var(--border)",
+                fontSize: 14, fontFamily: "'Source Sans 3', sans-serif", outline: "none",
+              }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Company</label>
+              <input value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder="e.g. Google" style={{
+                width: "100%", padding: "12px 14px", borderRadius: 12, border: "1.5px solid var(--border)",
+                fontSize: 14, fontFamily: "'Source Sans 3', sans-serif", outline: "none",
+              }} />
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Interview Type</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[["mixed", "Mixed"], ["behavioral", "Behavioral"], ["technical", "Technical"]].map(([k, l]) => (
+                  <button key={k} onClick={() => setInterviewType(k)} style={{
+                    flex: 1, padding: "10px 8px", borderRadius: 10, border: "1.5px solid",
+                    borderColor: interviewType === k ? "var(--coral)" : "var(--border)",
+                    background: interviewType === k ? "rgba(255,107,91,0.08)" : "white",
+                    color: interviewType === k ? "var(--coral)" : "var(--text-secondary)",
+                    fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+                  }}>{l}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Difficulty</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[["entry", "Entry"], ["mid", "Mid"], ["senior", "Senior"]].map(([k, l]) => (
+                  <button key={k} onClick={() => setDifficulty(k)} style={{
+                    flex: 1, padding: "10px 8px", borderRadius: 10, border: "1.5px solid",
+                    borderColor: difficulty === k ? "var(--sage)" : "var(--border)",
+                    background: difficulty === k ? "rgba(126,184,158,0.08)" : "white",
+                    color: difficulty === k ? "var(--sage)" : "var(--text-secondary)",
+                    fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
+                  }}>{l}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <Button variant="coral" size="lg" onClick={startInterview} disabled={!jd.trim() || loading}
+            style={{ width: "100%", borderRadius: 14, fontSize: 16 }}
+            icon={loading ? <div style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }} /> : Icons.mic}
+          >
+            {loading ? "Preparing your interview..." : "Start Mock Interview"}
+          </Button>
+        </Card>
+
+        <div style={{ padding: 20, borderRadius: 14, background: "rgba(126,184,158,0.08)", border: "1px solid rgba(126,184,158,0.2)" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--sage)", marginBottom: 8 }}>HOW IT WORKS</div>
+          <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+            1. Paste a job description and configure your interview<br/>
+            2. The bot will ask you questions out loud using voice synthesis<br/>
+            3. Click the microphone to record your answer — Wispr AI will transcribe it<br/>
+            4. Get instant feedback with a score, strengths, and areas to improve<br/>
+            5. Review your complete performance at the end
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Active Interview Phase ──
+  if (phase === "active" && session) {
+    const q = session.questions[currentQ];
+    const progress = ((currentQ + (feedback ? 1 : 0)) / session.questions.length) * 100;
+
+    return (
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
+              {session.company_name} — {session.job_title}
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>
+              Question {currentQ + 1} of {session.questions.length}
+            </h2>
+          </div>
+          <button onClick={resetInterview} style={{
+            padding: "8px 16px", borderRadius: 10, border: "1.5px solid var(--border)",
+            background: "white", fontSize: 13, fontWeight: 600, cursor: "pointer",
+            color: "var(--text-muted)", fontFamily: "'Source Sans 3', sans-serif",
+          }}>End Interview</button>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: 4, borderRadius: 2, background: "var(--cream-dark)", marginBottom: 28, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${progress}%`, borderRadius: 2, background: "linear-gradient(90deg, var(--coral), var(--sage))", transition: "width 0.5s ease" }} />
+        </div>
+
+        {/* Question card */}
+        <Card style={{ marginBottom: 20, position: "relative", overflow: "visible" }}>
+          <div style={{
+            position: "absolute", top: -14, left: 20, padding: "4px 12px", borderRadius: 8,
+            background: q.type === "behavioral" ? "var(--coral)" : q.type === "technical" ? "var(--lavender)" : q.type === "situational" ? "var(--sage)" : "var(--gold)",
+            color: "white", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
+          }}>{q.type}</div>
+
+          <div style={{ paddingTop: 8 }}>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 600, lineHeight: 1.5, marginBottom: 16, color: "var(--ink)" }}>
+              "{q.q}"
+            </p>
+            {isSpeaking && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+                  {[0, 1, 2, 3, 4].map(i => (
+                    <div key={i} style={{
+                      width: 3, height: 12 + Math.random() * 12, borderRadius: 2,
+                      background: "var(--coral)", animation: `pulse 0.8s ease-in-out ${i * 0.1}s infinite`,
+                    }} />
+                  ))}
+                </div>
+                <span style={{ fontSize: 13, color: "var(--coral)", fontWeight: 600 }}>Speaking...</span>
+              </div>
+            )}
+            <div style={{ padding: 12, borderRadius: 10, background: "var(--cream)", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              <strong style={{ color: "var(--sage)" }}>Tip:</strong> {q.tip}
+            </div>
+          </div>
+        </Card>
+
+        {/* Recording controls */}
+        {!feedback && (
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            {!isRecording && !isTranscribing && !transcript && (
+              <button onClick={startRecording} style={{
+                width: 80, height: 80, borderRadius: 40, border: "none", cursor: "pointer",
+                background: "linear-gradient(135deg, var(--coral) 0%, #e85a4a 100%)",
+                boxShadow: "0 8px 32px rgba(255,107,91,0.4)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                margin: "0 auto", transition: "all 0.2s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = "scale(1.08)"}
+              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+              >
+                <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0" stroke="white" strokeWidth="2" fill="none"/><path d="M12 18v4" stroke="white" strokeWidth="2"/></svg>
+              </button>
+            )}
+
+            {isRecording && (
+              <div>
+                <button onClick={stopRecording} style={{
+                  width: 80, height: 80, borderRadius: 40, border: "none", cursor: "pointer",
+                  background: "var(--ink)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.3), 0 0 0 8px rgba(255,107,91,0.2)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  margin: "0 auto", animation: "pulse 1.5s ease-in-out infinite",
+                }}>
+                  <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                </button>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--coral)", marginTop: 12, animation: "pulse 1.5s ease-in-out infinite" }}>
+                  Recording... Click to stop
+                </p>
+              </div>
+            )}
+
+            {isTranscribing && (
+              <div style={{ padding: 20 }}>
+                <div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: 20, border: "3px solid var(--cream-dark)", borderTopColor: "var(--coral)", animation: "spin 1s linear infinite" }} />
+                <p style={{ fontSize: 14, color: "var(--text-muted)", fontWeight: 600 }}>Transcribing with Wispr AI...</p>
+              </div>
+            )}
+
+            {!isRecording && !isTranscribing && !transcript && (
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 12 }}>
+                Click the microphone to start recording your answer
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Transcript */}
+        {transcript && !feedback && (
+          <Card style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Your Answer</div>
+            <textarea value={transcript} onChange={e => setTranscript(e.target.value)} rows={4} style={{
+              width: "100%", padding: 12, borderRadius: 10, border: "1px solid var(--border)",
+              fontSize: 14, fontFamily: "'Source Sans 3', sans-serif", resize: "vertical",
+              lineHeight: 1.6, outline: "none", marginBottom: 12,
+            }} />
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button variant="coral" onClick={submitAnswer} disabled={isEvaluating} icon={isEvaluating ? <div style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }} /> : Icons.spark}>
+                {isEvaluating ? "Evaluating..." : "Get Feedback"}
+              </Button>
+              <Button variant="outline" onClick={startRecording}>Re-record</Button>
+            </div>
+          </Card>
+        )}
+
+        {/* Feedback */}
+        {feedback && (
+          <div style={{ animation: "slideUp 0.4s ease-out" }}>
+            <Card style={{ marginBottom: 16, borderLeft: `4px solid ${scoreColor(feedback.score)}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: 28, display: "flex", alignItems: "center", justifyContent: "center",
+                  background: `${scoreColor(feedback.score)}15`, border: `3px solid ${scoreColor(feedback.score)}`,
+                  fontSize: 20, fontWeight: 800, color: scoreColor(feedback.score),
+                }}>{feedback.score}</div>
+                <div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, marginBottom: 2 }}>
+                    {feedback.score >= 80 ? "Excellent!" : feedback.score >= 60 ? "Good Job!" : "Keep Practicing"}
+                  </div>
+                  <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5 }}>{feedback.feedback}</p>
+                </div>
+              </div>
+
+              {feedback.strengths && feedback.strengths.length > 0 && (
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--sage)", marginBottom: 6, textTransform: "uppercase" }}>Strengths</div>
+                  {feedback.strengths.map((s, i) => (
+                    <div key={i} style={{ fontSize: 14, color: "var(--text-secondary)", padding: "4px 0", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                      <span style={{ color: "var(--sage)", marginTop: 2 }}>{Icons.check}</span> {s}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {feedback.improvements && feedback.improvements.length > 0 && (
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gold)", marginBottom: 6, textTransform: "uppercase" }}>To Improve</div>
+                  {feedback.improvements.map((s, i) => (
+                    <div key={i} style={{ fontSize: 14, color: "var(--text-secondary)", padding: "4px 0", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                      <span style={{ color: "var(--gold)", marginTop: 2 }}>{Icons.arrow}</span> {s}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+
+            <Button variant={currentQ + 1 >= session.questions.length ? "coral" : "default"} size="lg" onClick={nextQuestion}
+              style={{ width: "100%", borderRadius: 14 }}
+              icon={currentQ + 1 >= session.questions.length ? Icons.chart : Icons.arrow}
+            >
+              {currentQ + 1 >= session.questions.length ? "View Full Report" : "Next Question"}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Review Phase ──
+  if (phase === "review") {
+    return (
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{
+            width: 88, height: 88, borderRadius: 44, margin: "0 auto 16px",
+            background: `${scoreColor(avgScore)}15`, border: `4px solid ${scoreColor(avgScore)}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 32, fontWeight: 800, color: scoreColor(avgScore),
+          }}>{avgScore}</div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Interview Complete!</h1>
+          <p style={{ color: "var(--text-muted)", fontSize: 15 }}>
+            {avgScore >= 80 ? "Outstanding performance! You're well-prepared." : avgScore >= 60 ? "Good performance with room for growth." : "Keep practicing — you'll get there!"}
+          </p>
+        </div>
+
+        {/* Stats row */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
+          {[
+            { label: "Questions", value: answers.length, accent: "var(--lavender)" },
+            { label: "Avg Score", value: avgScore + "%", accent: scoreColor(avgScore) },
+            { label: "Best Score", value: (Math.max(...answers.map(a => a.score)) || 0) + "%", accent: "var(--sage)" },
+          ].map((stat, i) => (
+            <div key={i} style={{ textAlign: "center", padding: 20, borderRadius: 14, background: "white", border: "1px solid var(--border)" }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: stat.accent }}>{stat.value}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginTop: 4, textTransform: "uppercase" }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Individual results */}
+        {answers.map((a, i) => (
+          <Card key={i} style={{ marginBottom: 12, borderLeft: `3px solid ${scoreColor(a.score)}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+              <div style={{ flex: 1 }}>
+                <span style={{
+                  padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700, textTransform: "uppercase",
+                  background: a.type === "behavioral" ? "rgba(255,107,91,0.1)" : a.type === "technical" ? "rgba(155,143,212,0.1)" : "rgba(126,184,158,0.1)",
+                  color: a.type === "behavioral" ? "var(--coral)" : a.type === "technical" ? "var(--lavender)" : "var(--sage)",
+                }}>{a.type}</span>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 600, marginTop: 6, lineHeight: 1.4 }}>"{a.question}"</p>
+              </div>
+              <div style={{
+                minWidth: 40, height: 40, borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center",
+                background: `${scoreColor(a.score)}15`, border: `2px solid ${scoreColor(a.score)}`,
+                fontSize: 14, fontWeight: 800, color: scoreColor(a.score), marginLeft: 12,
+              }}>{a.score}</div>
+            </div>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5, fontStyle: "italic" }}>{a.feedback}</p>
+          </Card>
+        ))}
+
+        <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
+          <Button variant="coral" size="lg" onClick={resetInterview} style={{ flex: 1, borderRadius: 14 }} icon={Icons.mic}>
+            Practice Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+// ─── Scout AI Chatbot ────────────────────────────────────────────────
+const ScoutView = ({ profile }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [hasGreeted, setHasGreeted] = useState(false);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => { scrollToBottom(); }, [messages]);
+
+  // Auto-greet on first mount
+  useEffect(() => {
+    if (!hasGreeted) {
+      setHasGreeted(true);
+      sendMessage("hello", true);
+    }
+  }, []);
+
+  const sendMessage = async (text, isSystem = false) => {
+    const userMsg = text.trim();
+    if (!userMsg) return;
+
+    if (!isSystem) {
+      setMessages(prev => [...prev, { role: "user", content: userMsg }]);
+    }
+    setInput("");
+    setLoading(true);
+
+    try {
+      const data = await api.scoutChat(userMsg);
+      setMessages(prev => [...prev, {
+        role: "scout",
+        content: data.reply,
+        jobs: data.jobs,
+        suggestions: data.suggestions,
+        insight_type: data.insight_type,
+      }]);
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        role: "scout",
+        content: "Hmm, I hit a snag. Try again in a moment!",
+        suggestions: ["Find remote jobs", "What can you do?"],
+      }]);
+    } finally {
+      setLoading(false);
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleSuggestion = (s) => {
+    sendMessage(s);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input);
+    }
+  };
+
+  // Simple markdown-like renderer for bold text
+  const renderText = (text) => {
+    if (!text) return null;
+    return text.split("\n").map((line, i) => (
+      <div key={i} style={{ minHeight: line === "" ? 12 : "auto" }}>
+        {line.split(/(\*\*.*?\*\*)/).map((part, j) =>
+          part.startsWith("**") && part.endsWith("**")
+            ? <strong key={j} style={{ fontWeight: 700 }}>{part.slice(2, -2)}</strong>
+            : <span key={j}>{part}</span>
+        )}
+      </div>
+    ));
+  };
+
+  const ScoutJobCard = ({ job }) => {
+    const score = job.match_score || 0;
+    const scoreColor = score >= 80 ? "var(--coral)" : score >= 60 ? "var(--sage)" : "var(--gold)";
+
+    return (
+      <div style={{
+        padding: 16, borderRadius: 14,
+        background: "white",
+        border: "1px solid var(--border)",
+        transition: "all 0.2s",
+        cursor: "pointer",
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--coral)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,107,91,0.12)"; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+      onClick={() => job.apply_link && window.open(job.apply_link, "_blank")}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{job.title}</div>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>{job.company}</div>
+          </div>
+          {score > 0 && (
+            <div style={{
+              minWidth: 44, height: 44, borderRadius: 22, display: "flex", alignItems: "center", justifyContent: "center",
+              background: `${scoreColor}15`, border: `2px solid ${scoreColor}`,
+              fontSize: 13, fontWeight: 800, color: scoreColor,
+            }}>{score}%</div>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", fontSize: 12, color: "var(--text-muted)" }}>
+          {job.location && <span style={{ display: "flex", alignItems: "center", gap: 3 }}>{Icons.mapPin} {job.location}</span>}
+          {job.remote && <span style={{ padding: "2px 8px", borderRadius: 6, background: "rgba(126,184,158,0.15)", color: "var(--sage)", fontWeight: 600, fontSize: 11 }}>Remote</span>}
+          {job.employment_type && <span>{job.employment_type}</span>}
+          <span style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 6, background: {jsearch:"rgba(255,107,91,0.1)",jobs_api:"rgba(155,143,212,0.1)",linkedin:"rgba(0,119,181,0.1)",indeed:"rgba(0,51,153,0.1)",jobs_search:"rgba(126,184,158,0.1)"}[job.source] || "rgba(155,143,212,0.1)", color: {jsearch:"var(--coral)",jobs_api:"var(--lavender)",linkedin:"#0077B5",indeed:"#003399",jobs_search:"var(--sage)"}[job.source] || "var(--lavender)", fontWeight: 600, fontSize: 10, textTransform: "uppercase" }}>{{jsearch:"JSearch",jobs_api:"Jobs API",linkedin:"LinkedIn",indeed:"Indeed",jobs_search:"Multi-Board"}[job.source] || job.source}</span>
+        </div>
+        {job.required_skills && job.required_skills.length > 0 && (
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 8 }}>
+            {job.required_skills.slice(0, 5).map(s => {
+              const userHas = (profile?.skills || []).some(us => us.toLowerCase() === s.toLowerCase());
+              return (
+                <span key={s} style={{
+                  padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
+                  background: userHas ? "rgba(255,107,91,0.12)" : "var(--cream-dark)",
+                  color: userHas ? "var(--coral)" : "var(--text-muted)",
+                }}>{s}</span>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 64px)", maxWidth: 800, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 24,
+            background: "linear-gradient(135deg, var(--coral) 0%, var(--lavender) 100%)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
+          }}>
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="8" stroke="white" strokeWidth="1.5" fill="none"/>
+              <circle cx="12" cy="12" r="3" fill="white" opacity="0.4"/>
+              <circle cx="12" cy="12" r="1.5" fill="white"/>
+              <path d="M12 4v3m0 10v3m-8-8h3m10 0h3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em" }}>Scout AI</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500 }}>Your AI career counselor</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div style={{
+        flex: 1, overflowY: "auto", paddingRight: 8,
+        display: "flex", flexDirection: "column", gap: 16,
+        scrollbarWidth: "thin", scrollbarColor: "var(--cream-dark) transparent",
+      }}>
+        {messages.map((msg, i) => (
+          <div key={i} style={{
+            display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
+            animation: "slideUp 0.3s ease-out forwards",
+          }}>
+            {msg.role === "scout" && (
+              <div style={{
+                width: 32, height: 32, borderRadius: 16, flexShrink: 0, marginRight: 10, marginTop: 4,
+                background: "linear-gradient(135deg, var(--coral) 0%, var(--lavender) 100%)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3" opacity="0.5"/><circle cx="12" cy="12" r="1.5"/>
+                </svg>
+              </div>
+            )}
+            <div style={{ maxWidth: "85%" }}>
+              <div style={{
+                padding: "14px 18px", borderRadius: 18,
+                background: msg.role === "user"
+                  ? "var(--ink)"
+                  : "white",
+                color: msg.role === "user" ? "var(--cream)" : "var(--text-primary)",
+                fontSize: 14, lineHeight: 1.7,
+                border: msg.role === "scout" ? "1px solid var(--border)" : "none",
+                boxShadow: msg.role === "scout" ? "0 2px 12px rgba(0,0,0,0.04)" : "none",
+                borderTopLeftRadius: msg.role === "scout" ? 4 : 18,
+                borderTopRightRadius: msg.role === "user" ? 4 : 18,
+              }}>
+                {renderText(msg.content)}
+              </div>
+
+              {/* Job results */}
+              {msg.jobs && msg.jobs.length > 0 && (
+                <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                  {msg.jobs.slice(0, 5).map((job, j) => (
+                    <ScoutJobCard key={job.id || j} job={job} />
+                  ))}
+                  {msg.jobs.length > 5 && (
+                    <div style={{ textAlign: "center", fontSize: 13, color: "var(--text-muted)", padding: 8 }}>
+                      +{msg.jobs.length - 5} more results
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Suggestion chips */}
+              {msg.suggestions && msg.suggestions.length > 0 && i === messages.length - 1 && (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+                  {msg.suggestions.map((s, j) => (
+                    <button key={j} onClick={() => handleSuggestion(s)} style={{
+                      padding: "8px 14px", borderRadius: 20,
+                      background: "var(--cream)",
+                      border: "1.5px solid var(--border-strong)",
+                      fontSize: 13, fontWeight: 600, cursor: "pointer",
+                      color: "var(--text-secondary)",
+                      transition: "all 0.2s",
+                      fontFamily: "'Source Sans 3', sans-serif",
+                    }}
+                    onMouseEnter={e => { e.target.style.borderColor = "var(--coral)"; e.target.style.color = "var(--coral)"; e.target.style.background = "rgba(255,107,91,0.06)"; }}
+                    onMouseLeave={e => { e.target.style.borderColor = "var(--border-strong)"; e.target.style.color = "var(--text-secondary)"; e.target.style.background = "var(--cream)"; }}
+                    >{s}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {/* Typing indicator */}
+        {loading && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, animation: "fadeIn 0.3s ease" }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 16,
+              background: "linear-gradient(135deg, var(--coral) 0%, var(--lavender) 100%)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3" opacity="0.5"/><circle cx="12" cy="12" r="1.5"/>
+              </svg>
+            </div>
+            <div style={{
+              padding: "14px 20px", borderRadius: 18, borderTopLeftRadius: 4,
+              background: "white", border: "1px solid var(--border)",
+              display: "flex", gap: 6, alignItems: "center",
+            }}>
+              {[0, 1, 2].map(d => (
+                <div key={d} style={{
+                  width: 8, height: 8, borderRadius: 4,
+                  background: "linear-gradient(135deg, var(--coral), var(--lavender))",
+                  animation: `pulse 1.4s ease-in-out ${d * 0.2}s infinite`,
+                }} />
+              ))}
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input area */}
+      <div style={{
+        marginTop: 16, padding: "4px 4px 4px 20px",
+        borderRadius: 24, background: "white",
+        border: "1.5px solid var(--border)",
+        display: "flex", alignItems: "center", gap: 8,
+        transition: "border-color 0.2s, box-shadow 0.2s",
+      }}
+      onFocus={e => { e.currentTarget.style.borderColor = "var(--coral)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(255,107,91,0.08)"; }}
+      onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+      >
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Ask about jobs, interviews, salary, career advice..."
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{
+            flex: 1, border: "none", outline: "none", fontSize: 15,
+            color: "var(--text-primary)", background: "transparent",
+            fontFamily: "'Source Sans 3', sans-serif",
+          }}
+        />
+        <button
+          onClick={() => sendMessage(input)}
+          disabled={!input.trim() || loading}
+          style={{
+            width: 44, height: 44, borderRadius: 20,
+            background: input.trim() ? "linear-gradient(135deg, var(--coral) 0%, var(--lavender) 100%)" : "var(--cream-dark)",
+            border: "none", cursor: input.trim() ? "pointer" : "not-allowed",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.2s",
+            boxShadow: input.trim() ? "0 4px 12px rgba(255,107,91,0.3)" : "none",
+          }}
+        >
+          <svg width="18" height="18" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24" style={{ transform: "rotate(-45deg)", marginLeft: 2 }}>
+            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>
+          </svg>
+        </button>
+      </div>
+      <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-muted)", marginTop: 8, opacity: 0.6 }}>
+        Scout searches JSearch, Jobs API, LinkedIn, Indeed & more simultaneously
+      </div>
+    </div>
+  );
+};
+
 // ─── Sidebar ─────────────────────────────────────────────────────────
 const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
   const roleColors = { seeker: "var(--coral)", recruiter: "var(--sage)", company: "var(--lavender)" };
@@ -2707,6 +3585,8 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
   const navItems = {
     seeker: [
       { key: "home", icon: Icons.briefcase, label: "Job Matches" },
+      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
+      { key: "interview", icon: Icons.mic, label: "Interview Bot", glow: true },
       { key: "resume", icon: Icons.doc, label: "My Resume" },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
@@ -2715,6 +3595,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
     ],
     recruiter: [
       { key: "home", icon: Icons.users, label: "Candidates" },
+      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
       { key: "pipeline", icon: Icons.target, label: "Pipeline" },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
@@ -2722,6 +3603,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
     ],
     company: [
       { key: "home", icon: Icons.building, label: "Dashboard" },
+      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
       { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
       { key: "analytics", icon: Icons.chart, label: "Analytics" },
       { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
@@ -2755,8 +3637,9 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
               fontWeight: 600, fontSize: 14, transition: "all 0.15s",
             }}
           >
-            <span style={{ color: activeTab === item.key ? roleColors[role] : "inherit" }}>{item.icon}</span>
-            {item.label}
+            <span style={{ color: activeTab === item.key ? roleColors[role] : item.glow ? "var(--coral)" : "inherit" }}>{item.icon}</span>
+            <span>{item.label}</span>
+            {item.glow && activeTab !== item.key && <span style={{ width: 6, height: 6, borderRadius: 3, background: "linear-gradient(135deg, var(--coral), var(--lavender))", marginLeft: "auto", animation: "pulse 2s ease-in-out infinite" }} />}
             {item.badge && (
               <span style={{
                 marginLeft: "auto", minWidth: 20, height: 20, borderRadius: 10,
@@ -2787,7 +3670,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
 const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
   const reqSkills = job.requiredSkills || [];
   const matchingSkills = reqSkills.filter(s => (profile.skills || []).map(sk => sk.toLowerCase()).includes(s.toLowerCase()));
-  const isExternal = job.source === "jsearch";
+  const isExternal = ["jsearch", "jobs_api", "linkedin", "indeed", "jobs_search"].includes(job.source);
 
   return (
     <Card hover style={{ marginBottom: 16 }}>
@@ -3295,7 +4178,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
     niceSkills: job.nice_skills || [],
     applyLink: job.apply_link || "",
     matchReasons: job.match_reasons || [],
-    source: "jsearch",
+    source: job.source || "jsearch",
   })).sort((a, b) => b.match - a.match) : null;
 
   // Fallback: compute matches against hardcoded JOBS
@@ -3317,6 +4200,8 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
     j.company.toLowerCase().includes(search.toLowerCase())
   );
 
+  if (activeTab === "scout") return <ScoutView profile={profile} />;
+  if (activeTab === "interview") return <InterviewBot profile={profile} />;
   if (activeTab === "matcher") return <MatcherView profile={profile} />;
   if (activeTab === "ideas") return <IdeasBoard user={profile} />;
 
@@ -3527,6 +4412,7 @@ const ChatView = () => {
 const RecruiterDashboard = ({ activeTab }) => {
   const [search, setSearch] = useState("");
 
+  if (activeTab === "scout") return <ScoutView profile={null} />;
   if (activeTab === "ideas") return <IdeasBoard user={null} />;
   if (activeTab === "chat") return <ChatView />;
 
@@ -3637,6 +4523,7 @@ const RecruiterDashboard = ({ activeTab }) => {
 
 // ─── Company Dashboard ───────────────────────────────────────────────
 const CompanyDashboard = ({ activeTab }) => {
+  if (activeTab === "scout") return <ScoutView profile={null} />;
   if (activeTab === "ideas") return <IdeasBoard user={null} />;
   if (activeTab === "chat") return <ChatView />;
 
