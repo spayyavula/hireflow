@@ -36,6 +36,25 @@ const JOBS = [
   { id: 5, title: "Full Stack Developer", company: "PayLoop", location: "Remote", salary: "$140k–$175k", match: 79, tags: ["Node.js", "React", "PostgreSQL"], posted: "1d ago", remote: true, applicants: 54, desc: "Build payment infrastructure used by millions.", requiredSkills: ["Node.js", "React", "SQL"], niceSkills: ["TypeScript", "Docker", "AWS"] },
 ];
 
+const toSlug = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const FEATURED_JOB_POSTINGS = JOBS.map((job) => ({
+  ...job,
+  slug: toSlug(job.title),
+  description: job.desc,
+  datePosted: "2026-05-16",
+  validThrough: "2026-08-31",
+  employmentType: "FULL_TIME",
+  directApply: true,
+  applicantLocationRequirements: job.remote ? "Remote" : "On-site",
+}));
+
+const getJobPostingBySlug = (slug) => FEATURED_JOB_POSTINGS.find((job) => job.slug === slug) || null;
+
 const CANDIDATES = [
   { id: 1, name: "Sarah Chen", role: "Senior React Developer", experience: "8 years", match: 97, skills: ["React", "TypeScript", "GraphQL"], status: "Active", avatar: "SC", location: "San Francisco" },
   { id: 2, name: "Marcus Johnson", role: "Full Stack Engineer", experience: "6 years", match: 93, skills: ["Node.js", "React", "PostgreSQL"], status: "Active", avatar: "MJ", location: "Remote" },
@@ -57,6 +76,52 @@ const MESSAGES = [
   { id: 2, from: "Sarah Chen", avatar: "SC", preview: "Thanks for reaching out! I'd love to learn more...", time: "2h", unread: true },
   { id: 3, from: "DataPulse", avatar: "DP", preview: "Your profile caught our attention...", time: "1d", unread: false },
 ];
+
+const PUBLIC_PAGE_TO_PATH = {
+  home: "/",
+  features: "/features",
+  pricing: "/pricing",
+  about: "/about",
+  roadmap: "/roadmap",
+  blog: "/blog",
+  terms: "/terms",
+  privacy: "/privacy",
+  help: "/help",
+  "coming-soon": "/coming-soon",
+};
+
+const getPageFromPath = (pathname) => {
+  if (!pathname || pathname === "/") return "home";
+
+  if (pathname === "/ideas") return "roadmap";
+
+  if (pathname.startsWith("/jobs/")) {
+    const slug = pathname.replace("/jobs/", "").trim();
+    return slug ? `job-post:${slug}` : "home";
+  }
+
+  if (pathname.startsWith("/blog/")) {
+    const slug = pathname.replace("/blog/", "").trim();
+    return slug ? `blog-post:${slug}` : "blog";
+  }
+
+  const match = Object.entries(PUBLIC_PAGE_TO_PATH).find(([, path]) => path === pathname);
+  return match ? match[0] : "coming-soon";
+};
+
+const getPathFromPage = (page) => {
+  if (!page) return "/";
+  if (page === "ideas") return "/roadmap";
+  if (page.startsWith("job-post:")) {
+    const slug = page.replace("job-post:", "").trim();
+    return slug ? `/jobs/${slug}` : "/";
+  }
+  if (page.startsWith("blog-post:")) {
+    const slug = page.replace("blog-post:", "").trim();
+    return slug ? `/blog/${slug}` : "/blog";
+  }
+  return PUBLIC_PAGE_TO_PATH[page] || "/";
+};
 
 // ─── Global Styles ───────────────────────────────────────────────────
 const GlobalStyles = () => (
@@ -138,6 +203,23 @@ const GlobalStyles = () => (
     .animate-in-delay-1 { animation: slideUp 0.6s ease-out 0.1s forwards; opacity: 0; }
     .animate-in-delay-2 { animation: slideUp 0.6s ease-out 0.2s forwards; opacity: 0; }
     .animate-in-delay-3 { animation: slideUp 0.6s ease-out 0.3s forwards; opacity: 0; }
+
+    :focus-visible {
+      outline: 2px solid var(--coral);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .animate-in, .animate-in-delay-1, .animate-in-delay-2, .animate-in-delay-3 {
+        opacity: 1 !important;
+      }
+    }
   `}</style>
 );
 
@@ -400,11 +482,12 @@ const StatCard = ({ label, value, sub, icon, accent }) => (
 
 // ─── Public Nav ─────────────────────────────────────────────────────
 const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const navPage = currentPage === "ideas" ? "roadmap" : currentPage;
   const navLinks = [
     { key: "features", label: "Features" },
     { key: "pricing", label: "Pricing" },
     { key: "about", label: "About" },
-    { key: "ideas", label: "Ideas" },
+    { key: "roadmap", label: "Roadmap" },
     { key: "blog", label: "Blog" },
   ];
 
@@ -415,18 +498,30 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       zIndex: 100, borderBottom: "1px solid var(--border)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-        <div onClick={() => onNavigate("home")} style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer" }}>
-          {Icons.logo}
+        <a
+          href={getPathFromPage("home")}
+          onClick={(e) => { e.preventDefault(); onNavigate("home"); }}
+          style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer", textDecoration: "none" }}
+        >
+          <span aria-hidden="true" style={{ display: "flex" }}>{Icons.logo}</span>
           <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
-        </div>
+        </a>
         <nav style={{ display: "flex", gap: 8 }}>
           {navLinks.map(link => (
-            <button key={link.key} onClick={() => onNavigate(link.key)} style={{
+            <a
+              key={link.key}
+              href={getPathFromPage(link.key)}
+              onClick={(e) => { e.preventDefault(); onNavigate(link.key); }}
+              style={{
               padding: "8px 16px", borderRadius: 8, border: "none", background: "transparent",
-              fontSize: 14, fontWeight: 600, cursor: "pointer", color: currentPage === link.key ? "var(--coral)" : "var(--text-secondary)",
-              fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s", position: "relative",
-              borderBottom: currentPage === link.key ? "2px solid var(--coral)" : "2px solid transparent",
-            }}>{link.label}</button>
+              fontSize: 14, fontWeight: 600, cursor: "pointer", color: navPage === link.key ? "var(--coral)" : "var(--text-secondary)",
+              fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease", position: "relative",
+              borderBottom: navPage === link.key ? "2px solid var(--coral)" : "2px solid transparent",
+              textDecoration: "none",
+            }}
+            >
+              {link.label}
+            </a>
           ))}
         </nav>
       </div>
@@ -434,12 +529,12 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         <button onClick={onSignIn} style={{
           padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
           background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
-          color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+          color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
         }}>Sign In</button>
         <button onClick={onGetStarted} style={{
           padding: "10px 24px", borderRadius: 10, border: "none",
           background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
-          cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+          cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
         }}>Get Started</button>
       </div>
     </header>
@@ -494,9 +589,9 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
   ];
 
   const stats = [
-    { value: "10,000+", label: "Matches Made" },
-    { value: "500+", label: "Companies" },
-    { value: "96%", label: "Satisfaction" },
+    { value: "5", label: "Job sources searched at once" },
+    { value: "13", label: "Career domains Scout AI covers" },
+    { value: "Voice", label: "Mock interviews with instant feedback" },
   ];
 
   return (
@@ -531,7 +626,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 700,
             lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 20,
           }}>
-            Your AI-powered<br />career partner
+            Your AI-powered <br />career partner
           </h1>
           <p style={{
             fontSize: 18, color: "var(--text-secondary)", maxWidth: 580, margin: "0 auto 40px",
@@ -541,17 +636,17 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             with real-time feedback, and everything you need to land your dream role.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-            <button onClick={onGetStarted} style={{
+            <button onClick={() => onNavigate("features")} style={{
               padding: "14px 36px", borderRadius: 12, border: "none",
               background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
-              cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+              cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease",
               boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
-            }}>Get Started Free</button>
-            <button onClick={onSignIn} style={{
+            }}>See the Platform</button>
+            <button onClick={onGetStarted} style={{
               padding: "14px 36px", borderRadius: 12, border: "1.5px solid var(--border-strong)",
               background: "transparent", fontSize: 16, fontWeight: 600,
-              cursor: "pointer", color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
-            }}>Sign In</button>
+              cursor: "pointer", color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+            }}>Create Account</button>
           </div>
         </div>
       </section>
@@ -593,12 +688,12 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             <div key={i} className={`animate-in-delay-${i + 1}`} style={{
               background: "white", borderRadius: 20, padding: 32,
               border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
-              transition: "all 0.2s ease",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
             }}>
               <div style={{
                 display: "flex", alignItems: "center", gap: 12, marginBottom: 20,
               }}>
-                <div style={{
+                <div aria-hidden="true" style={{
                   width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
                   background: "rgba(255,107,91,0.08)", color: "var(--coral)",
                 }}>
@@ -625,35 +720,86 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           <h2 style={{
             fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
-          }}>Built for everyone</h2>
+          }}>Built for your job search</h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
-            Whether you're hiring or looking — JobsSearch has you covered
+            Every feature is designed to help you decide and land your next role
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-          {roles.map((r, i) => (
+
+        {/* Featured: Job Seekers */}
+        <div className="animate-in-delay-1" style={{
+          background: "white", borderRadius: 24, padding: 40,
+          border: "1px solid var(--border)", boxShadow: "0 4px 20px rgba(13,13,15,0.05)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
+            <div aria-hidden="true" style={{
+              width: 52, height: 52, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center",
+              background: `${roles[0].accent}1a`, color: roles[0].accent,
+            }}>
+              {roles[0].icon}
+            </div>
+            <div>
+              <div style={{
+                fontSize: 12, fontWeight: 700, color: roles[0].accent,
+                letterSpacing: "0.06em", textTransform: "uppercase",
+              }}>Primary focus</div>
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, color: "var(--ink)",
+              }}>{roles[0].title}</h3>
+            </div>
+          </div>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 24, maxWidth: 560 }}>
+            Everything in JobsSearch is built around one job — helping you find the right roles,
+            prepare with confidence, and land an offer.
+          </p>
+          <ul style={{
+            listStyle: "none", padding: 0, margin: 0,
+            display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 32px",
+          }}>
+            {roles[0].points.map((pt, j) => (
+              <li key={j} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
+                <span aria-hidden="true" style={{ color: roles[0].accent, flexShrink: 0 }}>{Icons.check}</span>
+                {pt}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Secondary: Recruiters & Companies */}
+        <div style={{ textAlign: "center", margin: "48px 0 20px" }}>
+          <h3 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700,
+            color: "var(--ink)", marginBottom: 6,
+          }}>Hiring, not job hunting?</h3>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
+            JobsSearch works for the other side of the table too.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>
+          {[roles[1], roles[2]].map((r, i) => (
             <div key={i} className={`animate-in-delay-${i + 1}`} style={{
-              background: "white", borderRadius: 20, padding: 28,
+              background: "white", borderRadius: 20, padding: 24,
               border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
-              transition: "all 0.25s ease", cursor: "default",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease", cursor: "default",
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,13,15,0.08)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
             >
-              <div style={{
-                width: 44, height: 44, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center",
-                background: `${r.accent}14`, color: r.accent, marginBottom: 20,
-              }}>
-                {r.icon}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div aria-hidden="true" style={{
+                  width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
+                  background: `${r.accent}14`, color: r.accent,
+                }}>
+                  {r.icon}
+                </div>
+                <h3 style={{
+                  fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "var(--ink)",
+                }}>{r.title}</h3>
               </div>
-              <h3 style={{
-                fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700,
-                color: "var(--ink)", marginBottom: 16,
-              }}>{r.title}</h3>
-              <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+              <ul style={{ listStyle: "none", padding: 0, display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
                 {r.points.map((pt, j) => (
-                  <li key={j} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
-                    <span style={{ color: r.accent, flexShrink: 0 }}>{Icons.check}</span>
+                  <li key={j} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--text-secondary)" }}>
+                    <span aria-hidden="true" style={{ color: r.accent, flexShrink: 0 }}>{Icons.check}</span>
                     {pt}
                   </li>
                 ))}
@@ -685,12 +831,12 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
               background: "white", borderRadius: 20, padding: 32,
               border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
               display: "flex", gap: 24, alignItems: "flex-start",
-              transition: "all 0.25s ease",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease",
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(13,13,15,0.08)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
             >
-              <div style={{
+              <div aria-hidden="true" style={{
                 width: 56, height: 56, borderRadius: 16, flexShrink: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 background: f.accentBg, color: f.accent,
@@ -722,16 +868,28 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
           }}>Featured opportunities</h2>
-          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto 12px" }}>
             Top roles from companies using JobsSearch right now
           </p>
+          <span style={{
+            display: "inline-block", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+            background: "rgba(126,184,158,0.12)", color: "var(--sage)", border: "1px solid rgba(126,184,158,0.25)",
+          }}>Demo preview — sample data</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {featuredJobs.map((job, i) => (
-            <div key={job.id} className={`animate-in-delay-${i + 1}`} style={{
+            <a
+              key={job.id}
+              href={getPathFromPage(`job-post:${toSlug(job.title)}`)}
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate(`job-post:${toSlug(job.title)}`);
+              }}
+              className={`animate-in-delay-${i + 1}`}
+              style={{
               background: "white", borderRadius: 20, padding: 24,
               border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
-              transition: "all 0.25s ease", cursor: "default",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease", cursor: "pointer", textDecoration: "none",
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,13,15,0.08)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(13,13,15,0.04)"; }}
@@ -761,6 +919,55 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
                   }}>{tag}</span>
                 ))}
               </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section style={{ padding: "64px 48px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
+            color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
+          }}>What early users say</h2>
+          <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+            From beta testers who've used it in their own job search
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+          {[
+            {
+              quote: "The match scoring actually makes sense. Instead of 200 irrelevant listings I got 12 that fit — and I knew exactly why.",
+              name: "Priya M.", role: "Senior Engineer, now at a Series B startup", initials: "PM",
+            },
+            {
+              quote: "I did three mock voice interviews the night before my panel. The feedback was sharper than anything I'd gotten from a human reviewer.",
+              name: "Daniel R.", role: "Product Manager, recently promoted", initials: "DR",
+            },
+            {
+              quote: "Scout AI walked me through a career pivot I'd been overthinking for a year. It gave me a concrete skills roadmap in one session.",
+              name: "Lena K.", role: "Transitioning from QA to Product Design", initials: "LK",
+            },
+          ].map((t, i) => (
+            <div key={i} style={{
+              background: "white", borderRadius: 20, padding: 32,
+              border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(13,13,15,0.04)",
+              display: "flex", flexDirection: "column", gap: 20,
+            }}>
+              <div style={{ color: "var(--coral)", fontSize: 28, lineHeight: 1, fontFamily: "Georgia, serif" }}>"</div>
+              <p style={{ fontSize: 15, color: "var(--text-primary)", lineHeight: 1.7, fontStyle: "italic", flex: 1 }}>{t.quote}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: "50%", background: "var(--ink)", color: "var(--cream)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 13, fontWeight: 700, flexShrink: 0,
+                }}>{t.initials}</div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)" }}>{t.name}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t.role}</div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -782,13 +989,13 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           <button onClick={onGetStarted} style={{
             padding: "14px 36px", borderRadius: 12, border: "none",
             background: "var(--coral)", color: "white", fontSize: 16, fontWeight: 700,
-            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease",
             boxShadow: "0 4px 16px rgba(255,107,91,0.3)",
           }}>Create Free Account</button>
           <button onClick={() => onNavigate("features")} style={{
             padding: "14px 36px", borderRadius: 12, border: "1.5px solid rgba(250,248,245,0.2)",
             background: "transparent", color: "var(--cream)", fontSize: 16, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "all 0.2s",
+            cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
           }}>See Features</button>
         </div>
       </section>
@@ -797,8 +1004,14 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       <footer style={{
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        © 2026 JobsSearch. Built with AI.
+        <span>© 2026 JobsSearch. Built with AI.</span>
+        <div style={{ display: "flex", gap: 24 }}>
+          <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
+          <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>
+          <a href="/help" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Help</a>
+        </div>
       </footer>
     </div>
   );
@@ -978,8 +1191,14 @@ const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       <footer style={{
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        © 2026 JobsSearch. Built with AI.
+        <span>© 2026 JobsSearch. Built with AI.</span>
+        <div style={{ display: "flex", gap: 24 }}>
+          <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
+          <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>
+          <a href="/help" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Help</a>
+        </div>
       </footer>
     </div>
   );
@@ -1165,8 +1384,14 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       <footer style={{
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        © 2026 JobsSearch. Built with AI.
+        <span>© 2026 JobsSearch. Built with AI.</span>
+        <div style={{ display: "flex", gap: 24 }}>
+          <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
+          <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>
+          <a href="/help" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Help</a>
+        </div>
       </footer>
     </div>
   );
@@ -1352,8 +1577,14 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       <footer style={{
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        © 2026 JobsSearch. Built with AI.
+        <span>© 2026 JobsSearch. Built with AI.</span>
+        <div style={{ display: "flex", gap: 24 }}>
+          <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
+          <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>
+          <a href="/help" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Help</a>
+        </div>
       </footer>
     </div>
   );
@@ -4642,6 +4873,38 @@ const BlogListPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
   const featured = posts.filter(p => p.featured);
   const regular = posts.filter(p => !p.featured);
 
+  useEffect(() => {
+    const upsertMeta = (selector, attrs) => {
+      let el = document.head.querySelector(selector);
+      if (!el) {
+        el = document.createElement("meta");
+        if (attrs.name) el.setAttribute("name", attrs.name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", attrs.content);
+    };
+
+    const hasPosts = posts.length > 0;
+    upsertMeta('meta[name="robots"]', {
+      name: "robots",
+      content: hasPosts ? "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" : "noindex,follow",
+    });
+
+    return () => {
+      upsertMeta('meta[name="robots"]', {
+        name: "robots",
+        content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+      });
+    };
+  }, [posts]);
+
+  const getQuickTake = (post) => {
+    const source = post?.excerpt || post?.subtitle || post?.title || "";
+    if (!source) return "Practical guidance for your next hiring or career decision.";
+    const trimmed = source.trim();
+    return trimmed.length > 170 ? `${trimmed.slice(0, 170)}...` : trimmed;
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
       <GlobalStyles />
@@ -4703,6 +4966,12 @@ const BlogListPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
                   {post.title}
                 </h2>
                 {post.excerpt && <p style={{ fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 16 }}>{post.excerpt}</p>}
+                <div style={{
+                  background: "rgba(13,13,15,0.03)", border: "1px solid var(--border)", borderRadius: 12,
+                  padding: "12px 14px", fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 16,
+                }}>
+                  <span style={{ fontWeight: 700, color: "var(--ink)" }}>Quick take:</span> {getQuickTake(post)}
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 13, color: "var(--text-muted)" }}>
                   <span style={{ fontWeight: 600, color: "var(--ink)" }}>{post.author_name}</span>
                   <span>{post.reading_time_min} min read</span>
@@ -4744,6 +5013,12 @@ const BlogListPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
                   {post.excerpt && <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 16 }}>
                     {post.excerpt.length > 120 ? post.excerpt.slice(0, 120) + "..." : post.excerpt}
                   </p>}
+                  <p style={{
+                    fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 14,
+                    padding: "10px 12px", borderRadius: 10, background: "rgba(13,13,15,0.03)", border: "1px solid var(--border)",
+                  }}>
+                    <span style={{ fontWeight: 700, color: "var(--ink)" }}>Quick take:</span> {getQuickTake(post)}
+                  </p>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
                     <span style={{ fontWeight: 600 }}>{post.author_name}</span>
                     <div style={{ display: "flex", gap: 12 }}>
@@ -4775,6 +5050,12 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const stripHtml = (html = "") => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const postPlainText = post ? stripHtml(post.body_html || "") : "";
+  const quickAnswer = post
+    ? (post.excerpt || post.subtitle || postPlainText || "").slice(0, 260)
+    : "";
+
   const getPostUrl = () => `${window.location.origin}/blog/${slug}`;
   const shareLinks = post ? {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getPostUrl())}`,
@@ -4787,7 +5068,106 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (!post) return;
+
+    const canonicalUrl = getPostUrl();
+    const pageTitle = post.seo_title ? `${post.seo_title} | JobsSearch` : `${post.title} | JobsSearch Blog`;
+    const pageDescription = post.seo_description || post.excerpt || post.subtitle || "Career insights and hiring decisions from JobsSearch.";
+
+    document.title = pageTitle;
+
+    const upsertMeta = (selector, attrs) => {
+      let el = document.head.querySelector(selector);
+      if (!el) {
+        el = document.createElement("meta");
+        if (attrs.name) el.setAttribute("name", attrs.name);
+        if (attrs.property) el.setAttribute("property", attrs.property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", attrs.content);
+    };
+
+    upsertMeta('meta[name="description"]', { name: "description", content: pageDescription });
+    upsertMeta('meta[property="og:type"]', { property: "og:type", content: "article" });
+    upsertMeta('meta[property="og:title"]', { property: "og:title", content: pageTitle });
+    upsertMeta('meta[property="og:description"]', { property: "og:description", content: pageDescription });
+    upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonicalUrl });
+    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: pageTitle });
+    upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: pageDescription });
+
+    if (post.cover_image_url) {
+      upsertMeta('meta[property="og:image"]', { property: "og:image", content: post.cover_image_url });
+      upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: post.cover_image_url });
+    }
+
+    if (post.published_at) {
+      upsertMeta('meta[property="article:published_time"]', { property: "article:published_time", content: post.published_at });
+    }
+
+    if (post.author_name) {
+      upsertMeta('meta[name="author"]', { name: "author", content: post.author_name });
+    }
+
+    let canonicalEl = document.head.querySelector('link[rel="canonical"]');
+    if (!canonicalEl) {
+      canonicalEl = document.createElement("link");
+      canonicalEl.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalEl);
+    }
+    canonicalEl.setAttribute("href", canonicalUrl);
+
+    let jsonLdEl = document.head.querySelector('#blogpost-jsonld');
+    if (!jsonLdEl) {
+      jsonLdEl = document.createElement("script");
+      jsonLdEl.setAttribute("type", "application/ld+json");
+      jsonLdEl.setAttribute("id", "blogpost-jsonld");
+      document.head.appendChild(jsonLdEl);
+    }
+
+    const articleSchema = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: pageDescription,
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      author: {
+        "@type": "Person",
+        name: post.author_name || "JobsSearch",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "JobsSearch",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://jobssearch.work/favicon.svg",
+        },
+      },
+      datePublished: post.published_at || undefined,
+      dateModified: post.updated_at || post.published_at || undefined,
+      image: post.cover_image_url || "https://jobssearch.work/og-image.svg",
+      keywords: Array.isArray(post.tags) ? post.tags.join(", ") : undefined,
+      articleSection: CATEGORY_LABELS[post.category] || post.category,
+      wordCount: postPlainText ? postPlainText.split(/\s+/).length : undefined,
+    };
+
+    jsonLdEl.textContent = JSON.stringify(articleSchema);
+
+    return () => {
+      const existing = document.head.querySelector('#blogpost-jsonld');
+      if (existing) existing.remove();
+    };
+  }, [post, slug]);
+
   useEffect(() => { window.scrollTo(0, 0); loadPost(); }, [slug]);
+
+  useEffect(() => {
+    if (!loading && !post) {
+      onNavigate("coming-soon", { replace: true });
+    }
+  }, [loading, post, onNavigate]);
 
   const loadPost = async () => {
     try {
@@ -4797,8 +5177,6 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
       ]);
       setPost(postData);
       setRelatedJobs(jobsData);
-      if (postData.seo_title) document.title = postData.seo_title + " | JobsSearch";
-      else document.title = postData.title + " | JobsSearch Blog";
     } catch (e) {
       console.error("Failed to load post:", e);
     }
@@ -4822,17 +5200,12 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
   );
 
   if (!post) return (
-    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
-      <GlobalStyles />
-      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
-      <div style={{ textAlign: "center", padding: 120 }}>
-        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: "var(--ink)", marginBottom: 12 }}>Post not found</h2>
-        <button onClick={() => onNavigate("blog")} style={{
-          padding: "10px 24px", borderRadius: 10, border: "none", background: "var(--coral)", color: "white",
-          fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif",
-        }}>Back to Blog</button>
-      </div>
-    </div>
+    <ComingSoonPage
+      onGetStarted={onGetStarted}
+      onSignIn={onSignIn}
+      onNavigate={onNavigate}
+      currentPage="coming-soon"
+    />
   );
 
   return (
@@ -4874,6 +5247,39 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
 
           {post.subtitle && (
             <p style={{ fontSize: 20, color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 24 }}>{post.subtitle}</p>
+          )}
+
+          {quickAnswer && (
+            <div style={{
+              borderRadius: 14, border: "1px solid var(--border)", background: "rgba(13,13,15,0.03)",
+              padding: "14px 16px", marginBottom: 24,
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 6 }}>
+                Quick answer
+              </div>
+              <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                {quickAnswer}{quickAnswer.length === 260 ? "..." : ""}
+              </p>
+            </div>
+          )}
+
+          {post.tags && post.tags.length > 0 && (
+            <div style={{
+              borderRadius: 14, border: "1px solid var(--border)", background: "white",
+              padding: "14px 16px", marginBottom: 28,
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 8 }}>
+                Key points covered
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {post.tags.slice(0, 6).map(tag => (
+                  <span key={tag} style={{
+                    padding: "6px 12px", borderRadius: 16, background: "rgba(13,13,15,0.05)",
+                    fontSize: 12, fontWeight: 600, color: "var(--text-secondary)",
+                  }}>{tag}</span>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Author + Date */}
@@ -5021,6 +5427,169 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
   );
 };
 
+const StaticContentPage = ({ title, subtitle, sections, onGetStarted, onSignIn, onNavigate, currentPage }) => (
+  <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+    <GlobalStyles />
+    <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+    <section style={{ maxWidth: 920, margin: "0 auto", padding: "72px 48px" }}>
+      <h1 style={{
+        fontFamily: "'Playfair Display', serif",
+        fontSize: "clamp(34px, 4vw, 48px)",
+        lineHeight: 1.15,
+        letterSpacing: "-0.02em",
+        marginBottom: 16,
+        color: "var(--ink)",
+      }}>{title}</h1>
+      <p style={{ fontSize: 17, color: "var(--text-secondary)", marginBottom: 28, lineHeight: 1.7 }}>{subtitle}</p>
+
+      <div style={{ display: "grid", gap: 18 }}>
+        {sections.map((section) => (
+          <article key={section.heading} style={{
+            background: "white",
+            borderRadius: 16,
+            border: "1px solid var(--border)",
+            padding: 24,
+          }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, marginBottom: 10, color: "var(--ink)" }}>{section.heading}</h2>
+            <p style={{ color: "var(--text-secondary)", lineHeight: 1.75 }}>{section.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <footer style={{
+      padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
+      background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
+    }}>
+      &copy; 2026 JobsSearch. Built with AI.
+    </footer>
+  </div>
+);
+
+const ComingSoonPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => (
+  <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+    <GlobalStyles />
+    <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+    <section style={{ maxWidth: 920, margin: "0 auto", padding: "96px 48px" }}>
+      <article style={{
+        background: "linear-gradient(135deg, #fff 0%, #f9f6f2 100%)",
+        border: "1px solid var(--border)",
+        borderRadius: 24,
+        padding: "44px 36px",
+        boxShadow: "0 14px 42px rgba(13,13,15,0.08)",
+        textAlign: "center",
+      }}>
+        <div style={{
+          display: "inline-block",
+          padding: "6px 14px",
+          borderRadius: 20,
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+          color: "var(--coral)",
+          background: "rgba(255,107,91,0.10)",
+          marginBottom: 16,
+        }}>
+          Coming Soon
+        </div>
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(34px, 4.5vw, 48px)",
+          lineHeight: 1.15,
+          letterSpacing: "-0.02em",
+          marginBottom: 10,
+          color: "var(--ink)",
+        }}>
+          This page is still in production
+        </h1>
+        <p style={{ color: "var(--text-secondary)", fontSize: 16, lineHeight: 1.75, marginBottom: 26 }}>
+          We are polishing this section so it launches with complete content and a cleaner decision flow.
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+          <Button variant="coral" onClick={() => onNavigate("home")}>Back to homepage</Button>
+          <Button variant="outline" onClick={() => onNavigate("roadmap")}>See roadmap</Button>
+        </div>
+      </article>
+    </section>
+  </div>
+);
+
+const JobDetailPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage }) => {
+  const job = getJobPostingBySlug(slug);
+
+  if (!job) {
+    return (
+      <ComingSoonPage
+        onGetStarted={onGetStarted}
+        onSignIn={onSignIn}
+        onNavigate={onNavigate}
+        currentPage="coming-soon"
+      />
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+      <GlobalStyles />
+      <PublicNav onGetStarted={onGetStarted} onSignIn={onSignIn} onNavigate={onNavigate} currentPage={currentPage} />
+
+      <section style={{ maxWidth: 940, margin: "0 auto", padding: "64px 48px 80px" }}>
+        <button onClick={() => onNavigate("home")} style={{
+          border: "none", background: "transparent", color: "var(--coral)", cursor: "pointer",
+          fontWeight: 700, marginBottom: 20, fontSize: 14, fontFamily: "'Source Sans 3', sans-serif",
+        }}>&larr; Back to featured opportunities</button>
+
+        <article style={{ background: "white", borderRadius: 20, border: "1px solid var(--border)", padding: 30 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 20, flexWrap: "wrap", marginBottom: 20 }}>
+            <div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-0.03em", color: "var(--ink)", marginBottom: 8 }}>{job.title}</h1>
+              <p style={{ color: "var(--text-secondary)", fontSize: 17 }}>{job.company} · {job.location}</p>
+            </div>
+            <div style={{ alignSelf: "flex-start", padding: "8px 14px", borderRadius: 10, background: "rgba(255,107,91,0.08)", color: "var(--coral)", fontWeight: 700 }}>
+              {job.match}% match
+            </div>
+          </div>
+
+          <p style={{ color: "var(--text-primary)", lineHeight: 1.75, marginBottom: 22 }}>{job.description}</p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 16, marginBottom: 24 }}>
+            <Card style={{ padding: 18 }}>
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6 }}>Salary</div>
+              <div style={{ fontWeight: 700 }}>{job.salary}</div>
+            </Card>
+            <Card style={{ padding: 18 }}>
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6 }}>Work type</div>
+              <div style={{ fontWeight: 700 }}>{job.remote ? "Remote-friendly" : "On-site"}</div>
+            </Card>
+          </div>
+
+          <div style={{ marginBottom: 22 }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, marginBottom: 10, color: "var(--ink)" }}>Required skills</h2>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {job.requiredSkills.map((skill) => <Tag key={skill} variant="coral" size="lg">{skill}</Tag>)}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, marginBottom: 10, color: "var(--ink)" }}>Nice to have</h2>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {job.niceSkills.map((skill) => <Tag key={skill} variant="outline" size="lg">{skill}</Tag>)}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <Button variant="coral" size="lg" onClick={onGetStarted}>Create free account to apply</Button>
+            <Button variant="outline" size="lg" onClick={() => onNavigate("features")}>See platform features</Button>
+          </div>
+        </article>
+      </section>
+    </div>
+  );
+};
+
 // ─── Main App ────────────────────────────────────────────────────────
 export default function App() {
   const [user, setUser] = useState(null);
@@ -5032,7 +5601,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState(() => getPageFromPath(window.location.pathname));
 
   // Rehydrate session from stored token on mount
   useEffect(() => {
@@ -5097,6 +5666,182 @@ export default function App() {
     setAiSummary("");
     setActiveTab("home");
     setCurrentPage("home");
+    window.history.replaceState({}, "", "/");
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      setCurrentPage(getPageFromPath(window.location.pathname));
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (user) return;
+
+    const seoConfig = {
+      home: {
+        title: "JobsSearch | Decision System For Job Search And Hiring",
+        description: "JobsSearch is an AI decision system for job seekers, recruiters, and companies with match scoring, pivot paths, certification ROI, and interview guidance.",
+      },
+      features: {
+        title: "Features | JobsSearch",
+        description: "Explore AI match scoring, interview coaching, recruiter pipelines, analytics, and collaboration tools built for calmer hiring decisions.",
+      },
+      pricing: {
+        title: "Pricing | JobsSearch",
+        description: "Simple pricing for seekers, recruiters, and companies. Start free and scale your hiring workflow with AI decision support.",
+      },
+      about: {
+        title: "About | JobsSearch",
+        description: "Learn why JobsSearch exists: replacing noisy hiring dashboards with a decision-first system that helps teams and candidates move forward.",
+      },
+      roadmap: {
+        title: "Roadmap | JobsSearch",
+        description: "See upcoming JobsSearch features, submit ideas, and vote on what should be built next.",
+      },
+      terms: {
+        title: "Terms | JobsSearch",
+        description: "Terms for using JobsSearch, including account responsibilities, acceptable use, and service limitations.",
+      },
+      privacy: {
+        title: "Privacy | JobsSearch",
+        description: "How JobsSearch collects, uses, and protects your personal and hiring data.",
+      },
+      help: {
+        title: "Help | JobsSearch",
+        description: "Get support for your account, subscriptions, interviews, and hiring workflows on JobsSearch.",
+      },
+      "coming-soon": {
+        title: "Coming Soon | JobsSearch",
+        description: "This JobsSearch page is on the way. Explore current features and check the roadmap while we finish it.",
+      },
+      blog: {
+        title: "Blog | JobsSearch",
+        description: "Hiring strategy, job search guidance, interview prep, and career decision insights from the JobsSearch team.",
+      },
+    };
+
+    const isBlogPost = currentPage.startsWith("blog-post:");
+    const isJobPost = currentPage.startsWith("job-post:");
+    const pageKey = isBlogPost ? "blog" : (currentPage === "ideas" ? "roadmap" : currentPage);
+    const fallback = seoConfig.home;
+    const jobSlug = isJobPost ? currentPage.replace("job-post:", "") : "";
+    const job = isJobPost ? getJobPostingBySlug(jobSlug) : null;
+
+    const meta = job
+      ? {
+          title: `${job.title} at ${job.company} | JobsSearch`,
+          description: `${job.title} in ${job.location}. ${job.description}`,
+        }
+      : (seoConfig[pageKey] || fallback);
+    const canonicalUrl = `https://jobssearch.work${getPathFromPage(currentPage)}`;
+
+    if (currentPage === "coming-soon" && window.location.pathname !== "/coming-soon") {
+      window.history.replaceState({}, "", "/coming-soon");
+    }
+
+    document.title = meta.title;
+
+    const upsertMeta = (selector, attrs) => {
+      let el = document.head.querySelector(selector);
+      if (!el) {
+        el = document.createElement("meta");
+        if (attrs.name) el.setAttribute("name", attrs.name);
+        if (attrs.property) el.setAttribute("property", attrs.property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", attrs.content);
+    };
+
+    upsertMeta('meta[name="description"]', { name: "description", content: meta.description });
+    upsertMeta('meta[property="og:title"]', { property: "og:title", content: meta.title });
+    upsertMeta('meta[property="og:type"]', { property: "og:type", content: job ? "website" : "website" });
+    upsertMeta('meta[property="og:description"]', { property: "og:description", content: meta.description });
+    upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonicalUrl });
+    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: meta.title });
+    upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: meta.description });
+
+    let canonicalEl = document.head.querySelector('link[rel="canonical"]');
+    if (!canonicalEl) {
+      canonicalEl = document.createElement("link");
+      canonicalEl.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalEl);
+    }
+    canonicalEl.setAttribute("href", canonicalUrl);
+
+    const existingJobJsonLd = document.head.querySelector("#jobposting-jsonld");
+    if (existingJobJsonLd) existingJobJsonLd.remove();
+
+    if (job) {
+      const jobSchema = {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: job.title,
+        description: job.description,
+        datePosted: job.datePosted,
+        validThrough: job.validThrough,
+        employmentType: job.employmentType,
+        directApply: job.directApply,
+        hiringOrganization: {
+          "@type": "Organization",
+          name: job.company,
+          sameAs: "https://jobssearch.work/",
+          logo: "https://jobssearch.work/favicon.svg",
+        },
+        jobLocationType: job.remote ? "TELECOMMUTE" : undefined,
+        jobLocation: job.remote
+          ? undefined
+          : {
+              "@type": "Place",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: job.location,
+              },
+            },
+        applicantLocationRequirements: {
+          "@type": "Country",
+          name: "US",
+        },
+        baseSalary: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: {
+            "@type": "QuantitativeValue",
+            unitText: "YEAR",
+            value: job.salary,
+          },
+        },
+      };
+
+      const jsonLdEl = document.createElement("script");
+      jsonLdEl.setAttribute("type", "application/ld+json");
+      jsonLdEl.setAttribute("id", "jobposting-jsonld");
+      jsonLdEl.textContent = JSON.stringify(jobSchema);
+      document.head.appendChild(jsonLdEl);
+    }
+  }, [currentPage, user]);
+
+  useEffect(() => {
+    if (user) return;
+    if (!currentPage.startsWith("job-post:")) return;
+
+    const slug = currentPage.replace("job-post:", "").trim();
+    const job = getJobPostingBySlug(slug);
+    if (!job) {
+      navigatePublicPage("coming-soon", { replace: true });
+    }
+  }, [currentPage, user]);
+
+  const navigatePublicPage = (page, options = {}) => {
+    const { replace = false } = options;
+    const nextPath = getPathFromPage(page);
+    if (window.location.pathname !== nextPath) {
+      if (replace) window.history.replaceState({}, "", nextPath);
+      else window.history.pushState({}, "", nextPath);
+    }
+    setCurrentPage(page);
   };
 
   // Loading state while checking token
@@ -5116,7 +5861,7 @@ export default function App() {
   const navProps = {
     onGetStarted: () => { setAuthMode("register"); setShowAuth(true); },
     onSignIn: () => { setAuthMode("login"); setShowAuth(true); },
-    onNavigate: (page) => setCurrentPage(page),
+    onNavigate: (page, options) => navigatePublicPage(page, options),
     currentPage,
   };
 
@@ -5126,9 +5871,54 @@ export default function App() {
       case "features": return <FeaturesPage {...navProps} />;
       case "pricing": return <PricingPage {...navProps} />;
       case "about": return <AboutPage {...navProps} />;
+      case "roadmap":
       case "ideas": return <IdeasBoard {...navProps} user={null} />;
+      case "terms":
+        return (
+          <StaticContentPage
+            {...navProps}
+            title="Terms"
+            subtitle="Clear expectations for using JobsSearch responsibly."
+            sections={[
+              { heading: "Using the platform", body: "Use JobsSearch for legitimate hiring and job search activity only. Keep profile details accurate, and do not submit misleading credentials, fake job postings, or automated spam applications." },
+              { heading: "Accounts and access", body: "You are responsible for securing your account and any activity under it. If you suspect unauthorized access, contact support immediately and rotate credentials." },
+              { heading: "Service limits", body: "Features may evolve during beta. We may rate-limit abusive traffic or suspend accounts violating fair-use, security, or legal standards." },
+            ]}
+          />
+        );
+      case "privacy":
+        return (
+          <StaticContentPage
+            {...navProps}
+            title="Privacy"
+            subtitle="How we handle personal and hiring data."
+            sections={[
+              { heading: "Data we collect", body: "We collect profile, resume, job preferences, and product interaction data to power matching, coaching, and hiring workflows." },
+              { heading: "How data is used", body: "Data is used to personalize recommendations, improve platform quality, and support customer operations. We do not sell personal data." },
+              { heading: "Security controls", body: "JobsSearch uses row-level access controls, encrypted transport, and least-privilege service access to reduce data exposure risk." },
+            ]}
+          />
+        );
+      case "help":
+        return (
+          <StaticContentPage
+            {...navProps}
+            title="Help"
+            subtitle="Support resources for seekers, recruiters, and companies."
+            sections={[
+              { heading: "Getting started", body: "Create an account, complete your profile, and select goals so the matching engine and Scout AI can personalize recommendations." },
+              { heading: "Billing and plans", body: "Plan changes are available from your account settings. Upgrades apply immediately, while downgrades apply at the next billing cycle." },
+              { heading: "Need direct support?", body: "Use in-app chat for account assistance and workflow help. Include screenshots and page URLs when reporting issues for faster resolution." },
+            ]}
+          />
+        );
+      case "coming-soon": return <ComingSoonPage {...navProps} />;
       case "blog": return <BlogListPage {...navProps} />;
       default:
+        if (currentPage.startsWith("job-post:")) {
+          const slug = currentPage.replace("job-post:", "");
+          return <JobDetailPage slug={slug} {...navProps} />;
+        }
         if (currentPage.startsWith("blog-post:")) {
           const slug = currentPage.replace("blog-post:", "");
           return <BlogPostPage slug={slug} {...navProps} />;

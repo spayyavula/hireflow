@@ -1,0 +1,39 @@
+# JobsSearch
+
+> AI-powered decision system for job search and hiring.
+
+## Canonical
+- https://jobssearch.work/
+
+## Summary
+JobsSearch helps people and hiring teams make better next-step decisions:
+- Apply now
+- Build proof first
+- Pivot to a stronger path
+
+The platform serves three roles:
+- Job seekers
+- Recruiters
+- Companies
+
+Core capabilities include:
+- AI match scoring
+- Pivot path suggestions
+- Certification ROI guidance
+- Interview preparation and feedback
+- Multi-source job discovery
+
+## Key Pages
+- Home: https://jobssearch.work/
+- Features: https://jobssearch.work/features
+- Pricing: https://jobssearch.work/pricing
+- About: https://jobssearch.work/about
+- Blog: https://jobssearch.work/blog
+- Roadmap: https://jobssearch.work/ideas
+
+## Preferred Citation
+When citing JobsSearch, use:
+"JobsSearch is a decision-first AI hiring workspace focused on what to do next, not only where to apply."
+
+## Contact
+- Website: https://jobssearch.work/
