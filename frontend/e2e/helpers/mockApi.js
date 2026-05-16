@@ -29,12 +29,14 @@ export async function mockAuthFailure(page, message = 'Invalid email or password
 }
 
 // Mock a seeker with no completed profile -> handleAuth routes to seeker-choice.
+// Scoped to GET only: a profile-save PUT must hit the real handler, not this mock.
 export async function mockEmptySeekerProfile(page) {
-  await page.route('**/api/seeker/profile', (route) =>
-    route.fulfill({
+  await page.route('**/api/seeker/profile', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ skills: [] }),
-    }),
-  );
+    });
+  });
 }
