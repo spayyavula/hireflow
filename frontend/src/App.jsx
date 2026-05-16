@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import api from "./api";
+import { toSlug } from './lib/slug';
+import { PUBLIC_PAGE_TO_PATH, getPageFromPath, getPathFromPage } from './lib/routing';
+import { formatTimeAgo } from './lib/format';
+import { SKILL_CATEGORIES, DESIRED_ROLES, EXPERIENCE_LEVELS, WORK_PREFS, SALARY_RANGES } from './data/constants';
+import { JOBS, FEATURED_JOB_POSTINGS, getJobPostingBySlug, CANDIDATES, PIPELINE_STAGES, PIPELINE_DATA, MESSAGES } from './data/mockData';
+import { FEATURE_CATEGORIES, FEATURE_STATUSES, STATUS_CONFIG, CATEGORY_COLORS, ROLE_BADGES } from './data/ideasConfig';
+import GlobalStyles from './styles/GlobalStyles';
 
 // ═══════════════════════════════════════════════════════════════════
 // HIREFLOW REDESIGN — Classic Corporate Aesthetic
@@ -7,221 +14,7 @@ import api from "./api";
 // Colors: Deep ink, warm coral, cream accents
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── Data ────────────────────────────────────────────────────────────
-const SKILL_CATEGORIES = {
-  "Frontend": ["React", "Vue.js", "Angular", "TypeScript", "JavaScript", "HTML/CSS", "Next.js", "Tailwind CSS", "Redux", "Svelte"],
-  "Backend": ["Node.js", "Python", "Java", "Go", "Ruby", "PHP", "C#", ".NET", "Rust", "Elixir"],
-  "Data & AI": ["Machine Learning", "TensorFlow", "PyTorch", "Data Analysis", "SQL", "Pandas", "NLP", "Computer Vision", "Deep Learning", "MLOps"],
-  "Cloud & DevOps": ["AWS", "Azure", "GCP", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux", "Nginx", "Jenkins"],
-  "Design": ["Figma", "UX Research", "UI Design", "Design Systems", "Prototyping", "Adobe XD", "Sketch", "Accessibility", "Motion Design", "Branding"],
-  "Management": ["Agile/Scrum", "Product Strategy", "Stakeholder Mgmt", "Roadmapping", "Team Leadership", "Budgeting", "OKRs", "Hiring", "Mentoring", "Cross-functional"],
-};
 
-const DESIRED_ROLES = [
-  "Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
-  "ML Engineer", "Data Scientist", "Data Analyst", "DevOps Engineer", "Cloud Architect",
-  "Product Manager", "Product Designer", "UX Researcher", "Engineering Manager",
-  "Mobile Developer", "QA Engineer", "Security Engineer", "Solutions Architect",
-];
-
-const EXPERIENCE_LEVELS = ["Entry Level (0-2 yrs)", "Mid Level (3-5 yrs)", "Senior (6-9 yrs)", "Staff / Lead (10+ yrs)", "Executive"];
-const WORK_PREFS = ["Remote", "Hybrid", "On-site"];
-const SALARY_RANGES = ["$50k–$80k", "$80k–$120k", "$120k–$160k", "$160k–$200k", "$200k+"];
-
-const JOBS = [
-  { id: 1, title: "Senior React Developer", company: "TechVault", location: "San Francisco, CA", salary: "$160k–$200k", match: 96, tags: ["React", "TypeScript", "Node.js"], posted: "2h ago", remote: true, applicants: 23, desc: "Lead frontend architecture for our next-gen platform.", requiredSkills: ["React", "TypeScript", "JavaScript"], niceSkills: ["Next.js", "Redux", "Node.js"] },
-  { id: 2, title: "ML Engineer", company: "DataPulse AI", location: "Remote", salary: "$180k–$230k", match: 91, tags: ["Python", "PyTorch", "MLOps"], posted: "5h ago", remote: true, applicants: 45, desc: "Build and deploy production ML pipelines at scale.", requiredSkills: ["Python", "Machine Learning", "PyTorch"], niceSkills: ["MLOps", "AWS", "Docker"] },
-  { id: 3, title: "Product Designer", company: "Forma Studio", location: "New York, NY", salary: "$130k–$165k", match: 88, tags: ["Figma", "UX Research", "Design Systems"], posted: "1d ago", remote: false, applicants: 67, desc: "Shape the future of our design system.", requiredSkills: ["Figma", "UX Research", "UI Design"], niceSkills: ["Design Systems", "Prototyping", "Accessibility"] },
-  { id: 4, title: "DevOps Lead", company: "CloudScale", location: "Austin, TX", salary: "$155k–$195k", match: 85, tags: ["AWS", "Kubernetes", "Terraform"], posted: "3h ago", remote: true, applicants: 18, desc: "Lead infrastructure team and modernize our cloud stack.", requiredSkills: ["AWS", "Kubernetes", "Terraform"], niceSkills: ["Docker", "CI/CD", "Linux"] },
-  { id: 5, title: "Full Stack Developer", company: "PayLoop", location: "Remote", salary: "$140k–$175k", match: 79, tags: ["Node.js", "React", "PostgreSQL"], posted: "1d ago", remote: true, applicants: 54, desc: "Build payment infrastructure used by millions.", requiredSkills: ["Node.js", "React", "SQL"], niceSkills: ["TypeScript", "Docker", "AWS"] },
-];
-
-const toSlug = (value = "") =>
-  String(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-const FEATURED_JOB_POSTINGS = JOBS.map((job) => ({
-  ...job,
-  slug: toSlug(job.title),
-  description: job.desc,
-  datePosted: "2026-05-16",
-  validThrough: "2026-08-31",
-  employmentType: "FULL_TIME",
-  directApply: true,
-  applicantLocationRequirements: job.remote ? "Remote" : "On-site",
-}));
-
-const getJobPostingBySlug = (slug) => FEATURED_JOB_POSTINGS.find((job) => job.slug === slug) || null;
-
-const CANDIDATES = [
-  { id: 1, name: "Sarah Chen", role: "Senior React Developer", experience: "8 years", match: 97, skills: ["React", "TypeScript", "GraphQL"], status: "Active", avatar: "SC", location: "San Francisco" },
-  { id: 2, name: "Marcus Johnson", role: "Full Stack Engineer", experience: "6 years", match: 93, skills: ["Node.js", "React", "PostgreSQL"], status: "Active", avatar: "MJ", location: "Remote" },
-  { id: 3, name: "Emily Park", role: "ML Engineer", experience: "5 years", match: 90, skills: ["Python", "TensorFlow", "AWS"], status: "Open", avatar: "EP", location: "Seattle" },
-  { id: 4, name: "David Kim", role: "DevOps Engineer", experience: "7 years", match: 87, skills: ["Kubernetes", "Docker", "CI/CD"], status: "Active", avatar: "DK", location: "Austin" },
-];
-
-const PIPELINE_STAGES = ["Applied", "Screening", "Interview", "Offer", "Hired"];
-const PIPELINE_DATA = [
-  { name: "Sarah Chen", stage: 3, role: "Sr. React Dev", avatar: "SC" },
-  { name: "Marcus Johnson", stage: 2, role: "Full Stack", avatar: "MJ" },
-  { name: "Emily Park", stage: 1, role: "ML Engineer", avatar: "EP" },
-  { name: "David Kim", stage: 4, role: "DevOps Lead", avatar: "DK" },
-  { name: "Lisa Wang", stage: 0, role: "Designer", avatar: "LW" },
-];
-
-const MESSAGES = [
-  { id: 1, from: "TechVault HR", avatar: "TV", preview: "We'd love to schedule an interview...", time: "15m", unread: true },
-  { id: 2, from: "Sarah Chen", avatar: "SC", preview: "Thanks for reaching out! I'd love to learn more...", time: "2h", unread: true },
-  { id: 3, from: "DataPulse", avatar: "DP", preview: "Your profile caught our attention...", time: "1d", unread: false },
-];
-
-const PUBLIC_PAGE_TO_PATH = {
-  home: "/",
-  features: "/features",
-  pricing: "/pricing",
-  about: "/about",
-  roadmap: "/roadmap",
-  blog: "/blog",
-  terms: "/terms",
-  privacy: "/privacy",
-  help: "/help",
-  "coming-soon": "/coming-soon",
-};
-
-const getPageFromPath = (pathname) => {
-  if (!pathname || pathname === "/") return "home";
-
-  if (pathname === "/ideas") return "roadmap";
-
-  if (pathname.startsWith("/jobs/")) {
-    const slug = pathname.replace("/jobs/", "").trim();
-    return slug ? `job-post:${slug}` : "home";
-  }
-
-  if (pathname.startsWith("/blog/")) {
-    const slug = pathname.replace("/blog/", "").trim();
-    return slug ? `blog-post:${slug}` : "blog";
-  }
-
-  const match = Object.entries(PUBLIC_PAGE_TO_PATH).find(([, path]) => path === pathname);
-  return match ? match[0] : "coming-soon";
-};
-
-const getPathFromPage = (page) => {
-  if (!page) return "/";
-  if (page === "ideas") return "/roadmap";
-  if (page.startsWith("job-post:")) {
-    const slug = page.replace("job-post:", "").trim();
-    return slug ? `/jobs/${slug}` : "/";
-  }
-  if (page.startsWith("blog-post:")) {
-    const slug = page.replace("blog-post:", "").trim();
-    return slug ? `/blog/${slug}` : "/blog";
-  }
-  return PUBLIC_PAGE_TO_PATH[page] || "/";
-};
-
-// ─── Global Styles ───────────────────────────────────────────────────
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --ink: #0d0d0f;
-      --ink-light: #1a1a1f;
-      --ink-lighter: #2a2a32;
-      --cream: #faf8f5;
-      --cream-dark: #ede9e3;
-      --coral: #ff6b5b;
-      --coral-light: #ff8a7a;
-      --coral-dark: #e85a4a;
-      --sage: #7eb89e;
-      --sage-light: #a8d4be;
-      --lavender: #9b8fd4;
-      --gold: #d4a853;
-      --text-primary: #0d0d0f;
-      --text-secondary: #5a5a66;
-      --text-muted: #8a8a96;
-      --border: rgba(13, 13, 15, 0.08);
-      --border-strong: rgba(13, 13, 15, 0.15);
-    }
-
-    body {
-      font-family: 'Source Sans 3', 'Inter', -apple-system, sans-serif;
-      background: var(--cream);
-      color: var(--text-primary);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    ::selection {
-      background: var(--coral);
-      color: white;
-    }
-
-    input, textarea, button { font-family: inherit; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .animate-in { animation: slideUp 0.6s ease-out forwards; }
-    .animate-in-delay-1 { animation: slideUp 0.6s ease-out 0.1s forwards; opacity: 0; }
-    .animate-in-delay-2 { animation: slideUp 0.6s ease-out 0.2s forwards; opacity: 0; }
-    .animate-in-delay-3 { animation: slideUp 0.6s ease-out 0.3s forwards; opacity: 0; }
-
-    :focus-visible {
-      outline: 2px solid var(--coral);
-      outline-offset: 2px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-      .animate-in, .animate-in-delay-1, .animate-in-delay-2, .animate-in-delay-3 {
-        opacity: 1 !important;
-      }
-    }
-  `}</style>
-);
 
 // ─── Icons ───────────────────────────────────────────────────────────
 const Icons = {
@@ -1591,24 +1384,6 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
 };
 
 // ─── Ideas Board (Feature Requests) ─────────────────────────────────
-const FEATURE_CATEGORIES = ["All", "Job Search", "Resume Tools", "Recruiter Tools", "Company Dashboard", "Chat & Messaging", "AI Features", "General"];
-const FEATURE_STATUSES = ["All", "submitted", "under_review", "planned", "in_progress", "shipped"];
-const STATUS_CONFIG = {
-  submitted: { label: "Submitted", color: "var(--text-muted)", bg: "rgba(138,138,150,0.1)" },
-  under_review: { label: "Under Review", color: "var(--gold)", bg: "rgba(212,168,83,0.1)" },
-  planned: { label: "Planned", color: "var(--lavender)", bg: "rgba(155,143,212,0.1)" },
-  in_progress: { label: "In Progress", color: "var(--coral)", bg: "rgba(255,107,91,0.1)" },
-  shipped: { label: "Shipped", color: "var(--sage)", bg: "rgba(126,184,158,0.1)" },
-};
-const CATEGORY_COLORS = {
-  "Job Search": "var(--coral)", "Resume Tools": "var(--sage)", "Recruiter Tools": "var(--lavender)",
-  "Company Dashboard": "var(--gold)", "Chat & Messaging": "#5b9bd5", "AI Features": "#e06090", "General": "var(--text-muted)",
-};
-const ROLE_BADGES = {
-  seeker: { label: "Seeker", color: "var(--coral)", bg: "rgba(255,107,91,0.08)" },
-  recruiter: { label: "Recruiter", color: "var(--sage)", bg: "rgba(126,184,158,0.08)" },
-  company: { label: "Company", color: "var(--lavender)", bg: "rgba(155,143,212,0.08)" },
-};
 
 const IdeasBoard = ({ onGetStarted, onSignIn, onNavigate, currentPage, user }) => {
   const [features, setFeatures] = useState([]);
@@ -4334,16 +4109,6 @@ const MatcherView = ({ profile }) => {
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────
-const formatTimeAgo = (dateStr) => {
-  if (!dateStr) return "";
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const hours = Math.floor(diff / 3600000);
-  if (hours < 1) return "Just now";
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return `${Math.floor(days / 7)}w ago`;
-};
 
 // ─── Seeker Dashboard ────────────────────────────────────────────────
 const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
