@@ -2,6 +2,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { escapeHtml, fetchJobs, jobSlug } from "./lib.mjs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, "..", "dist");
@@ -68,33 +70,21 @@ const PAGES = [
     description:
       "Hiring strategy, job search guidance, interview prep, and career decision insights from the JobsSearch team.",
   },
-  {
-    route: "/jobs/senior-react-developer",
-    title: "Senior React Developer at TechVault | JobsSearch",
-    description:
-      "Senior React Developer in San Francisco, CA. Lead frontend architecture for our next-gen platform.",
-  },
-  {
-    route: "/jobs/ml-engineer",
-    title: "ML Engineer at DataPulse AI | JobsSearch",
-    description:
-      "ML Engineer in Remote. Build and deploy production ML pipelines at scale.",
-  },
-  {
-    route: "/jobs/product-designer",
-    title: "Product Designer at Forma Studio | JobsSearch",
-    description:
-      "Product Designer in New York, NY. Shape the future of our design system.",
-  },
 ];
 
 function replaceMeta(html, selector, content) {
+  // The replacement is passed as a function so that `$` sequences in `content`
+  // (e.g. salary figures in real job data) are inserted literally rather than
+  // interpreted as String.prototype.replace special patterns.
   if (selector === "title") {
-    return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${content}</title>`);
+    return html.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${content}</title>`);
   }
 
   if (selector === "canonical") {
-    return html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${content}" />`);
+    return html.replace(
+      /<link rel="canonical" href="[^"]*"\s*\/>/i,
+      () => `<link rel="canonical" href="${content}" />`,
+    );
   }
 
   const sepIndex = selector.indexOf(":");
@@ -110,7 +100,7 @@ function replaceMeta(html, selector, content) {
       ? `<meta name="${key}" content="${content}" />`
       : `<meta property="${key}" content="${content}" />`;
 
-  return html.replace(regex, replacement);
+  return html.replace(regex, () => replacement);
 }
 
 function applyPageSeo(baseHtml, page) {
@@ -120,36 +110,39 @@ function applyPageSeo(baseHtml, page) {
   html = replaceMeta(html, "title", page.title);
   html = replaceMeta(html, "name:description", page.description);
   html = replaceMeta(html, "canonical", canonicalUrl);
-
-  html = html.replace(
-    /<meta property="og:title" content="[\s\S]*?"\s*\/>/i,
-    `<meta property="og:title" content="${page.title}" />`,
-  );
-  html = html.replace(
-    /<meta property="og:description" content="[\s\S]*?"\s*\/>/i,
-    `<meta property="og:description" content="${page.description}" />`,
-  );
-  html = html.replace(
-    /<meta property="og:url" content="[\s\S]*?"\s*\/>/i,
-    `<meta property="og:url" content="${canonicalUrl}" />`,
-  );
-  html = html.replace(
-    /<meta name="twitter:title" content="[\s\S]*?"\s*\/>/i,
-    `<meta name="twitter:title" content="${page.title}" />`,
-  );
-  html = html.replace(
-    /<meta name="twitter:description" content="[\s\S]*?"\s*\/>/i,
-    `<meta name="twitter:description" content="${page.description}" />`,
-  );
+  html = replaceMeta(html, "property:og:title", page.title);
+  html = replaceMeta(html, "property:og:description", page.description);
+  html = replaceMeta(html, "property:og:url", canonicalUrl);
+  html = replaceMeta(html, "name:twitter:title", page.title);
+  html = replaceMeta(html, "name:twitter:description", page.description);
 
   return html;
+}
+
+function buildJobPage(job) {
+  const company = job.companyName || "a hiring company";
+  const locationPart = job.location ? ` in ${job.location}` : "";
+  const summary = job.description
+    ? job.description.replace(/\s+/g, " ").slice(0, 140).trim()
+    : "View this role and decide whether to apply, build proof, or pivot — on JobsSearch.";
+  return {
+    route: `/jobs/${jobSlug(job)}`,
+    title: escapeHtml(`${job.title} at ${company} | JobsSearch`),
+    description: escapeHtml(`${job.title}${locationPart}. ${summary}`),
+  };
 }
 
 async function main() {
   const baseHtml = await readFile(baseHtmlPath, "utf8");
 
+  const apiBase = (process.env.VITE_API_URL || "").replace(/\/$/, "");
+  const jobPages = (
+    await fetchJobs({ apiBase, siteUrl: "https://jobssearch.work" })
+  ).map(buildJobPage);
+  const allPages = [...PAGES, ...jobPages];
+
   await Promise.all(
-    PAGES.map(async (page) => {
+    allPages.map(async (page) => {
       const pageHtml = applyPageSeo(baseHtml, page);
       const outputPath =
         page.route === "/"
@@ -161,7 +154,9 @@ async function main() {
     }),
   );
 
-  console.log(`Prerendered ${PAGES.length} static routes.`);
+  console.log(
+    `Prerendered ${allPages.length} static routes (${jobPages.length} job pages).`,
+  );
 }
 
 main().catch((error) => {

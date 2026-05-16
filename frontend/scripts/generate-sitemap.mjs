@@ -2,6 +2,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { fetchJobs, jobSlug, PRODUCTION_API_BASE } from "./lib.mjs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
@@ -23,9 +25,6 @@ const staticRoutes = [
   { path: "/privacy", changefreq: "yearly", priority: "0.3" },
   { path: "/help", changefreq: "monthly", priority: "0.5" },
   { path: "/coming-soon", changefreq: "monthly", priority: "0.4" },
-  { path: "/jobs/senior-react-developer", changefreq: "weekly", priority: "0.7" },
-  { path: "/jobs/ml-engineer", changefreq: "weekly", priority: "0.7" },
-  { path: "/jobs/product-designer", changefreq: "weekly", priority: "0.7" },
 ];
 
 const xmlEscape = (value) =>
@@ -52,9 +51,10 @@ function getCandidateBlogApiUrls() {
   }
 
   const candidates = [];
-  if (API_BASE) candidates.push(`${API_BASE}/api/blog?page=1&per_page=200`);
-  candidates.push("http://localhost:8000/api/blog?page=1&per_page=200");
-  candidates.push(`${SITE_URL}/api/blog?page=1&per_page=200`);
+  if (API_BASE) candidates.push(`${API_BASE}/api/blog?page=1&per_page=50`);
+  candidates.push(`${PRODUCTION_API_BASE}/api/blog?page=1&per_page=50`);
+  candidates.push("http://localhost:8000/api/blog?page=1&per_page=50");
+  candidates.push(`${SITE_URL}/api/blog?page=1&per_page=50`);
   return candidates;
 }
 
@@ -117,9 +117,16 @@ function buildSitemapXml(urls) {
 
 async function main() {
   const blogRoutes = await fetchBlogPosts();
+  const jobRoutes = (await fetchJobs({ apiBase: API_BASE, siteUrl: SITE_URL })).map((job) => ({
+    path: `/jobs/${jobSlug(job)}`,
+    lastmod: toDate(job.createdAt),
+    changefreq: "weekly",
+    priority: "0.7",
+  }));
   const allUrls = [
     ...staticRoutes.map((r) => ({ ...r, lastmod: TODAY })),
     ...blogRoutes,
+    ...jobRoutes,
   ];
 
   const xml = buildSitemapXml(allUrls);
@@ -133,7 +140,9 @@ async function main() {
     // Dist may not exist outside build, so only update public sitemap in that case.
   }
 
-  console.log(`Sitemap updated with ${allUrls.length} URLs (${blogRoutes.length} blog URLs).`);
+  console.log(
+    `Sitemap updated with ${allUrls.length} URLs (${blogRoutes.length} blog, ${jobRoutes.length} job).`,
+  );
 }
 
 main().catch((error) => {
