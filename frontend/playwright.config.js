@@ -3,7 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 // The frontend and backend deploy separately. Point the dev server's app at the
 // live backend so blog tests exercise the real read-only API. Auth/onboarding
 // tests mock the API via route interception regardless of this URL.
-const BACKEND_URL = 'https://hireflow-api.vercel.app';
+// Overridable via VITE_API_URL so CI / local backends can be targeted.
+const BACKEND_URL = process.env.VITE_API_URL ?? 'https://hireflow-api.vercel.app';
 
 export default defineConfig({
   testDir: './e2e',
