@@ -7,3 +7,6 @@ dist/
 lock
 .vercel
 .env*.local
+test-results/
+playwright-report/
+playwright/.cache/
