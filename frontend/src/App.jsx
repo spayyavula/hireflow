@@ -5,7 +5,6 @@ import { getPageFromPath, getPathFromPage } from './lib/routing';
 import { formatTimeAgo } from './lib/format';
 import { SKILL_CATEGORIES, DESIRED_ROLES, EXPERIENCE_LEVELS, WORK_PREFS, SALARY_RANGES } from './data/constants';
 import { JOBS, getJobPostingBySlug, CANDIDATES, PIPELINE_STAGES, PIPELINE_DATA, MESSAGES } from './data/mockData';
-import { FEATURE_CATEGORIES, FEATURE_STATUSES, STATUS_CONFIG, CATEGORY_COLORS, ROLE_BADGES } from './data/ideasConfig';
 import GlobalStyles from './styles/GlobalStyles';
 import Icons from './components/ui/Icons';
 import Button from './components/ui/Button';
