@@ -20,12 +20,14 @@ for (const { path, heading } of pages) {
 }
 
 test('top-nav links navigate between marketing pages', async ({ page }) => {
+  // PublicNav renders nav items as <a> links (role "link"). exact:true avoids
+  // substring-matching unrelated CTAs like the body's "See Features" button.
   await page.goto('/');
-  await page.getByRole('button', { name: 'Features' }).click();
+  await page.getByRole('link', { name: 'Features', exact: true }).click();
   await expect(
     page.getByRole('heading', { level: 1, name: /everything you need to hire/i }),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Pricing' }).click();
+  await page.getByRole('link', { name: 'Pricing', exact: true }).click();
   await expect(
     page.getByRole('heading', { level: 1, name: /the right plan for every team/i }),
   ).toBeVisible();
