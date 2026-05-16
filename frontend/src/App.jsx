@@ -15,6 +15,9 @@ import MatchScore from './components/ui/MatchScore';
 import Avatar from './components/ui/Avatar';
 import Card from './components/ui/Card';
 import StatCard from './components/ui/StatCard';
+import PublicNav from './components/PublicNav';
+import Sidebar from './components/Sidebar';
+import JobCard from './components/JobCard';
 
 // ═══════════════════════════════════════════════════════════════════
 // HIREFLOW REDESIGN — Classic Corporate Aesthetic
@@ -22,66 +25,6 @@ import StatCard from './components/ui/StatCard';
 // Colors: Deep ink, warm coral, cream accents
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── Public Nav ─────────────────────────────────────────────────────
-const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
-  const navPage = currentPage === "ideas" ? "roadmap" : currentPage;
-  const navLinks = [
-    { key: "features", label: "Features" },
-    { key: "pricing", label: "Pricing" },
-    { key: "about", label: "About" },
-    { key: "roadmap", label: "Roadmap" },
-    { key: "blog", label: "Blog" },
-  ];
-
-  return (
-    <header style={{
-      padding: "16px 48px", display: "flex", alignItems: "center", justifyContent: "space-between",
-      position: "sticky", top: 0, background: "rgba(250,248,245,0.85)", backdropFilter: "blur(12px)",
-      zIndex: 100, borderBottom: "1px solid var(--border)",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-        <a
-          href={getPathFromPage("home")}
-          onClick={(e) => { e.preventDefault(); onNavigate("home"); }}
-          style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer", textDecoration: "none" }}
-        >
-          <span aria-hidden="true" style={{ display: "flex" }}>{Icons.logo}</span>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
-        </a>
-        <nav style={{ display: "flex", gap: 8 }}>
-          {navLinks.map(link => (
-            <a
-              key={link.key}
-              href={getPathFromPage(link.key)}
-              onClick={(e) => { e.preventDefault(); onNavigate(link.key); }}
-              style={{
-              padding: "8px 16px", borderRadius: 8, border: "none", background: "transparent",
-              fontSize: 14, fontWeight: 600, cursor: "pointer", color: navPage === link.key ? "var(--coral)" : "var(--text-secondary)",
-              fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease", position: "relative",
-              borderBottom: navPage === link.key ? "2px solid var(--coral)" : "2px solid transparent",
-              textDecoration: "none",
-            }}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-      </div>
-      <div style={{ display: "flex", gap: 12 }}>
-        <button onClick={onSignIn} style={{
-          padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
-          background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
-          color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-        }}>Sign In</button>
-        <button onClick={onGetStarted} style={{
-          padding: "10px 24px", borderRadius: 10, border: "none",
-          background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
-          cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-        }}>Get Started</button>
-      </div>
-    </header>
-  );
-};
 
 // ─── Landing Page ────────────────────────────────────────────────────
 const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
@@ -3329,160 +3272,6 @@ const ScoutView = ({ profile }) => {
         Scout searches JSearch, Jobs API, LinkedIn, Indeed & more simultaneously
       </div>
     </div>
-  );
-};
-
-// ─── Sidebar ─────────────────────────────────────────────────────────
-const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
-  const roleColors = { seeker: "var(--coral)", recruiter: "var(--sage)", company: "var(--lavender)" };
-  const roleLabels = { seeker: "Job Seeker", recruiter: "Recruiter", company: "Company" };
-
-  const navItems = {
-    seeker: [
-      { key: "home", icon: Icons.briefcase, label: "Job Matches" },
-      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
-      { key: "interview", icon: Icons.mic, label: "Interview Bot", glow: true },
-      { key: "resume", icon: Icons.doc, label: "My Resume" },
-      { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
-      { key: "analytics", icon: Icons.chart, label: "Analytics" },
-      { key: "matcher", icon: Icons.target, label: "JD Matcher" },
-      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
-    ],
-    recruiter: [
-      { key: "home", icon: Icons.users, label: "Candidates" },
-      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
-      { key: "pipeline", icon: Icons.target, label: "Pipeline" },
-      { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
-      { key: "analytics", icon: Icons.chart, label: "Analytics" },
-      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
-    ],
-    company: [
-      { key: "home", icon: Icons.building, label: "Dashboard" },
-      { key: "scout", icon: Icons.scout, label: "Scout AI", glow: true },
-      { key: "chat", icon: Icons.chat, label: "Messages", badge: 2 },
-      { key: "analytics", icon: Icons.chart, label: "Analytics" },
-      { key: "ideas", icon: Icons.spark, label: "Ideas Board" },
-    ],
-  };
-
-  return (
-    <div style={{
-      width: 240, height: "100vh", position: "fixed", left: 0, top: 0,
-      background: "white", borderRight: "1px solid var(--border)",
-      display: "flex", flexDirection: "column", padding: "24px 16px", zIndex: 100,
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px", marginBottom: 8, color: "var(--ink)" }}>
-        {Icons.logo}
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>JobsSearch</span>
-      </div>
-      <div style={{ padding: "8px", fontSize: 11, color: roleColors[role], fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-        {roleLabels[role]}
-      </div>
-
-      <nav style={{ flex: 1, marginTop: 16 }}>
-        {(navItems[role] || []).map(item => (
-          <div
-            key={item.key}
-            onClick={() => setActiveTab(item.key)}
-            style={{
-              padding: "12px 14px", borderRadius: 12, marginBottom: 4, cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 12,
-              background: activeTab === item.key ? "var(--cream)" : "transparent",
-              color: activeTab === item.key ? "var(--ink)" : "var(--text-muted)",
-              fontWeight: 600, fontSize: 14, transition: "all 0.15s",
-            }}
-          >
-            <span style={{ color: activeTab === item.key ? roleColors[role] : item.glow ? "var(--coral)" : "inherit" }}>{item.icon}</span>
-            <span>{item.label}</span>
-            {item.glow && activeTab !== item.key && <span style={{ width: 6, height: 6, borderRadius: 3, background: "linear-gradient(135deg, var(--coral), var(--lavender))", marginLeft: "auto", animation: "pulse 2s ease-in-out infinite" }} />}
-            {item.badge && (
-              <span style={{
-                marginLeft: "auto", minWidth: 20, height: 20, borderRadius: 10,
-                background: "var(--coral)", color: "white",
-                fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
-              }}>{item.badge}</span>
-            )}
-          </div>
-        ))}
-      </nav>
-
-      <div
-        onClick={onLogout}
-        style={{
-          padding: "12px 14px", borderRadius: 12, cursor: "pointer",
-          display: "flex", alignItems: "center", gap: 10,
-          color: "var(--text-muted)", fontSize: 14, fontWeight: 600,
-          borderTop: "1px solid var(--border)", marginTop: 16, paddingTop: 20,
-        }}
-      >
-        {Icons.arrowLeft} Sign Out
-      </div>
-    </div>
-  );
-};
-
-// ─── Job Card ────────────────────────────────────────────────────────
-const JobCard = ({ job, profile, onApply, applied, onSave, saved }) => {
-  const reqSkills = job.requiredSkills || [];
-  const matchingSkills = reqSkills.filter(s => (profile.skills || []).map(sk => sk.toLowerCase()).includes(s.toLowerCase()));
-  const isExternal = ["jsearch", "jobs_api", "linkedin", "indeed", "jobs_search"].includes(job.source);
-
-  return (
-    <Card hover style={{ marginBottom: 16 }}>
-      <div style={{ display: "flex", gap: 20 }}>
-        <MatchScore score={job.match} size="lg" />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
-            <div>
-              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{job.title}</h3>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "var(--text-muted)", flexWrap: "wrap" }}>
-                <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{job.company}</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 4 }}>{Icons.mapPin} {job.location}</span>
-                {job.salary && <span style={{ color: "var(--coral)", fontWeight: 600 }}>{job.salary}</span>}
-              </div>
-            </div>
-            <button onClick={onSave} style={{ background: "none", border: "none", cursor: "pointer", color: saved ? "var(--coral)" : "var(--text-muted)", padding: 8 }}>
-              {Icons.heart}
-            </button>
-          </div>
-
-          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 12, lineHeight: 1.6 }}>{job.desc}</p>
-
-          {reqSkills.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-              {reqSkills.map(s => (
-                <Tag key={s} variant={matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) ? "coral" : "outline"}>
-                  {matchingSkills.map(m => m.toLowerCase()).includes(s.toLowerCase()) && <span>{Icons.check}</span>} {s}
-                </Tag>
-              ))}
-            </div>
-          )}
-
-          {job.matchReasons && job.matchReasons.length > 0 && (
-            <div style={{ fontSize: 13, color: "var(--sage)", marginBottom: 8 }}>
-              {job.matchReasons[0]}
-            </div>
-          )}
-
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-              {reqSkills.length > 0 ? `${matchingSkills.length}/${reqSkills.length} skills match` : ""}
-              {job.posted ? ` · ${job.posted}` : ""}
-              {isExternal && <span style={{ marginLeft: 6, color: "var(--sage)" }}>via JSearch</span>}
-            </div>
-            {isExternal && job.applyLink ? (
-              <Button size="sm" variant="coral" onClick={onApply}>
-                Apply {Icons.arrow}
-              </Button>
-            ) : (
-              <Button size="sm" variant={applied ? "outline" : "coral"} onClick={onApply} disabled={applied}>
-                {applied ? <>{Icons.check} Applied</> : <>Apply {Icons.arrow}</>}
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-    </Card>
   );
 };
 
