@@ -17,8 +17,10 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import FastAPI
+import httpx
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog
 from api.routes.scout import router as scout_router
@@ -46,6 +48,24 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
+# ─── Database Unavailability Handler ─────────────────────
+@app.exception_handler(httpx.TransportError)
+async def database_unavailable_handler(request: Request, exc: httpx.TransportError):
+    """
+    Supabase unreachable (network error, or the free-tier project is paused).
+    Return a clean 503 instead of letting the raw httpx error surface as a
+    bare 500 Internal Server Error.
+    """
+    return JSONResponse(
+        status_code=503,
+        content={
+            "detail": "Service temporarily unavailable. The database is "
+            "unreachable — please try again in a few moments."
+        },
+    )
+
 
 # ─── Register Routers ────────────────────────────────────
 app.include_router(auth.router)
