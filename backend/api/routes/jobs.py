@@ -17,6 +17,10 @@ from api.core.database import (
     get_applications_by_seeker,
     create_application,
     update_application_status,
+    assign_recruiter_to_job,
+    unassign_recruiter_from_job,
+    get_recruiter_assignment,
+    get_recruiters_for_job,
 )
 from api.models.schemas import (
     JobCreate,
@@ -24,6 +28,8 @@ from api.models.schemas import (
     ApplicationCreate,
     ApplicationResponse,
     ApplicationUpdateStatus,
+    AssignRecruiterRequest,
+    RecruiterAssignmentResponse,
     SuccessResponse,
 )
 
@@ -54,6 +60,16 @@ def _format_job(job: dict) -> JobResponse:
         applicant_count=job.get("applicant_count", 0),
         created_at=job.get("created_at", ""),
     )
+
+
+def _user_can_access_job(user: dict, job: dict) -> bool:
+    """A company can access jobs it owns; a recruiter can access jobs it is assigned to."""
+    role = user.get("role")
+    if role == "company":
+        return job.get("company_id") == user["id"]
+    if role == "recruiter":
+        return get_recruiter_assignment(job["id"], user["id"]) is not None
+    return False
 
 
 # ── List / Search Jobs ───────────────────────────────────
@@ -255,6 +271,68 @@ async def update_app_status(app_id: str, req: ApplicationUpdateStatus, user: dic
         job=_format_job(job) if job else None,
         created_at=app.get("created_at", ""),
     )
+
+
+# ── Recruiter Assignments (Company-managed) ───────────────
+@router.post("/{job_id}/recruiters", response_model=RecruiterAssignmentResponse, status_code=201)
+async def assign_recruiter(job_id: str, req: AssignRecruiterRequest, user: dict = Depends(require_user)):
+    """Assign a recruiter to a job posting (owning company only)."""
+    job = get_job_by_id(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if user.get("role") != "company" or job.get("company_id") != user["id"]:
+        raise HTTPException(status_code=403, detail="Only the owning company can assign recruiters")
+
+    recruiter = get_user_by_id(req.recruiter_id)
+    if not recruiter:
+        raise HTTPException(status_code=404, detail="Recruiter not found")
+    if recruiter.get("role") != "recruiter":
+        raise HTTPException(status_code=400, detail="User is not a recruiter")
+
+    if get_recruiter_assignment(job_id, req.recruiter_id):
+        raise HTTPException(status_code=409, detail="Recruiter already assigned to this job")
+
+    assign_recruiter_to_job(job_id, req.recruiter_id)
+    return RecruiterAssignmentResponse(
+        job_id=job_id,
+        recruiter_id=req.recruiter_id,
+        recruiter_name=recruiter.get("name"),
+        agency=recruiter.get("agency"),
+    )
+
+
+@router.delete("/{job_id}/recruiters/{recruiter_id}", response_model=SuccessResponse)
+async def unassign_recruiter(job_id: str, recruiter_id: str, user: dict = Depends(require_user)):
+    """Remove a recruiter from a job posting (owning company only)."""
+    job = get_job_by_id(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if user.get("role") != "company" or job.get("company_id") != user["id"]:
+        raise HTTPException(status_code=403, detail="Only the owning company can unassign recruiters")
+
+    unassign_recruiter_from_job(job_id, recruiter_id)
+    return SuccessResponse(message="Recruiter unassigned", id=recruiter_id)
+
+
+@router.get("/{job_id}/recruiters", response_model=list[RecruiterAssignmentResponse])
+async def list_job_recruiters(job_id: str, user: dict = Depends(require_user)):
+    """List recruiters assigned to a job (owning company or an assigned recruiter)."""
+    job = get_job_by_id(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if not _user_can_access_job(user, job):
+        raise HTTPException(status_code=403, detail="You do not have access to this job")
+
+    results = []
+    for rid in get_recruiters_for_job(job_id):
+        recruiter = get_user_by_id(rid) or {}
+        results.append(RecruiterAssignmentResponse(
+            job_id=job_id,
+            recruiter_id=rid,
+            recruiter_name=recruiter.get("name"),
+            agency=recruiter.get("agency"),
+        ))
+    return results
 
 
 

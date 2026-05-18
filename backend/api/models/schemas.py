@@ -180,6 +180,17 @@ class ApplicationUpdateStatus(BaseModel):
     status: ApplicationStatus
 
 
+class AssignRecruiterRequest(BaseModel):
+    recruiter_id: str
+
+
+class RecruiterAssignmentResponse(BaseModel):
+    job_id: str
+    recruiter_id: str
+    recruiter_name: Optional[str] = None
+    agency: Optional[str] = None
+
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CANDIDATES (recruiter/company view of seekers)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
