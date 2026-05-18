@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:pr": "playwright test e2e/smoke.spec.js --grep \"homepage loads and shows the hero heading|a new seeker reaches the onboarding choice screen\" e2e/onboarding.spec.js"
   },
   "dependencies": {
     "react": "^18.3.1",
