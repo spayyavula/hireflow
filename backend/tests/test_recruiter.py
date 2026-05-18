@@ -73,9 +73,15 @@ class TestPipeline:
 
     @pytest.mark.integration
     def test_pipeline_includes_applications(self, seeded_client):
-        # Create application
+        # Seeker applies to job_1
         seeker_token, _ = register_user(seeded_client, email="pipe@test.com", role="seeker", name="Pipe User")
         seeded_client.post("/api/jobs/job_1/apply", json={"job_id": "job_1"}, headers=auth_header(seeker_token))
+
+        # ADR-0001: the pipeline is scoped to assigned jobs, so the owning
+        # company must assign the recruiter to job_1 first.
+        co_resp = seeded_client.post("/api/auth/login", json={"email": "techvault@demo.com", "password": "demo1234"})
+        co_token = co_resp.json()["access_token"]
+        seeded_client.post("/api/jobs/job_1/recruiters", json={"recruiter_id": "rec_1"}, headers=auth_header(co_token))
 
         resp = seeded_client.post("/api/auth/login", json={"email": "recruiter@demo.com", "password": "demo1234"})
         rec_token = resp.json()["access_token"]

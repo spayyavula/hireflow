@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from api.core.config import require_user
 from api.core.database import (
@@ -6,7 +6,8 @@ from api.core.database import (
     get_active_jobs,
     get_job_by_id,
     get_user_by_id,
-    get_all_applications,
+    get_applications_by_job,
+    get_jobs_for_recruiter,
 )
 from api.models.schemas import (
     CandidateResponse,
@@ -16,6 +17,12 @@ from api.models.schemas import (
 from api.services.ai import compute_candidate_match
 
 router = APIRouter(prefix="/api/recruiter", tags=["Recruiter"])
+
+
+def _require_recruiter(user: dict):
+    """Reject any caller whose role is not 'recruiter'."""
+    if user.get("role") != "recruiter":
+        raise HTTPException(status_code=403, detail="Recruiter access only")
 
 
 def _seeker_to_candidate(s: dict, score: int = 75) -> CandidateResponse:
@@ -45,6 +52,7 @@ async def search_candidates(
     user: dict = Depends(require_user),
 ):
     """Search and rank candidates. Optionally match against a specific job."""
+    _require_recruiter(user)
     seekers = get_seekers_with_skills()
 
     if query:
@@ -83,6 +91,7 @@ async def search_candidates(
 @router.post("/candidates/search", response_model=list[CandidateResponse])
 async def search_candidates_advanced(req: CandidateSearchRequest, user: dict = Depends(require_user)):
     """Advanced candidate search with structured filters."""
+    _require_recruiter(user)
     seekers = get_seekers_with_skills()
 
     if req.query:
@@ -120,24 +129,25 @@ async def search_candidates_advanced(req: CandidateSearchRequest, user: dict = D
 # ── Pipeline ──────────────────────────────────────────────
 @router.get("/pipeline", response_model=dict)
 async def get_pipeline(user: dict = Depends(require_user)):
-    """Get the hiring pipeline grouped by stage."""
+    """Get the hiring pipeline for the recruiter's assigned jobs, grouped by stage."""
+    _require_recruiter(user)
     stages = ["applied", "screening", "interview", "offer", "hired"]
     pipeline = {stage: [] for stage in stages}
 
-    all_apps = get_all_applications()
-    for app in all_apps:
-        status = app.get("status", "applied")
-        if status in pipeline:
-            seeker = get_user_by_id(app.get("seeker_id", "")) or {}
-            job = get_job_by_id(app.get("job_id", "")) or {}
-            pipeline[status].append({
-                "application_id": app["id"],
-                "candidate_name": seeker.get("name", "Unknown"),
-                "candidate_id": app.get("seeker_id"),
-                "job_title": job.get("title", "Unknown"),
-                "job_id": app.get("job_id"),
-                "applied_at": app.get("created_at"),
-            })
+    for job_id in get_jobs_for_recruiter(user["id"]):
+        job = get_job_by_id(job_id) or {}
+        for app in get_applications_by_job(job_id):
+            status = app.get("status", "applied")
+            if status in pipeline:
+                seeker = get_user_by_id(app.get("seeker_id", "")) or {}
+                pipeline[status].append({
+                    "application_id": app["id"],
+                    "candidate_name": seeker.get("name", "Unknown"),
+                    "candidate_id": app.get("seeker_id"),
+                    "job_title": job.get("title", "Unknown"),
+                    "job_id": job_id,
+                    "applied_at": app.get("created_at"),
+                })
 
     return {
         "stages": stages,
@@ -150,6 +160,7 @@ async def get_pipeline(user: dict = Depends(require_user)):
 @router.get("/analytics", response_model=RecruiterAnalytics)
 async def get_recruiter_analytics(user: dict = Depends(require_user)):
     """Get recruiter analytics dashboard data."""
+    _require_recruiter(user)
     return RecruiterAnalytics(
         placements_ytd=23,
         revenue_ytd=412000,
