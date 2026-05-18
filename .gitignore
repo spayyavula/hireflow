@@ -34,3 +34,9 @@ Thumbs.db
 htmlcov/
 coverage/
 .vercel
+
+# Agent tooling state (oh-my-claudecode, agents, local skills)
+.omc/
+.agents/
+.claude/skills/
+skills-lock.json
