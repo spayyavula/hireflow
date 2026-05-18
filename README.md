@@ -47,10 +47,10 @@ hireflow/
 │   ├── api/
 │   │   ├── index.py               → App entrypoint + CORS + routers
 │   │   ├── core/config.py         → JWT auth, bcrypt hashing
-│   │   ├── core/database.py       → 40+ Supabase DB functions
+│   │   ├── core/database.py       → 50+ Supabase DB functions
 │   │   ├── models/schemas.py      → Pydantic request/response models
-│   │   ├── routes/                → 9 route modules (auth, seeker, jobs, recruiter, company, chat, matcher, features, blog)
-│   │   └── services/              → AI matching, LLM client, blog AI enrichment
+│   │   ├── routes/                → 11 route modules (auth, seeker, jobs, recruiter, company, chat, matcher, features, blog, scout, interview)
+│   │   └── services/              → AI matching, LLM client, blog AI enrichment, jobs provider integration
 │   ├── tools/pressroom.py         → Browserless CMS CLI tool
 │   ├── supabase/migrations/       → Schema + seed SQL (5 migrations)
 │   ├── tests/                     → 128+ pytest tests (unit/integration/regression)
@@ -71,7 +71,7 @@ hireflow/
 | Database | Supabase (PostgreSQL) with Row Level Security |
 | Auth | bcrypt + JWT tokens (7-day expiry) |
 | AI/LLM | OpenAI / Anthropic (provider-agnostic) |
-| Mobile | React Native 0.83, Expo 55 |
+| Mobile | React Native 0.81, Expo 54 |
 | CMS | Pressroom CLI (Python, markdown + YAML frontmatter) |
 | Deployment | Vercel (serverless) |
 | Testing | pytest (backend), Vitest + RTL (frontend) |
@@ -123,30 +123,80 @@ App runs at [http://localhost:5173](http://localhost:5173) with API proxy to loc
 |--------|----------|-------------|
 | POST | `/api/auth/register` | Register (seeker/recruiter/company) |
 | POST | `/api/auth/login` | Login → JWT token |
-| GET/PUT | `/api/seeker/profile` | Seeker profile CRUD |
+| POST/GET | `/api/seeker/profile` | Seeker profile create/update + fetch |
 | POST | `/api/seeker/resume/upload` | Upload PDF/DOCX resume |
-| GET | `/api/seeker/matches` | AI-scored job matches |
-| POST | `/api/seeker/ai-summary` | Generate AI profile summary |
+| POST | `/api/seeker/ai/summary` | Generate AI profile summary |
+| GET/POST | `/api/seeker/jobs/matches` | AI-scored job matches |
+| GET | `/api/seeker/analytics` | Seeker analytics |
 | GET | `/api/jobs` | List/search active jobs |
+| GET | `/api/jobs/search` | Search external jobs |
+| GET | `/api/jobs/{id}` | Job details |
 | POST | `/api/jobs` | Create job posting (company) |
 | POST | `/api/jobs/{id}/apply` | Apply to job |
+| GET | `/api/jobs/{id}/applications` | List applications for a job |
+| PATCH | `/api/jobs/applications/{id}/status` | Update pipeline stage |
+| POST | `/api/jobs/{id}/recruiters` | Assign a recruiter to a job (company) |
+| GET | `/api/jobs/{id}/recruiters` | List recruiters assigned to a job |
+| DELETE | `/api/jobs/{id}/recruiters/{recruiter_id}` | Unassign a recruiter (company) |
+| GET | `/api/jobs/me/applications` | My applications |
 | GET | `/api/recruiter/candidates` | Search candidates |
+| POST | `/api/recruiter/candidates/search` | Advanced candidate search |
+| GET | `/api/recruiter/pipeline` | Recruiter pipeline |
+| GET | `/api/recruiter/analytics` | Recruiter analytics |
 | GET | `/api/company/dashboard` | Company hiring dashboard |
-| POST | `/api/chat/send` | Send message |
+| GET | `/api/company/candidates/recommended` | Recommended candidates |
+| GET | `/api/company/analytics` | Company analytics |
+| GET | `/api/chat/conversations` | List conversations |
+| GET | `/api/chat/conversations/{id}/messages` | Get messages |
+| POST | `/api/chat/messages` | Send message |
 | POST | `/api/matcher/analyze` | AI resume-to-JD match analysis |
 | POST | `/api/matcher/generate` | AI cover letter generation |
+| GET | `/api/matcher/history` | List matcher history |
+| GET | `/api/matcher/history/{id}` | Get matcher analysis |
 | GET | `/api/features` | List feature requests |
 | POST | `/api/features` | Submit feature request |
 | POST | `/api/features/{id}/vote` | Vote/unvote on feature |
+| GET | `/api/features/{id}/comments` | List feature comments |
+| POST | `/api/features/{id}/comments` | Add feature comment |
 | GET | `/api/blog` | List published blog posts |
+| GET | `/api/blog/categories` | List blog categories |
 | GET | `/api/blog/{slug}` | Get blog post by slug |
 | GET | `/api/blog/{slug}/related-jobs` | Jobs matching post skills |
 | POST | `/api/blog/admin/posts` | Create blog post (CLI) |
 | POST | `/api/blog/admin/enrich` | AI-enrich blog content |
+| POST | `/api/scout/chat` | AI career counselor chat |
+| POST | `/api/interview/start` | Start interview session |
+| POST | `/api/interview/transcribe` | Transcribe interview audio |
+| POST | `/api/interview/evaluate` | Evaluate interview answer |
 
 Full Swagger docs available at `/docs` when running.
 
 ## Testing
+
+### Fast local verification
+```powershell
+.\tools\verify.ps1
+```
+
+Cross-platform equivalent:
+```bash
+node tools/verify.mjs
+```
+
+Included fast gates:
+- API contract parity
+- Backend dependency consistency
+- Frontend unit tests
+- Backend unit and integration tests
+
+Optional PR e2e subset:
+```powershell
+.\tools\verify.ps1 -IncludeE2E
+```
+
+```bash
+node tools/verify.mjs --include-e2e
+```
 
 ### Backend (pytest)
 ```bash
@@ -155,6 +205,7 @@ pytest                           # Run all 128+ tests
 pytest tests/unit/               # Unit tests only
 pytest tests/integration/        # Integration tests only
 pytest tests/regression/         # Regression tests only
+pytest -m "unit or integration"  # Fast CI-aligned subset
 pytest -v --tb=short             # Verbose with short tracebacks
 ```
 
@@ -162,8 +213,8 @@ pytest -v --tb=short             # Verbose with short tracebacks
 ```bash
 cd frontend
 npm test                         # Run all tests
-npm run test:unit                # Unit tests only
-npm run test:integration         # Integration tests only
+npm run test:e2e:pr              # Fast PR e2e subset
+npm run test:e2e                 # Full Playwright suite
 ```
 
 ## Deployment
