@@ -189,6 +189,44 @@ def get_all_applications() -> list[dict]:
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  JOB RECRUITERS (recruiter ↔ job assignments)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def assign_recruiter_to_job(job_id: str, recruiter_id: str) -> dict:
+    res = supabase.table("job_recruiters").insert(
+        {"job_id": job_id, "recruiter_id": recruiter_id}
+    ).execute()
+    return res.data[0]
+
+
+def unassign_recruiter_from_job(job_id: str, recruiter_id: str):
+    supabase.table("job_recruiters").delete().eq("job_id", job_id).eq(
+        "recruiter_id", recruiter_id
+    ).execute()
+
+
+def get_recruiter_assignment(job_id: str, recruiter_id: str) -> Optional[dict]:
+    res = (
+        supabase.table("job_recruiters")
+        .select("*")
+        .eq("job_id", job_id)
+        .eq("recruiter_id", recruiter_id)
+        .limit(1)
+        .execute()
+    )
+    return res.data[0] if res.data else None
+
+
+def get_recruiters_for_job(job_id: str) -> list[str]:
+    res = supabase.table("job_recruiters").select("recruiter_id").eq("job_id", job_id).execute()
+    return [r["recruiter_id"] for r in (res.data or [])]
+
+
+def get_jobs_for_recruiter(recruiter_id: str) -> list[str]:
+    res = supabase.table("job_recruiters").select("job_id").eq("recruiter_id", recruiter_id).execute()
+    return [r["job_id"] for r in (res.data or [])]
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CONVERSATIONS & MESSAGES
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_conversation_between(user_a: str, user_b: str) -> Optional[str]:
