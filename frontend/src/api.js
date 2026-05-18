@@ -88,11 +88,11 @@ class JobsSearchAPI {
   }
 
   async getMatches(minScore = 0) {
-    return this._fetch(`/api/seeker/matches?min_score=${minScore}`);
+    return this._fetch(`/api/seeker/jobs/matches?min_score=${minScore}`);
   }
 
   async generateAISummary() {
-    return this._fetch('/api/seeker/ai-summary', { method: 'POST' });
+    return this._fetch('/api/seeker/ai/summary', { method: 'POST' });
   }
 
   // ─── Jobs ─────────────────────────────────────────────
@@ -272,7 +272,7 @@ class JobsSearchAPI {
 
   // ─── Chat ─────────────────────────────────────────────
   async sendMessage(recipientId, content) {
-    return this._fetch('/api/chat/send', {
+    return this._fetch('/api/chat/messages', {
       method: 'POST',
       body: JSON.stringify({ recipient_id: recipientId, content }),
     });
