@@ -205,6 +205,12 @@ class TestRecruiterJourneyRegression:
         # Apply to job so pipeline has data
         c.post("/api/jobs/job_1/apply", json={"job_id": "job_1"}, headers=auth_header(seeker_token))
 
+        # ADR-0001: the pipeline is scoped to assigned jobs, so the owning
+        # company must assign the recruiter to job_1 first.
+        co_resp = c.post("/api/auth/login", json={"email": "techvault@demo.com", "password": "demo1234"})
+        co_token = co_resp.json()["access_token"]
+        c.post("/api/jobs/job_1/recruiters", json={"recruiter_id": "rec_1"}, headers=auth_header(co_token))
+
         # Login as recruiter
         resp = c.post("/api/auth/login", json={
             "email": "recruiter@demo.com", "password": "demo1234",
