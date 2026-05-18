@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import vike from 'vike/plugin';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [vike()],
   server: {
     port: 5173,
     proxy: {
@@ -18,12 +18,5 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
-  },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.js'],
-    include: ['src/**/*.{test,spec}.{js,jsx}'],
-    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
   },
 });
