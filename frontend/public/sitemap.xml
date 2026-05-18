@@ -61,20 +61,68 @@
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://jobssearch.work/jobs/senior-react-developer</loc>
-    <lastmod>2026-05-16</lastmod>
+    <loc>https://jobssearch.work/blog/10-best-online-career-coaching-services-remote-job-seekers</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/blog/7-best-websites-remote-jobs-united-states</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/blog/remote-jobs-bay-area-best-sources</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/senior-react-developer-job_1</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://jobssearch.work/jobs/ml-engineer</loc>
-    <lastmod>2026-05-16</lastmod>
+    <loc>https://jobssearch.work/jobs/ml-engineer-job_2</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://jobssearch.work/jobs/product-designer</loc>
-    <lastmod>2026-05-16</lastmod>
+    <loc>https://jobssearch.work/jobs/product-designer-job_3</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/devops-lead-job_4</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/frontend-architect-job_5</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/full-stack-developer-job_6</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/data-scientist-job_7</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jobssearch.work/jobs/engineering-manager-job_8</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
