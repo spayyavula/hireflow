@@ -238,10 +238,12 @@ async def apply_to_job(job_id: str, req: ApplicationCreate, user: dict = Depends
 
 @router.get("/{job_id}/applications", response_model=list[ApplicationResponse])
 async def get_job_applications(job_id: str, user: dict = Depends(require_user)):
-    """Get all applications for a job (company/recruiter only)."""
+    """Get all applications for a job (owning company or an assigned recruiter only)."""
     job = get_job_by_id(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
+    if not _user_can_access_job(user, job):
+        raise HTTPException(status_code=403, detail="You do not have access to this job's applications")
 
     apps = get_applications_by_job(job_id)
     return [
@@ -256,19 +258,28 @@ async def get_job_applications(job_id: str, user: dict = Depends(require_user)):
 
 @router.patch("/applications/{app_id}/status", response_model=ApplicationResponse)
 async def update_app_status(app_id: str, req: ApplicationUpdateStatus, user: dict = Depends(require_user)):
-    """Update application status (move candidate through pipeline)."""
+    """Update application status (move a candidate through the pipeline).
+
+    Owning company or an assigned recruiter only. Only the company may set 'hired'.
+    """
     app = get_application_by_id(app_id)
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
 
-    updated = update_application_status(app_id, req.status.value)
     job = get_job_by_id(app["job_id"])
+    if not job or not _user_can_access_job(user, job):
+        raise HTTPException(status_code=403, detail="You do not have access to this application")
+
+    if req.status.value == "hired" and user.get("role") != "company":
+        raise HTTPException(status_code=403, detail="Only the company can mark a candidate as hired")
+
+    updated = update_application_status(app_id, req.status.value)
 
     return ApplicationResponse(
         id=app["id"], job_id=app["job_id"], seeker_id=app["seeker_id"],
         status=updated.get("status", req.status.value),
         cover_letter=app.get("cover_letter"),
-        job=_format_job(job) if job else None,
+        job=_format_job(job),
         created_at=app.get("created_at", ""),
     )
 
