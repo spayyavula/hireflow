@@ -1,4 +1,4 @@
-import { toSlug } from './slug';
+import { toSlug } from './slug.js';
 
 const HUB_THRESHOLD = 5;
 
