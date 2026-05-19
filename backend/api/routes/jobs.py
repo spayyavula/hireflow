@@ -1,7 +1,8 @@
+import logging
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 
 from api.core.config import require_user, get_current_user
 from api.core.database import (
@@ -32,8 +33,27 @@ from api.models.schemas import (
     RecruiterAssignmentResponse,
     SuccessResponse,
 )
+from api.services.indexing import notify_job_published, notify_job_removed
 
 router = APIRouter(prefix="/api/jobs", tags=["Jobs"])
+
+logger = logging.getLogger(__name__)
+
+
+def _safe_notify_published(job: dict) -> None:
+    """Background-task shim: an indexing failure must never surface."""
+    try:
+        notify_job_published(job)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("Google Indexing publish notification failed: %s", exc)
+
+
+def _safe_notify_removed(job: dict) -> None:
+    """Background-task shim: an indexing failure must never surface."""
+    try:
+        notify_job_removed(job)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("Google Indexing removal notification failed: %s", exc)
 
 
 def _format_job(job: dict) -> JobResponse:
@@ -158,7 +178,9 @@ async def get_job(job_id: str):
 
 # ── Create / Manage Jobs (Company) ────────────────────────
 @router.post("", response_model=JobResponse, status_code=201)
-async def create_job_endpoint(req: JobCreate, user: dict = Depends(require_user)):
+async def create_job_endpoint(
+    req: JobCreate, background_tasks: BackgroundTasks, user: dict = Depends(require_user),
+):
     """Create a new job posting (company only)."""
     if user.get("role") != "company":
         raise HTTPException(status_code=403, detail="Only companies can create job postings")
@@ -172,6 +194,7 @@ async def create_job_endpoint(req: JobCreate, user: dict = Depends(require_user)
         "status": "active",
         "applicant_count": 0,
     })
+    background_tasks.add_task(_safe_notify_published, job)
     return _format_job(job)
 
 
@@ -189,7 +212,9 @@ async def update_job_endpoint(job_id: str, req: JobCreate, user: dict = Depends(
 
 
 @router.delete("/{job_id}", response_model=SuccessResponse)
-async def close_job_endpoint(job_id: str, user: dict = Depends(require_user)):
+async def close_job_endpoint(
+    job_id: str, background_tasks: BackgroundTasks, user: dict = Depends(require_user),
+):
     """Close a job posting."""
     job = get_job_by_id(job_id)
     if not job:
@@ -197,6 +222,7 @@ async def close_job_endpoint(job_id: str, user: dict = Depends(require_user)):
     if job.get("company_id") != user["id"]:
         raise HTTPException(status_code=403, detail="Not your job posting")
     close_job(job_id)
+    background_tasks.add_task(_safe_notify_removed, job)
     return SuccessResponse(message="Job closed", id=job_id)
 
 
