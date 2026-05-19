@@ -1,4 +1,5 @@
 import { writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -6,7 +7,10 @@ import { urlsetXml, sitemapIndexXml, deriveHubEntries } from '../src/lib/sitemap
 
 const SITE = 'https://jobssearch.work';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const outDir = path.resolve(__dirname, '..', 'dist', 'client');
+const outDirs = [
+  path.resolve(__dirname, '..', 'dist', 'client'),
+  path.resolve(__dirname, '..', '.vercel', 'output', 'static'),
+];
 const apiBase = (process.env.VITE_API_URL || '').replace(/\/$/, '');
 
 const STATIC_ROUTES = [
@@ -49,8 +53,11 @@ async function main() {
     Object.keys(files).map((name) => `${SITE}/${name}`),
   );
 
-  for (const [name, xml] of Object.entries(files)) {
-    await writeFile(path.join(outDir, name), xml, 'utf8');
+  for (const dir of outDirs) {
+    if (!existsSync(dir)) continue;
+    for (const [name, xml] of Object.entries(files)) {
+      await writeFile(path.join(dir, name), xml, 'utf8');
+    }
   }
   console.log(
     `Sitemaps written: ${jobs.length} jobs, ${posts.length} blog posts, ` +
