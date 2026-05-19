@@ -235,6 +235,7 @@ chmod +x deploy.sh
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role API key |
 | `SECRET_KEY` | JWT signing secret |
+| `GOOGLE_INDEXING_CREDENTIALS` | Optional. Google service-account JSON (entire credential file as a single value) for the Google Indexing API; when set, the backend notifies Google when a job posting is created or closed so Google for Jobs re-crawls it (skipped silently when unset). The service account needs Owner on the Search Console property. |
 
 **Frontend:**
 | Variable | Description |
