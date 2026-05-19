@@ -30,3 +30,12 @@ class TestHubContentEndpoint:
     def test_invalid_slug_returns_400(self, client):
         resp = client.get("/api/seo/hub/a/b/c/d/e")
         assert resp.status_code == 400
+
+    @pytest.mark.integration
+    def test_cache_hit_returns_same_content_without_duplicate(self, client, mock_supabase):
+        first = client.get("/api/seo/hub/typescript").json()
+        second = client.get("/api/seo/hub/typescript").json()
+        assert first == second
+        rows = [r for r in mock_supabase.store.get("hub_content", {}).values()
+                if r["slug"] == "typescript"]
+        assert len(rows) == 1
