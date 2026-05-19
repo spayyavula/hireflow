@@ -10,9 +10,23 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || '';
 
+// SSR-safe localStorage: during server prerender there is no localStorage.
+const safeStorage = {
+  get(key) {
+    if (typeof localStorage === 'undefined') return null;
+    return localStorage.getItem(key);
+  },
+  set(key, value) {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value);
+  },
+  remove(key) {
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
+  },
+};
+
 class JobsSearchAPI {
   constructor() {
-    this.token = localStorage.getItem('jobssearch_token') || null;
+    this.token = safeStorage.get('jobssearch_token') || null;
   }
 
   // ─── Internal ─────────────────────────────────────────
@@ -41,7 +55,7 @@ class JobsSearchAPI {
       body: JSON.stringify(body),
     });
     this.token = data.access_token;
-    localStorage.setItem('jobssearch_token', this.token);
+    safeStorage.set('jobssearch_token', this.token);
     return data;
   }
 
@@ -51,13 +65,13 @@ class JobsSearchAPI {
       body: JSON.stringify({ email, password }),
     });
     this.token = data.access_token;
-    localStorage.setItem('jobssearch_token', this.token);
+    safeStorage.set('jobssearch_token', this.token);
     return data;
   }
 
   logout() {
     this.token = null;
-    localStorage.removeItem('jobssearch_token');
+    safeStorage.remove('jobssearch_token');
   }
 
   // ─── Seeker ───────────────────────────────────────────
