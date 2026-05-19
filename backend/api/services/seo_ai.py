@@ -8,7 +8,11 @@ copy when the LLM is unconfigured or fails.
 
 from __future__ import annotations
 
+import logging
+
 from api.services.llm import _call_llm, _parse_json_response
+
+logger = logging.getLogger(__name__)
 
 
 _HUB_SYSTEM = """You are an SEO content strategist for JobsSearch, a job marketplace.
@@ -98,6 +102,6 @@ def generate_hub_copy(slug: str) -> dict:
         valid_faq = [f for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")]
         if len(copy) > 50 and valid_faq:
             return {"copy": copy, "faq": valid_faq}
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Hub copy LLM generation failed, using fallback: %s", exc)
     return _fallback_copy(label)

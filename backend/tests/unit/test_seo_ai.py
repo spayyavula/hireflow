@@ -37,3 +37,29 @@ def test_generate_hub_copy_falls_back_without_llm(monkeypatch):
     assert isinstance(result["copy"], str) and len(result["copy"]) > 50
     assert isinstance(result["faq"], list) and len(result["faq"]) >= 1
     assert all("q" in item and "a" in item for item in result["faq"])
+
+
+@pytest.mark.unit
+def test_generate_hub_copy_uses_valid_llm_output(monkeypatch):
+    import api.services.seo_ai as mod
+    good = {
+        "copy": "x" * 60,
+        "faq": [{"q": "Real question?", "a": "Real answer."}],
+    }
+    monkeypatch.setattr(mod, "_call_llm", lambda *a, **k: "ignored-raw")
+    monkeypatch.setattr(mod, "_parse_json_response", lambda raw: good)
+    result = generate_hub_copy("react")
+    assert result["copy"] == good["copy"]
+    assert result["faq"] == good["faq"]
+
+
+@pytest.mark.unit
+def test_generate_hub_copy_rejects_weak_llm_output(monkeypatch):
+    import api.services.seo_ai as mod
+    weak = {"copy": "short", "faq": []}
+    monkeypatch.setattr(mod, "_call_llm", lambda *a, **k: "ignored-raw")
+    monkeypatch.setattr(mod, "_parse_json_response", lambda raw: weak)
+    result = generate_hub_copy("react")
+    # Weak output is discarded — the deterministic fallback is used instead.
+    assert result["copy"] != "short"
+    assert len(result["faq"]) >= 1
