@@ -36,7 +36,9 @@ function jobUrl(job) {
 }
 
 async function main() {
-  const jobs = apiBase ? await fetchJson(`${apiBase}/api/jobs?limit=1000`) : [];
+  // The backend caps /api/jobs `limit` at 100 (Query le=100); a larger value
+  // returns 422, which fetchJson swallows to [] — leaving the sitemap empty.
+  const jobs = apiBase ? await fetchJson(`${apiBase}/api/jobs?limit=100`) : [];
   const posts = apiBase ? await fetchJson(`${apiBase}/api/blog`) : [];
 
   const files = {
