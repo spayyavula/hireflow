@@ -3,7 +3,12 @@
 import pytest
 
 from api.services import indexing
-from api.services.indexing import job_public_url, notify_url, notify_job_published
+from api.services.indexing import (
+    job_public_url,
+    notify_url,
+    notify_job_published,
+    notify_job_removed,
+)
 
 
 @pytest.mark.unit
@@ -38,3 +43,11 @@ def test_notify_job_published_uses_url_updated(monkeypatch):
     monkeypatch.setattr(indexing, "notify_url", lambda url, action: calls.append((url, action)))
     notify_job_published({"id": "job_1", "title": "Data Scientist"})
     assert calls == [("https://jobssearch.work/jobs/data-scientist-job_1", "URL_UPDATED")]
+
+
+@pytest.mark.unit
+def test_notify_job_removed_uses_url_deleted(monkeypatch):
+    calls = []
+    monkeypatch.setattr(indexing, "notify_url", lambda url, action: calls.append((url, action)))
+    notify_job_removed({"id": "job_9", "title": "Old Role"})
+    assert calls == [("https://jobssearch.work/jobs/old-role-job_9", "URL_DELETED")]

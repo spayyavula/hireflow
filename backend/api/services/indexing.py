@@ -12,6 +12,7 @@ notification never raises and never blocks the job operation.
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 
@@ -31,7 +32,7 @@ def _slug(text: str) -> str:
 
 def job_public_url(job: dict) -> str:
     """The canonical public URL of a job posting."""
-    return f"{SITE}/jobs/{_slug(job.get('title', ''))}-{job['id']}"
+    return f"{SITE}/jobs/{_slug(job.get('title', ''))}-{job.get('id', '')}"
 
 
 def notify_url(url: str, action: str) -> bool:
@@ -44,7 +45,6 @@ def notify_url(url: str, action: str) -> bool:
         logger.debug("Google Indexing not configured; skipping %s for %s", action, url)
         return False
     try:
-        import json
         import requests
         from google.oauth2 import service_account
         from google.auth.transport.requests import Request as GoogleAuthRequest
