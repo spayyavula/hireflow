@@ -35,3 +35,20 @@ test('a job page server-renders body content and a JobPosting blob', async ({ re
   expect(html).toContain('"@type":"JobPosting"');
   expect(html).toContain('"directApply":true');
 });
+
+test('a skill hub page server-renders a heading and is reachable', async ({ request }) => {
+  // A hub URL always resolves (200) regardless of how many jobs match.
+  const res = await request.get('/jobs/react');
+  expect(res.status()).toBe(200);
+  const html = await res.text();
+  expect(html).toMatch(/<h1[^>]*>[^<]*[Rr]eact jobs/);
+});
+
+test('a job-detail URL still routes to the job page, not the hub', async ({ request }) => {
+  // A segment ending in job_<id> must not be claimed by the hub route.
+  const res = await request.get('/jobs/some-title-job_nonexistent');
+  expect(res.status()).toBe(200);
+  const html = await res.text();
+  // The job page renders its not-found state for an unknown id.
+  expect(html).toContain('no longer available');
+});
