@@ -1,5 +1,7 @@
-const GlobalStyles = () => (
-  <style>{`
+// CSS is injected via dangerouslySetInnerHTML so the server and client emit
+// byte-identical raw text — passing it as children makes React entity-escape
+// the `&` in the font @import on the server, breaking hydration.
+const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -94,7 +96,8 @@ const GlobalStyles = () => (
         opacity: 1 !important;
       }
     }
-  `}</style>
-);
+  `;
+
+const GlobalStyles = () => <style dangerouslySetInnerHTML={{ __html: CSS }} />;
 
 export default GlobalStyles;

@@ -46,16 +46,18 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         </nav>
       </div>
       <div style={{ display: "flex", gap: 12 }}>
-        <button onClick={onSignIn} style={{
+        <a href="/app?mode=login" style={{
           padding: "10px 24px", borderRadius: 10, border: "1.5px solid var(--border-strong)",
           background: "transparent", fontSize: 14, fontWeight: 600, cursor: "pointer",
           color: "var(--text-primary)", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-        }}>Sign In</button>
-        <button onClick={onGetStarted} style={{
+          textDecoration: "none", display: "inline-block",
+        }}>Sign In</a>
+        <a href="/app?mode=register" style={{
           padding: "10px 24px", borderRadius: 10, border: "none",
           background: "var(--coral)", color: "white", fontSize: 14, fontWeight: 600,
           cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-        }}>Get Started</button>
+          textDecoration: "none", display: "inline-block",
+        }}>Get Started</a>
       </div>
     </header>
   );

@@ -6,7 +6,7 @@ async function registerAsNewSeeker(page) {
   await mockAuthSuccess(page, { role: 'seeker' });
   await mockEmptySeekerProfile(page);
   await page.goto('/');
-  await page.getByRole('button', { name: 'Get Started', exact: true }).click();
+  await page.getByRole('link', { name: 'Get Started', exact: true }).click();
   await page.getByPlaceholder('Jane Smith').fill('Sam Seeker');
   await page.getByPlaceholder('you@example.com').fill('sam@example.com');
   await page.getByPlaceholder('••••••••').fill('password123');
