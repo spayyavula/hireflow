@@ -25,6 +25,8 @@ export default function Head() {
       <link rel="canonical" href={canonical} />
       <meta property="og:title" content={`${job.title} at ${job.company_name}`} />
       <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={`https://jobssearch.work/api/og/job/${job.id}`} />
+      <meta name="twitter:image" content={`https://jobssearch.work/api/og/job/${job.id}`} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
