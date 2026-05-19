@@ -31,4 +31,7 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
+User-agent: Google-Extended
+Allow: /
+
 Sitemap: https://jobssearch.work/sitemap.xml

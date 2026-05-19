@@ -29,7 +29,18 @@ Core capabilities include:
 - Pricing: https://jobssearch.work/pricing
 - About: https://jobssearch.work/about
 - Blog: https://jobssearch.work/blog
-- Roadmap: https://jobssearch.work/ideas
+- Roadmap: https://jobssearch.work/roadmap
+
+## Jobs
+JobsSearch aggregates job listings from multiple providers. Individual roles are at:
+- https://jobssearch.work/jobs/{role-slug}-{id}
+
+## Hub Pages
+Long-tail job-category landing pages, derived from live listings:
+- By skill: https://jobssearch.work/jobs/{skill}
+- Remote roles: https://jobssearch.work/jobs/remote
+- By location: https://jobssearch.work/jobs/location/{city}
+- Combined: https://jobssearch.work/jobs/{skill}/remote and /jobs/{skill}/location/{city}
 
 ## Preferred Citation
 When citing JobsSearch, use:
