@@ -1712,7 +1712,12 @@ export default function App() {
   const [aiSummary, setAiSummary] = useState("");
   const [activeTab, setActiveTab] = useState("home");
   const [showAuth, setShowAuth] = useState(false);
-  const [authMode, setAuthMode] = useState("login");
+  const [authMode, setAuthMode] = useState(() => {
+    if (typeof window === 'undefined') return 'login';
+    return new URLSearchParams(window.location.search).get('mode') === 'register'
+      ? 'register'
+      : 'login';
+  });
   const [currentPage, setCurrentPage] = useState(() => getPageFromPath(window.location.pathname));
 
   // Rehydrate session from stored token on mount
@@ -1969,74 +1974,9 @@ export default function App() {
     );
   }
 
-  // Auth gate — show landing page, content pages, or login/register
-  const navProps = {
-    onGetStarted: () => { setAuthMode("register"); setShowAuth(true); },
-    onSignIn: () => { setAuthMode("login"); setShowAuth(true); },
-    onNavigate: (page, options) => navigatePublicPage(page, options),
-    currentPage,
-  };
-
-  if (!user && showAuth) return <AuthScreen onAuth={handleAuth} onBack={() => setShowAuth(false)} initialMode={authMode} />;
+  // /app is the authenticated SPA. A logged-out visitor sees the auth screen.
   if (!user) {
-    switch (currentPage) {
-      case "features": return <FeaturesPage {...navProps} />;
-      case "pricing": return <PricingPage {...navProps} />;
-      case "about": return <AboutPage {...navProps} />;
-      case "roadmap":
-      case "ideas": return <IdeasBoard {...navProps} user={null} />;
-      case "terms":
-        return (
-          <StaticContentPage
-            {...navProps}
-            title="Terms"
-            subtitle="Clear expectations for using JobsSearch responsibly."
-            sections={[
-              { heading: "Using the platform", body: "Use JobsSearch for legitimate hiring and job search activity only. Keep profile details accurate, and do not submit misleading credentials, fake job postings, or automated spam applications." },
-              { heading: "Accounts and access", body: "You are responsible for securing your account and any activity under it. If you suspect unauthorized access, contact support immediately and rotate credentials." },
-              { heading: "Service limits", body: "Features may evolve during beta. We may rate-limit abusive traffic or suspend accounts violating fair-use, security, or legal standards." },
-            ]}
-          />
-        );
-      case "privacy":
-        return (
-          <StaticContentPage
-            {...navProps}
-            title="Privacy"
-            subtitle="How we handle personal and hiring data."
-            sections={[
-              { heading: "Data we collect", body: "We collect profile, resume, job preferences, and product interaction data to power matching, coaching, and hiring workflows." },
-              { heading: "How data is used", body: "Data is used to personalize recommendations, improve platform quality, and support customer operations. We do not sell personal data." },
-              { heading: "Security controls", body: "JobsSearch uses row-level access controls, encrypted transport, and least-privilege service access to reduce data exposure risk." },
-            ]}
-          />
-        );
-      case "help":
-        return (
-          <StaticContentPage
-            {...navProps}
-            title="Help"
-            subtitle="Support resources for seekers, recruiters, and companies."
-            sections={[
-              { heading: "Getting started", body: "Create an account, complete your profile, and select goals so the matching engine and Scout AI can personalize recommendations." },
-              { heading: "Billing and plans", body: "Plan changes are available from your account settings. Upgrades apply immediately, while downgrades apply at the next billing cycle." },
-              { heading: "Need direct support?", body: "Use in-app chat for account assistance and workflow help. Include screenshots and page URLs when reporting issues for faster resolution." },
-            ]}
-          />
-        );
-      case "coming-soon": return <ComingSoonPage {...navProps} />;
-      case "blog": return <BlogListPage {...navProps} />;
-      default:
-        if (currentPage.startsWith("job-post:")) {
-          const slug = currentPage.replace("job-post:", "");
-          return <JobDetailPage slug={slug} {...navProps} />;
-        }
-        if (currentPage.startsWith("blog-post:")) {
-          const slug = currentPage.replace("blog-post:", "");
-          return <BlogPostPage slug={slug} {...navProps} />;
-        }
-        return <LandingPage {...navProps} />;
-    }
+    return <AuthScreen onAuth={handleAuth} onBack={() => { window.location.href = '/'; }} initialMode={authMode} />;
   }
 
   // Render based on phase
