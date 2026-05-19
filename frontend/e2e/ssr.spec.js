@@ -42,6 +42,7 @@ test('a skill hub page server-renders a heading and is reachable', async ({ requ
   expect(res.status()).toBe(200);
   const html = await res.text();
   expect(html).toMatch(/<h1[^>]*>[^<]*[Rr]eact jobs/);
+  expect(html).toMatch(/<title>[^<]*React jobs[^<]*<\/title>/i);
 });
 
 test('a job-detail URL still routes to the job page, not the hub', async ({ request }) => {
