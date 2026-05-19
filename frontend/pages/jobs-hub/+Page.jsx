@@ -32,7 +32,7 @@ export default function HubPage() {
     siblings.push({ label: `Remote ${label}`, href: hubUrlPath({ ...descriptor, remote: true }) });
   }
   if (descriptor.skill && descriptor.city) {
-    siblings.push({ label: `${hubLabel({ skill: descriptor.skill })}`, href: hubUrlPath({ skill: descriptor.skill, city: null, remote: false }) });
+    siblings.push({ label: hubLabel({ skill: descriptor.skill, city: null, remote: false }), href: hubUrlPath({ skill: descriptor.skill, city: null, remote: false }) });
   }
 
   return (

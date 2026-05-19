@@ -1,7 +1,7 @@
-import { parseHubPath, hubLabel } from '../../src/lib/hubRoute';
+import { hubLabel } from '../../src/lib/hubRoute';
 
 export default (pageContext) => {
-  const descriptor = parseHubPath(pageContext.routeParams.hubPath);
+  const descriptor = pageContext.data?.descriptor;
   return descriptor
     ? `${hubLabel(descriptor)} | JobsSearch`
     : 'Jobs | JobsSearch';
