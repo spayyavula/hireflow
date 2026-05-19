@@ -227,6 +227,34 @@ def get_jobs_for_recruiter(recruiter_id: str) -> list[str]:
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  HUB CONTENT (cached SEO copy)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def _parse_hub_row(data: dict) -> dict:
+    if not data:
+        return data
+    val = data.get("faq_json")
+    if val is None:
+        data["faq_json"] = []
+    elif isinstance(val, str):
+        import json as _json
+        try:
+            data["faq_json"] = _json.loads(val)
+        except (ValueError, TypeError):
+            data["faq_json"] = []
+    return data
+
+
+def get_hub_content(slug: str) -> Optional[dict]:
+    res = supabase.table("hub_content").select("*").eq("slug", slug).limit(1).execute()
+    return _parse_hub_row(res.data[0]) if res.data else None
+
+
+def create_hub_content(row: dict) -> dict:
+    res = supabase.table("hub_content").insert(row).execute()
+    return _parse_hub_row(res.data[0])
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CONVERSATIONS & MESSAGES
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_conversation_between(user_a: str, user_b: str) -> Optional[str]:
