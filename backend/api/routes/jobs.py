@@ -94,7 +94,7 @@ async def search_external_jobs(
     page: int = Query(1, ge=1),
     user=Depends(get_current_user),
 ):
-    """Search real job postings from JSearch + Jobs API and optionally match against user profile."""
+    """Search real job postings from external providers and optionally match against user profile."""
     from api.services.jobs_api import search_all_providers
     from api.core.config import RAPIDAPI_KEY
 

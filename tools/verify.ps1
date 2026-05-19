@@ -45,7 +45,7 @@ try {
         Invoke-Step -Name 'Backend unit and integration tests' -Action {
             Push-Location backend
             try {
-                pytest -m "unit or integration"
+                python -m pytest -m "unit or integration"
             }
             finally {
                 Pop-Location
