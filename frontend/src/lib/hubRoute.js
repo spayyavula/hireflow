@@ -55,9 +55,12 @@ export function jobMatchesHub(job, { skill, city, remote }) {
   if (remote && !job.remote) return false;
   if (skill) {
     const haystack = [...(job.required_skills || []), ...(job.nice_skills || [])]
-      .map((s) => s.toLowerCase());
+      .map((s) => String(s).toLowerCase());
     if (!haystack.includes(skill.toLowerCase())) return false;
   }
+  // City match is a deliberate substring check on the slugified location, so a
+  // hub city like 'austin' matches 'Austin, TX'. Broad matching is acceptable
+  // for SEO landing pages.
   if (city) {
     if (!toSlug(job.location || '').includes(city.toLowerCase())) return false;
   }

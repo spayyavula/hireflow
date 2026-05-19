@@ -46,3 +46,21 @@ describe('jobMatchesHub', () => {
     expect(jobMatchesHub(job, { skill: null, city: 'denver', remote: false })).toBe(false);
   });
 });
+
+describe('hubRoute edge cases', () => {
+  it('parseHubPath rejects a remote-then-skill ordering', () => {
+    expect(parseHubPath('remote/react')).toBeNull();
+  });
+  it('hubLabel handles a skill-only descriptor and the bare fallback', () => {
+    expect(hubLabel({ skill: 'python', city: null, remote: false })).toBe('Python jobs');
+    expect(hubLabel({ skill: null, city: null, remote: false })).toBe('jobs');
+  });
+  it('jobMatchesHub rejects a non-remote job for a remote hub', () => {
+    expect(jobMatchesHub({ remote: false, required_skills: [], nice_skills: [] },
+      { skill: null, city: null, remote: true })).toBe(false);
+  });
+  it('jobMatchesHub tolerates missing skill/location fields', () => {
+    expect(jobMatchesHub({}, { skill: null, city: null, remote: false })).toBe(true);
+    expect(jobMatchesHub({ required_skills: [null, 42] }, { skill: 'react', city: null, remote: false })).toBe(false);
+  });
+});
