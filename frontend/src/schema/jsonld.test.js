@@ -80,3 +80,30 @@ describe('breadcrumbList', () => {
     expect(ld.itemListElement[1].item).toBe('https://jobssearch.work/jobs');
   });
 });
+
+import { itemList, faqPage } from './jsonld';
+
+describe('itemList', () => {
+  it('wraps jobs as an ItemList of JobPostings, positioned from 1', () => {
+    const jobs = [
+      { id: 'job_a', title: 'A', company_name: 'X', location: 'NYC', description: 'd', type: 'full-time', remote: false, created_at: '2026-03-01T00:00:00Z', required_skills: [], nice_skills: [] },
+      { id: 'job_b', title: 'B', company_name: 'Y', location: 'LA', description: 'd', type: 'contract', remote: true, created_at: '2026-03-01T00:00:00Z', required_skills: [], nice_skills: [] },
+    ];
+    const ld = itemList(jobs);
+    expect(ld['@type']).toBe('ItemList');
+    expect(ld.itemListElement).toHaveLength(2);
+    expect(ld.itemListElement[0].position).toBe(1);
+    expect(ld.itemListElement[0].item['@type']).toBe('JobPosting');
+    expect(ld.itemListElement[1].position).toBe(2);
+  });
+});
+
+describe('faqPage', () => {
+  it('builds a FAQPage from q/a pairs', () => {
+    const ld = faqPage([{ q: 'Question?', a: 'Answer.' }]);
+    expect(ld['@type']).toBe('FAQPage');
+    expect(ld.mainEntity[0]['@type']).toBe('Question');
+    expect(ld.mainEntity[0].name).toBe('Question?');
+    expect(ld.mainEntity[0].acceptedAnswer.text).toBe('Answer.');
+  });
+});

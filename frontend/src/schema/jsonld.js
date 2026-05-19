@@ -97,3 +97,25 @@ export function jobPosting(job) {
   }
   return ld;
 }
+
+export function itemList(jobs) {
+  return {
+    '@type': 'ItemList',
+    itemListElement: jobs.map((job, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: jobPosting(job),
+    })),
+  };
+}
+
+export function faqPage(qa) {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: qa.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+}
