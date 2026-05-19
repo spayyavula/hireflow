@@ -22,7 +22,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog
+from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog, seo
 from api.routes.scout import router as scout_router
 from api.routes.interview import router as interview_router
 
@@ -77,6 +77,7 @@ app.include_router(chat.router)
 app.include_router(matcher.router)
 app.include_router(features.router)
 app.include_router(blog.router)
+app.include_router(seo.router)
 app.include_router(scout_router)
 app.include_router(interview_router)
 
