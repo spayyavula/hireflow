@@ -16,6 +16,7 @@ if not SECRET_KEY:
     )
 RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "").strip()
 WISPR_API_KEY = os.environ.get("WISPR_API_KEY", "").strip()
+GOOGLE_INDEXING_CREDENTIALS = os.environ.get("GOOGLE_INDEXING_CREDENTIALS", "").strip()
 OPENAI_API_KEY = (os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY") or "").strip()
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
