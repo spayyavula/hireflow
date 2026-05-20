@@ -1411,7 +1411,7 @@ const SeekerDashboard = ({ profile, aiSummary, activeTab, onEditResume }) => {
       <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
         {jobsLoading ? "Loading..." : `${filtered.length} jobs ranked by match score`}
         {usingRealJobs && !jobsLoading && <span style={{ marginLeft: 8, color: "var(--sage)", fontWeight: 600 }}>Live results</span>}
-        {!usingRealJobs && !jobsLoading && <span style={{ marginLeft: 8, color: "var(--text-muted)" }}>(sample data)</span>}
+        {!usingRealJobs && !jobsLoading && <span style={{ marginLeft: 8, color: "var(--text-muted)" }}>(showing sample roles — connect a profile to see live results)</span>}
       </div>
 
       {jobsLoading && (

@@ -9,13 +9,9 @@ export function LandingFeaturedJobs({ featuredJobs, onNavigate }) {
           fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
           color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
         }}>Featured opportunities</h2>
-        <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto 12px" }}>
-          Top roles from companies using Hyrly right now
+        <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
+          A sample of roles surfaced by Hyrly's match engine
         </p>
-        <span style={{
-          display: "inline-block", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-          background: "rgba(126,184,158,0.12)", color: "var(--sage)", border: "1px solid rgba(126,184,158,0.25)",
-        }}>Demo preview — sample data</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
         {featuredJobs.map((job, i) => (
