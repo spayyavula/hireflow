@@ -557,3 +557,44 @@ class BlogEnrichResponse(BaseModel):
     suggested_tags: list[str] = []
     related_skills: list[str] = []
     reading_time_min: int
+
+
+# ─── LP1: Layoff Triage ──────────────────────────────────────
+
+class TriageAnswers(BaseModel):
+    """Raw answers from the 10-question Triage wizard.
+
+    Each field matches a question id from
+    frontend/src/features/triage/questions.js. Keep field names in lockstep
+    with that file — if a question id changes there, change it here too.
+    """
+    laid_off_when: str           # 'today' | '1-7d' | '8-30d' | '31-90d' | '90+d'
+    role: str                    # 'engineer' | 'em' | 'pm' | 'designer' | 'data' | 'other'
+    level: str                   # 'junior' | 'mid' | 'senior' | 'staff_plus'
+    company_tier: str            # 'faang' | 'public' | 'series_b_d' | 'pre_series_b' | 'other'
+    severance_runway: str        # 'none' | 'lt_8w' | '8_16w' | '16w_plus'
+    visa_status: str             # 'citizen_gc' | 'h1b' | 'opt' | 'other_temp'
+    location_flexibility: str    # 'same_metro' | 'us_relocate' | 'remote_us' | 'international'
+    resume_state: str            # 'up_to_date' | 'needs_rewrite' | 'not_started' | 'unsure'
+    network_state: str           # 'warm_intros' | 'cold_contacts' | 'limited' | 'rebuild'
+    top_concern: str             # 'finances' | 'visa' | 'imposter' | 'direction' | 'family' | 'other'
+
+
+class TriageActionItem(BaseModel):
+    priority: int                # 1..N (lower = more urgent)
+    title: str                   # "File for unemployment this week"
+    why: str                     # "With <8 weeks of severance, the 1-3 week processing delay matters."
+    how: str                     # "uidol.dol.gov has a state-by-state filing tool. ~20 min."
+    eta: str                     # "20 minutes" | "1-2 hours" | "this week"
+
+
+class TriagePlan(BaseModel):
+    summary: str                 # "You're a Senior Engineer, just laid off from a Series C startup..."
+    suggested_first_topic: str   # 'severance' | 'visa' | 'resume' | 'career_exploration' | 'finances' | 'networking'
+    actions: list[TriageActionItem]
+
+
+class TriageResponse(BaseModel):
+    """Response shape from POST /api/triage."""
+    triage_id: str               # UUID, used to fetch + Scout handoff
+    plan: TriagePlan
