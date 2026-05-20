@@ -1,5 +1,5 @@
 export default {
   title: 'Roadmap | Hyrly',
   description:
-    'See upcoming Hyrly features, submit ideas, and vote on what should be built next.',
+    'What\'s shipped, what\'s in progress, and what\'s next. A hand-curated roadmap — not a community-vote board (yet).',
 };
