@@ -238,7 +238,7 @@ def cmd_publish(args):
     if resp.status_code == 201:
         data = resp.json()
         print(f"Published: {data['slug']}")
-        print(f"URL: {api_url.replace('http://localhost:8000', 'https://jobssearch.work')}/blog/{data['slug']}")
+        print(f"URL: {api_url.replace('http://localhost:8000', 'https://hyrly.ai')}/blog/{data['slug']}")
     elif resp.status_code == 409:
         # Already exists — update instead
         slug = payload["slug"]

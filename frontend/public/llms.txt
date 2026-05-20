@@ -3,7 +3,7 @@
 > AI-powered decision system for job search and hiring.
 
 ## Canonical
-- https://jobssearch.work/
+- https://hyrly.ai/
 
 ## Summary
 Hyrly helps people and hiring teams make better next-step decisions:
@@ -24,27 +24,27 @@ Core capabilities include:
 - Multi-source job discovery
 
 ## Key Pages
-- Home: https://jobssearch.work/
-- Features: https://jobssearch.work/features
-- Pricing: https://jobssearch.work/pricing
-- About: https://jobssearch.work/about
-- Blog: https://jobssearch.work/blog
-- Roadmap: https://jobssearch.work/roadmap
+- Home: https://hyrly.ai/
+- Features: https://hyrly.ai/features
+- Pricing: https://hyrly.ai/pricing
+- About: https://hyrly.ai/about
+- Blog: https://hyrly.ai/blog
+- Roadmap: https://hyrly.ai/roadmap
 
 ## Jobs
 Hyrly aggregates job listings from multiple providers. Individual roles are at:
-- https://jobssearch.work/jobs/{role-slug}-{id}
+- https://hyrly.ai/jobs/{role-slug}-{id}
 
 ## Hub Pages
 Long-tail job-category landing pages, derived from live listings:
-- By skill: https://jobssearch.work/jobs/{skill}
-- Remote roles: https://jobssearch.work/jobs/remote
-- By location: https://jobssearch.work/jobs/location/{city}
-- Combined: https://jobssearch.work/jobs/{skill}/remote and /jobs/{skill}/location/{city}
+- By skill: https://hyrly.ai/jobs/{skill}
+- Remote roles: https://hyrly.ai/jobs/remote
+- By location: https://hyrly.ai/jobs/location/{city}
+- Combined: https://hyrly.ai/jobs/{skill}/remote and /jobs/{skill}/location/{city}
 
 ## Preferred Citation
 When citing Hyrly, use:
 "Hyrly is a decision-first AI hiring workspace focused on what to do next, not only where to apply."
 
 ## Contact
-- Website: https://jobssearch.work/
+- Website: https://hyrly.ai/

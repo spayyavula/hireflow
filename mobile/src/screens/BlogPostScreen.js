@@ -162,27 +162,27 @@ export default function BlogPostScreen({ route, navigation }) {
         <View style={styles.shareRow}>
           <TouchableOpacity
             style={[styles.shareBtn, { backgroundColor: '#0A66C2' }]}
-            onPress={() => Linking.openURL(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}`)}
+            onPress={() => Linking.openURL(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://hyrly.ai/blog/${slug}`)}`)}
           >
             <Text style={styles.shareBtnText}>LinkedIn</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.shareBtn, { backgroundColor: '#0F1419' }]}
-            onPress={() => Linking.openURL(`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}&text=${encodeURIComponent(post.title)}`)}
+            onPress={() => Linking.openURL(`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://hyrly.ai/blog/${slug}`)}&text=${encodeURIComponent(post.title)}`)}
           >
             <Text style={styles.shareBtnText}>X</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.shareBtn, { backgroundColor: '#1877F2' }]}
-            onPress={() => Linking.openURL(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://jobssearch.work/blog/${slug}`)}`)}
+            onPress={() => Linking.openURL(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://hyrly.ai/blog/${slug}`)}`)}
           >
             <Text style={styles.shareBtnText}>Facebook</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.shareBtn, { backgroundColor: colors.coral }]}
             onPress={() => Share.share({
-              message: `${post.title} — https://jobssearch.work/blog/${slug}`,
-              url: `https://jobssearch.work/blog/${slug}`,
+              message: `${post.title} — https://hyrly.ai/blog/${slug}`,
+              url: `https://hyrly.ai/blog/${slug}`,
             })}
           >
             <Text style={styles.shareBtnText}>More...</Text>

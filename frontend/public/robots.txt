@@ -34,4 +34,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://jobssearch.work/sitemap.xml
+Sitemap: https://hyrly.ai/sitemap.xml
