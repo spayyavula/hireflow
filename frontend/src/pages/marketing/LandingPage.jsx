@@ -52,7 +52,7 @@ const LandingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
     {
       icon: Icons.search, accent: "var(--lavender)", accentBg: "rgba(155,143,212,0.08)",
       title: "Multi-Provider Job Search",
-      desc: "Search across JSearch, Jobs API, LinkedIn, Indeed, and multi-board aggregators simultaneously. Jobs are deduplicated, scored against your profile, and ranked by match strength.",
+      desc: "Aggregated search across 5+ public job-board APIs and open data sources. Jobs are deduplicated, scored against your profile, and ranked by match strength.",
       tags: ["5 Job Sources", "AI Match Scoring", "Real-Time Results"],
     },
   ];

@@ -19,7 +19,7 @@ const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       { icon: Icons.scout, title: "Scout AI Career Counselor", desc: "Get guidance on interviews, resumes, salary negotiation, career transitions, burnout, leadership, and more — 13 career domains." },
       { icon: Icons.mic, title: "Voice Mock Interviews", desc: "Practice with AI-generated questions based on the job description. Answer by voice, get scored on STAR method, quantification, and depth." },
       { icon: Icons.spark, title: "AI Match Scoring", desc: "Get a 0-99 compatibility score for every job based on your skills, experience, and preferences." },
-      { icon: Icons.search, title: "Multi-Provider Job Search", desc: "Search JSearch, Jobs API, LinkedIn, Indeed, and multi-board aggregators — deduplicated and match-scored." },
+      { icon: Icons.search, title: "Multi-Provider Job Search", desc: "Aggregated search across 5+ public job-board APIs and open data sources — deduplicated and match-scored." },
       { icon: Icons.doc, title: "Resume Builder & Analyzer", desc: "Build a professional resume or upload yours for AI-powered feedback and optimization." },
       { icon: Icons.target, title: "JD Matcher", desc: "Paste any job description and get a detailed match analysis with cover letter generation." },
       { icon: Icons.zap, title: "One-Click Apply", desc: "Apply to jobs instantly with your saved profile — no repetitive forms." },

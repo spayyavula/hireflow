@@ -834,7 +834,7 @@ const ScoutView = ({ profile }) => {
         </button>
       </div>
       <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-muted)", marginTop: 8, opacity: 0.6 }}>
-        Scout searches JSearch, Jobs API, LinkedIn, Indeed & more simultaneously
+        Scout searches multiple public job-board APIs in parallel
       </div>
     </div>
   );
