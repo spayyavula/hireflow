@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS triage_responses (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID REFERENCES users(id) ON DELETE SET NULL,
+  user_id       TEXT REFERENCES users(id) ON DELETE SET NULL,
   answers       JSONB NOT NULL,
   plan          JSONB NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
