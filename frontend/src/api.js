@@ -74,6 +74,34 @@ class HyrlyAPI {
     safeStorage.remove('hyrly_token');
   }
 
+  // ─── Triage (LP1) ─────────────────────────────────────
+  async submitTriage(answers) {
+    return this._fetch('/api/triage', {
+      method: 'POST',
+      body: JSON.stringify(answers),
+    });
+  }
+
+  async startScoutWithContext({ summary, suggestedFirstTopic }) {
+    // Synthesize a Scout opening message that embeds the triage summary
+    // so Scout doesn't make the user re-explain. The Scout backend treats
+    // any inbound message as user input, so this is the cleanest handoff.
+    const openings = {
+      visa: 'Help me figure out my H-1B grace-period plan.',
+      severance: 'Help me negotiate my severance package.',
+      finances: 'Help me budget and file for unemployment.',
+      resume: 'Help me rewrite my resume for active search.',
+      career_exploration: 'Help me figure out what I want my next role to look like.',
+      networking: 'Help me reactivate my network.',
+    };
+    const opening = openings[suggestedFirstTopic] || 'I\'d like a career coaching session.';
+    const message = `${opening}\n\nContext: ${summary}`;
+    return this._fetch('/api/scout/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    });
+  }
+
   // ─── Seeker ───────────────────────────────────────────
   async getProfile() {
     return this._fetch('/api/seeker/profile');
