@@ -19,7 +19,7 @@ const ITEMS = [
 
   // Planned
   { title: 'Stripe billing for Hyrly Coach + Layoff Sprint', status: 'planned', when: 'June 2026',
-    desc: 'Wires the Pricing page Reserve buttons to real checkout. Until it lands, signups go through hello@hyrly.ai.' },
+    desc: 'Wires the Pricing page Reserve buttons to real checkout. Until it lands, signups go through spayyavula@gmail.com.' },
   { title: '5 more Playbook articles', status: 'planned', when: 'June 2026',
     desc: 'Recruiter outreach scripts, FAANG vs startup decision framework, freelance bridge income, mental-health resources, LinkedIn announcement template.' },
   { title: 'Free Severance Calculator at /tools/severance', status: 'planned', when: 'June 2026',
@@ -113,7 +113,7 @@ const StaticRoadmap = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       {/* Idea-submission acknowledgement */}
       <section style={{ padding: '0 48px 48px', maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
         <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, fontStyle: 'italic' }}>
-          Something you'd want built? Email <a href="mailto:hello@hyrly.ai" style={{ color: 'var(--coral)', fontWeight: 600 }}>hello@hyrly.ai</a>. The community-vote version of this page is in the codebase; it'll go live once there's a community.
+          Something you'd want built? Email <a href="mailto:spayyavula@gmail.com" style={{ color: 'var(--coral)', fontWeight: 600 }}>spayyavula@gmail.com</a>. The community-vote version of this page is in the codebase; it'll go live once there's a community.
         </p>
       </section>
 

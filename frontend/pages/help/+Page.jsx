@@ -6,7 +6,7 @@ export default function HelpPage() {
     <StaticContentPage
       {...marketingNavProps('help')}
       title="Help"
-      subtitle="Support resources for Hyrly users — start here or email hello@hyrly.ai."
+      subtitle="Support resources for Hyrly users — start here or email spayyavula@gmail.com."
       sections={[
         { heading: 'Getting started', body: 'Create an account, complete your profile, and select goals so the matching engine and Scout AI can personalize recommendations.' },
         { heading: 'Billing and plans', body: 'Plan changes are available from your account settings. Upgrades apply immediately, while downgrades apply at the next billing cycle.' },
