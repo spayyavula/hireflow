@@ -169,7 +169,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           letterSpacing: "-0.02em", marginBottom: 16,
         }}>Start free today</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
-          Join thousands of professionals finding their perfect match with Hyrly.
+          Hyrly is brand-new — the first 100 people using it directly shape what gets built next.
         </p>
         <button onClick={onGetStarted} style={{
           padding: "14px 36px", borderRadius: 12, border: "none",
