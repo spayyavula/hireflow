@@ -79,6 +79,9 @@ export default function HomePage() {
           <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 16 }}>
             No signup. No email. Free.
           </p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4, fontStyle: 'italic' }}>
+            Built by an engineer who's been on the other side of these layoffs.
+          </p>
           {error && (
             <p style={{ marginTop: 16, color: 'var(--coral)', fontSize: 14 }}>{error}</p>
           )}

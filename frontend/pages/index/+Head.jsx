@@ -17,9 +17,13 @@ export default function HomeHead() {
     },
   };
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-    />
+    <>
+      <meta property="og:image" content={`${SITE}/api/og/home`} />
+      <meta name="twitter:image" content={`${SITE}/api/og/home`} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
+    </>
   );
 }
