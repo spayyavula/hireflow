@@ -12,7 +12,7 @@ export function IdeasBoardHeader({ features, totalVotes, shippedCount, isLoggedI
         lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 12,
       }}>Ideas Board</h1>
       <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 520, margin: "0 auto 28px", lineHeight: 1.7 }}>
-        Shape the future of JobsSearch. Submit ideas, vote on what matters, and watch features come to life.
+        Shape the future of Hyrly. Submit ideas, vote on what matters, and watch features come to life.
       </p>
 
       {/* Stats row */}

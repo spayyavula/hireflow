@@ -17,7 +17,7 @@ export default async function handler(request) {
     job = null;
   }
 
-  const title = job ? job.title : 'JobsSearch';
+  const title = job ? job.title : 'Hyrly';
   const subtitle = job
     ? `${job.company_name || ''}${job.location ? ' · ' + job.location : ''}`
     : 'AI-powered job search and hiring';
@@ -33,7 +33,7 @@ export default async function handler(request) {
         children: [
           { type: 'div', props: { style: { fontSize: 60, fontWeight: 700, color: '#0d0d0f', lineHeight: 1.1 }, children: title } },
           { type: 'div', props: { style: { fontSize: 32, color: '#5a5a66', marginTop: 24 }, children: subtitle } },
-          { type: 'div', props: { style: { fontSize: 28, color: '#ff6b5b', fontWeight: 700, marginTop: 'auto' }, children: 'JobsSearch' } },
+          { type: 'div', props: { style: { fontSize: 28, color: '#ff6b5b', fontWeight: 700, marginTop: 'auto' }, children: 'Hyrly' } },
         ],
       },
     },

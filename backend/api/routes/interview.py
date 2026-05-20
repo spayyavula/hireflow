@@ -389,7 +389,7 @@ async def transcribe_audio(req: TranscribeRequest, user=Depends(get_current_user
                     "audio": req.audio_base64,
                     "language": ["en"],
                     "context": {
-                        "app": {"name": "JobsSearch Interview Bot", "type": "ai"},
+                        "app": {"name": "Hyrly Interview Bot", "type": "ai"},
                     },
                 },
             )

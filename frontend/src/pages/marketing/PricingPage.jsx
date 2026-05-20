@@ -169,7 +169,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           letterSpacing: "-0.02em", marginBottom: 16,
         }}>Start free today</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
-          Join thousands of professionals finding their perfect match with JobsSearch.
+          Join thousands of professionals finding their perfect match with Hyrly.
         </p>
         <button onClick={onGetStarted} style={{
           padding: "14px 36px", borderRadius: 12, border: "none",
@@ -184,7 +184,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
         display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        <span>© 2026 JobsSearch. Built with AI.</span>
+        <span>© 2026 Hyrly. Built with AI.</span>
         <div style={{ display: "flex", gap: 24 }}>
           <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
           <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>

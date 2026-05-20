@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Pressroom — Browserless CMS CLI for JobsSearch
+Pressroom — Browserless CMS CLI for Hyrly
 ===============================================
 Usage:
   python -m tools.pressroom new "Post Title" --category career-playbook
@@ -390,7 +390,7 @@ def cmd_draft(args):
 def main():
     parser = argparse.ArgumentParser(
         prog="pressroom",
-        description="Pressroom — Browserless CMS for JobsSearch",
+        description="Pressroom — Browserless CMS for Hyrly",
     )
     sub = parser.add_subparsers(dest="command", help="Available commands")
 

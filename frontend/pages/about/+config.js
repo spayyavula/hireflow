@@ -1,5 +1,5 @@
 export default {
-  title: 'About | JobsSearch',
+  title: 'About | Hyrly',
   description:
-    'Learn why JobsSearch exists: replacing noisy hiring dashboards with a decision-first system that helps teams and candidates move forward.',
+    'Learn why Hyrly exists: replacing noisy hiring dashboards with a decision-first system that helps teams and candidates move forward.',
 };

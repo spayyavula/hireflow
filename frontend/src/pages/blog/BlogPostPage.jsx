@@ -20,7 +20,7 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
   const shareLinks = post ? {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getPostUrl())}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getPostUrl())}`,
-    x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getPostUrl())}&text=${encodeURIComponent(post.title + " | JobsSearch Blog")}`,
+    x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getPostUrl())}&text=${encodeURIComponent(post.title + " | Hyrly Blog")}`,
     instagram: null, // Instagram doesn't support direct URL sharing — copy link instead
   } : {};
   const handleCopyLink = () => {
@@ -33,8 +33,8 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
     if (!post) return;
 
     const canonicalUrl = getPostUrl();
-    const pageTitle = post.seo_title ? `${post.seo_title} | JobsSearch` : `${post.title} | JobsSearch Blog`;
-    const pageDescription = post.seo_description || post.excerpt || post.subtitle || "Career insights and hiring decisions from JobsSearch.";
+    const pageTitle = post.seo_title ? `${post.seo_title} | Hyrly` : `${post.title} | Hyrly Blog`;
+    const pageDescription = post.seo_description || post.excerpt || post.subtitle || "Career insights and hiring decisions from Hyrly.";
 
     document.title = pageTitle;
 
@@ -95,11 +95,11 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
       url: canonicalUrl,
       author: {
         "@type": "Person",
-        name: post.author_name || "JobsSearch",
+        name: post.author_name || "Hyrly",
       },
       publisher: {
         "@type": "Organization",
-        name: "JobsSearch",
+        name: "Hyrly",
         logo: {
           "@type": "ImageObject",
           url: "https://jobssearch.work/favicon.svg",
@@ -381,7 +381,7 @@ const BlogPostPage = ({ slug, onGetStarted, onSignIn, onNavigate, currentPage })
         padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
       }}>
-        &copy; 2026 JobsSearch. Built with AI.
+        &copy; 2026 Hyrly. Built with AI.
       </footer>
     </div>
   );

@@ -40,7 +40,7 @@ const Sidebar = ({ role, activeTab, setActiveTab, onLogout }) => {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px", marginBottom: 8, color: "var(--ink)" }}>
         {Icons.logo}
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>JobsSearch</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>Hyrly</span>
       </div>
       <div style={{ padding: "8px", fontSize: 11, color: roleColors[role], fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
         {roleLabels[role]}

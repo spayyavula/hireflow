@@ -1,5 +1,5 @@
 export default {
-  title: 'Terms | JobsSearch',
+  title: 'Terms | Hyrly',
   description:
-    'Terms for using JobsSearch, including account responsibilities, acceptable use, and service limitations.',
+    'Terms for using Hyrly, including account responsibilities, acceptable use, and service limitations.',
 };

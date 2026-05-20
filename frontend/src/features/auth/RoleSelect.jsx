@@ -20,7 +20,7 @@ const RoleSelect = ({ onSelect }) => {
       <header style={{ padding: "24px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Hyrly</span>
         </div>
         <Button variant="ghost" size="sm">Sign In</Button>
       </header>
@@ -85,7 +85,7 @@ const RoleSelect = ({ onSelect }) => {
 
       {/* Footer */}
       <footer style={{ padding: "24px 48px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
-        © 2024 JobsSearch. Built with AI.
+        © 2024 Hyrly. Built with AI.
       </footer>
     </div>
   );

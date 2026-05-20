@@ -1,5 +1,5 @@
 /**
- * JobsSearch API Client
+ * Hyrly API Client
  * Connects the React frontend to the FastAPI backend.
  *
  * Usage:
@@ -24,7 +24,7 @@ const safeStorage = {
   },
 };
 
-class JobsSearchAPI {
+class HyrlyAPI {
   constructor() {
     this.token = safeStorage.get('jobssearch_token') || null;
   }
@@ -301,5 +301,5 @@ class JobsSearchAPI {
   }
 }
 
-const api = new JobsSearchAPI();
+const api = new HyrlyAPI();
 export default api;

@@ -39,7 +39,7 @@ export default function Head() {
   return (
     <>
       <link rel="canonical" href={canonical} />
-      <meta property="og:title" content={`${label} | JobsSearch`} />
+      <meta property="og:title" content={`${label} | Hyrly`} />
       <meta property="og:url" content={canonical} />
       <script
         type="application/ld+json"

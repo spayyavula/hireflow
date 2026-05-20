@@ -10,7 +10,7 @@ export function LandingFeaturedJobs({ featuredJobs, onNavigate }) {
           color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 12,
         }}>Featured opportunities</h2>
         <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto 12px" }}>
-          Top roles from companies using JobsSearch right now
+          Top roles from companies using Hyrly right now
         </p>
         <span style={{
           display: "inline-block", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,

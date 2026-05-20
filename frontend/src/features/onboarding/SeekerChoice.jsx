@@ -13,7 +13,7 @@ const SeekerChoice = ({ onUpload, onBuild, onBack }) => {
       <header style={{ padding: "24px 48px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>Hyrly</span>
         </div>
       </header>
 

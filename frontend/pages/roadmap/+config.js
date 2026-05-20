@@ -1,5 +1,5 @@
 export default {
-  title: 'Roadmap | JobsSearch',
+  title: 'Roadmap | Hyrly',
   description:
-    'See upcoming JobsSearch features, submit ideas, and vote on what should be built next.',
+    'See upcoming Hyrly features, submit ideas, and vote on what should be built next.',
 };

@@ -40,7 +40,7 @@ export default function LoginScreen({ navigation }) {
           <View style={styles.logoIcon}>
             <Text style={styles.logoIconText}>JS</Text>
           </View>
-          <Text style={styles.logoText}>JobsSearch</Text>
+          <Text style={styles.logoText}>Hyrly</Text>
         </View>
 
         <Text style={styles.subtitle}>Sign in to your account</Text>

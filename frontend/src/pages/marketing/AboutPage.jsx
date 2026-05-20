@@ -47,7 +47,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
         }}>Built by people who've been on both sides of the table</h1>
         <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-          We've been the candidate refreshing our inbox, the recruiter drowning in spreadsheets, and the hiring manager struggling to find signal in the noise. JobsSearch exists because we knew there had to be a better way.
+          We've been the candidate refreshing our inbox, the recruiter drowning in spreadsheets, and the hiring manager struggling to find signal in the noise. Hyrly exists because we knew there had to be a better way.
         </p>
       </section>
 
@@ -83,7 +83,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             {/* Platform */}
             <div style={{ textAlign: "center", padding: 32, background: "var(--cream)", borderRadius: 20, border: "1px solid var(--border)" }}>
               <div style={{ color: "var(--ink)", marginBottom: 16, display: "flex", justifyContent: "center" }}>{Icons.logo}</div>
-              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>JobsSearch Platform</h3>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: "var(--ink)", marginBottom: 8 }}>Hyrly Platform</h3>
               <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>AI matching, real-time chat, analytics</p>
             </div>
             <div style={{ color: "var(--lavender)", fontSize: 24 }}>←</div>
@@ -138,7 +138,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           <h2 style={{
             fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
             color: "var(--ink)", letterSpacing: "-0.02em", textAlign: "center", marginBottom: 48,
-          }}>The team behind JobsSearch</h2>
+          }}>The team behind Hyrly</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
             {team.map((person, i) => (
               <div key={i} style={{ textAlign: "center", padding: 24 }}>
@@ -162,7 +162,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         <h2 style={{
           fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 700,
           letterSpacing: "-0.02em", marginBottom: 16,
-        }}>Join the JobsSearch community</h2>
+        }}>Join the Hyrly community</h2>
         <p style={{ fontSize: 16, color: "rgba(250,248,245,0.6)", marginBottom: 36, maxWidth: 480, margin: "0 auto 36px" }}>
           Whether you're hiring or looking, we're building the future of work together.
         </p>
@@ -186,7 +186,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
         display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        <span>© 2026 JobsSearch. Built with AI.</span>
+        <span>© 2026 Hyrly. Built with AI.</span>
         <div style={{ display: "flex", gap: 24 }}>
           <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
           <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>

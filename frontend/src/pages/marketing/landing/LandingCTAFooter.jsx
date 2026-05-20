@@ -34,7 +34,7 @@ export function LandingCTAFooter({ onGetStarted, onNavigate }) {
         background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
         display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
-        <span>© 2026 JobsSearch. Built with AI.</span>
+        <span>© 2026 Hyrly. Built with AI.</span>
         <div style={{ display: "flex", gap: 24 }}>
           <a href="/terms" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Terms</a>
           <a href="/privacy" style={{ color: "rgba(250,248,245,0.45)", textDecoration: "none", fontSize: 12 }}>Privacy</a>

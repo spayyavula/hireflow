@@ -13,7 +13,7 @@ from typing import Optional
 from api.services.llm import _call_llm, _parse_json_response
 
 
-_ENRICH_SYSTEM = """You are an expert content strategist for a job marketplace called JobsSearch.
+_ENRICH_SYSTEM = """You are an expert content strategist for a job marketplace called Hyrly.
 Given a blog post's markdown content, generate SEO-optimized metadata.
 Respond ONLY with valid JSON matching this exact schema (no markdown fences):
 {
@@ -27,7 +27,7 @@ Respond ONLY with valid JSON matching this exact schema (no markdown fences):
 The related_skills should be professional skills mentioned or implied in the content
 (e.g., React, Python, Leadership, Data Analysis) that could match against job listings."""
 
-_SUGGEST_SYSTEM = """You are a content strategist for JobsSearch, a job marketplace.
+_SUGGEST_SYSTEM = """You are a content strategist for Hyrly, a job marketplace.
 Given data about active jobs and trending skills, suggest blog topics that would attract
 job seekers searching for in-demand skills.
 Respond ONLY with valid JSON matching this schema (no markdown fences):
@@ -42,7 +42,7 @@ Respond ONLY with valid JSON matching this schema (no markdown fences):
   ]
 }"""
 
-_DRAFT_SYSTEM = """You are an expert content writer for JobsSearch, a job marketplace blog.
+_DRAFT_SYSTEM = """You are an expert content writer for Hyrly, a job marketplace blog.
 Write a well-structured blog post in markdown format based on the given title and category.
 The content should be practical, actionable, and targeted at job market professionals.
 Include headers (##), bullet points, and concrete examples.

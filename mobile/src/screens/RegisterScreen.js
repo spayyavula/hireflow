@@ -56,7 +56,7 @@ export default function RegisterScreen({ navigation }) {
           <View style={styles.logoIcon}>
             <Text style={styles.logoIconText}>JS</Text>
           </View>
-          <Text style={styles.logoText}>JobsSearch</Text>
+          <Text style={styles.logoText}>Hyrly</Text>
         </View>
 
         <Text style={styles.subtitle}>Create your account</Text>

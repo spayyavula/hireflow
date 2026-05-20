@@ -165,7 +165,7 @@ export default function AppNavigator() {
         }}>
           <Text style={{ color: colors.cream, fontSize: 20, fontWeight: '800' }}>JS</Text>
         </View>
-        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.ink, marginBottom: 8 }}>JobsSearch</Text>
+        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.ink, marginBottom: 8 }}>Hyrly</Text>
         <Text style={{ color: colors.textMuted }}>Loading...</Text>
       </View>
     );

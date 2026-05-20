@@ -1,5 +1,5 @@
 export default {
-  title: 'Coming Soon | JobsSearch',
+  title: 'Coming Soon | Hyrly',
   description:
-    'This JobsSearch page is on the way. Explore current features and check the roadmap while we finish it.',
+    'This Hyrly page is on the way. Explore current features and check the roadmap while we finish it.',
 };

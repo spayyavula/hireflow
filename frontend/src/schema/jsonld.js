@@ -23,7 +23,7 @@ export function organization() {
   return {
     '@type': 'Organization',
     '@id': `${SITE}/#organization`,
-    name: 'JobsSearch',
+    name: 'Hyrly',
     url: `${SITE}/`,
     logo: `${SITE}/favicon.svg`,
     description: 'AI-powered decision system for job search and hiring.',
@@ -35,7 +35,7 @@ export function website() {
     '@type': 'WebSite',
     '@id': `${SITE}/#website`,
     url: `${SITE}/`,
-    name: 'JobsSearch',
+    name: 'Hyrly',
     publisher: { '@id': `${SITE}/#organization` },
     potentialAction: {
       '@type': 'SearchAction',

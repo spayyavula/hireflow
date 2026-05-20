@@ -1,4 +1,4 @@
-// JobsSearch Mobile Theme — matches web design system
+// Hyrly Mobile Theme — matches web design system
 export const colors = {
   ink: '#0d0d0f',
   inkLight: '#1a1a1f',

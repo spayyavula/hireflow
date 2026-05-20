@@ -223,7 +223,7 @@ const ResumeBuilder = ({ onComplete, existingProfile }) => {
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 48 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>Hyrly</span>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             {Array.from({ length: totalSteps }, (_, i) => (

@@ -1,5 +1,5 @@
 /**
- * JobsSearch Mobile API Client
+ * Hyrly Mobile API Client
  * Mirrors the web api.js but uses expo-secure-store for token persistence.
  */
 import { Platform } from 'react-native';
@@ -12,7 +12,7 @@ if (Platform.OS !== 'web') {
 
 const TOKEN_KEY = 'jobssearch_token';
 
-class JobsSearchAPI {
+class HyrlyAPI {
   constructor() {
     this.token = null;
     this._ready = this._loadToken();
@@ -237,5 +237,5 @@ class JobsSearchAPI {
   }
 }
 
-const api = new JobsSearchAPI();
+const api = new HyrlyAPI();
 export default api;

@@ -36,7 +36,7 @@ export function LandingRoleCards({ roles }) {
           </div>
         </div>
         <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 24, maxWidth: 560 }}>
-          Everything in JobsSearch is built around one job — helping you find the right roles,
+          Everything in Hyrly is built around one job — helping you find the right roles,
           prepare with confidence, and land an offer.
         </p>
         <ul style={{
@@ -59,7 +59,7 @@ export function LandingRoleCards({ roles }) {
           color: "var(--ink)", marginBottom: 6,
         }}>Hiring, not job hunting?</h3>
         <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
-          JobsSearch works for the other side of the table too.
+          Hyrly works for the other side of the table too.
         </p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>

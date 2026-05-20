@@ -24,7 +24,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--ink)", cursor: "pointer", textDecoration: "none" }}
         >
           <span aria-hidden="true" style={{ display: "flex" }}>{Icons.logo}</span>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>JobsSearch</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Hyrly</span>
         </a>
         <nav style={{ display: "flex", gap: 8 }}>
           {navLinks.map(link => (

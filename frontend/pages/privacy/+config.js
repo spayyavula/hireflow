@@ -1,4 +1,4 @@
 export default {
-  title: 'Privacy | JobsSearch',
-  description: 'How JobsSearch collects, uses, and protects your personal and hiring data.',
+  title: 'Privacy | Hyrly',
+  description: 'How Hyrly collects, uses, and protects your personal and hiring data.',
 };

@@ -194,7 +194,7 @@ const IdeasBoard = ({ onGetStarted, onSignIn, onNavigate, currentPage, user }) =
         <footer style={{
           padding: "24px 48px", textAlign: "center", fontSize: 13, color: "var(--text-muted)",
           background: "var(--ink)", borderTop: "1px solid rgba(250,248,245,0.06)",
-        }}>© 2026 JobsSearch. Built with AI.</footer>
+        }}>© 2026 Hyrly. Built with AI.</footer>
       </div>
     );
   }

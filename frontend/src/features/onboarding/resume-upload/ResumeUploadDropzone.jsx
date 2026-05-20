@@ -9,7 +9,7 @@ export function ResumeUploadDropzone({ dragOver, error, onDragOver, onDragLeave,
       <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
           {Icons.logo}
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>Hyrly</span>
         </div>
 
         <h1 className="animate-in" style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, marginBottom: 12 }}>Upload your resume</h1>

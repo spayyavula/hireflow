@@ -1,5 +1,5 @@
 export default {
-  title: 'Help | JobsSearch',
+  title: 'Help | Hyrly',
   description:
-    'Get support for your account, subscriptions, interviews, and hiring workflows on JobsSearch.',
+    'Get support for your account, subscriptions, interviews, and hiring workflows on Hyrly.',
 };

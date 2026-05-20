@@ -15,7 +15,7 @@ from api.services.llm import _call_llm, _parse_json_response
 logger = logging.getLogger(__name__)
 
 
-_HUB_SYSTEM = """You are an SEO content strategist for JobsSearch, a job marketplace.
+_HUB_SYSTEM = """You are an SEO content strategist for Hyrly, a job marketplace.
 Given a description of a job-search hub page, write a helpful intro and FAQ.
 Respond ONLY with valid JSON (no markdown fences) matching this schema:
 {
@@ -73,7 +73,7 @@ def hub_label(descriptor: dict) -> str:
 def _fallback_copy(label: str) -> dict:
     return {
         "copy": (
-            f"Explore {label} on JobsSearch. We aggregate openings from multiple "
+            f"Explore {label} on Hyrly. We aggregate openings from multiple "
             f"providers and score every role against your skills, experience, and "
             f"work preferences so you can decide whether to apply now, build proof "
             f"first, or pivot to a better-fit path. Browse the current {label.lower()} "
@@ -83,8 +83,8 @@ def _fallback_copy(label: str) -> dict:
             {"q": f"How many {label.lower()} are available?",
              "a": "Listings update continuously as employers post and close roles. The roles shown below are live right now."},
             {"q": f"Can I get matched to {label.lower()}?",
-             "a": "Yes. Create a free JobsSearch profile and our AI scores each role against your skills and preferences."},
-            {"q": "Is JobsSearch free for job seekers?",
+             "a": "Yes. Create a free Hyrly profile and our AI scores each role against your skills and preferences."},
+            {"q": "Is Hyrly free for job seekers?",
              "a": "Yes, job seekers can search, match, and apply for free."},
         ],
     }

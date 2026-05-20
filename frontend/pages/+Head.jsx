@@ -7,7 +7,7 @@ export default function HeadDefault() {
       {
         '@type': 'Organization',
         '@id': `${SITE}/#organization`,
-        name: 'JobsSearch',
+        name: 'Hyrly',
         url: `${SITE}/`,
         logo: `${SITE}/favicon.svg`,
         description: 'AI-powered decision system for job search and hiring.',
@@ -16,7 +16,7 @@ export default function HeadDefault() {
         '@type': 'WebSite',
         '@id': `${SITE}/#website`,
         url: `${SITE}/`,
-        name: 'JobsSearch',
+        name: 'Hyrly',
         publisher: { '@id': `${SITE}/#organization` },
         potentialAction: {
           '@type': 'SearchAction',
@@ -34,7 +34,7 @@ export default function HeadDefault() {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="JobsSearch" />
+      <meta property="og:site_name" content="Hyrly" />
       <meta property="og:image" content={`${SITE}/og-image.svg`} />
       <meta name="twitter:card" content="summary_large_image" />
       <script

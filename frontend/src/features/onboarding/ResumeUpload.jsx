@@ -129,7 +129,7 @@ const ResumeUpload = ({ onComplete, onBack }) => {
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48, color: "var(--ink)" }}>
             {Icons.logo}
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>JobsSearch</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700 }}>Hyrly</span>
           </header>
 
           <div className="animate-in" style={{ marginBottom: 32 }}>
