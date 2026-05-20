@@ -1,5 +1,5 @@
 export default {
-  title: 'Hyrly | Decision System For Job Search And Hiring',
+  title: 'Hyrly — The AI coach for laid-off tech engineers',
   description:
-    'Hyrly is an AI decision system for job seekers, recruiters, and companies with match scoring, pivot paths, certification ROI, and interview guidance.',
+    'Just got laid off? Answer 10 questions in 3 minutes and get your week-1 priorities ranked. Then talk to Scout AI, your coach across the 13 things that actually matter post-layoff.',
 };
