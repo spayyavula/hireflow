@@ -9,7 +9,7 @@ export default function HeadDefault() {
         '@id': `${SITE}/#organization`,
         name: 'Hyrly',
         url: `${SITE}/`,
-        logo: `${SITE}/favicon.svg`,
+        logo: `${SITE}/logo.png`,
         description: 'AI-powered decision system for job search and hiring.',
       },
       {
@@ -30,12 +30,13 @@ export default function HeadDefault() {
     <>
       <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
       <meta name="theme-color" content="#faf8f5" />
-      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <link rel="icon" type="image/png" href="/logo.png" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="Hyrly" />
-      <meta property="og:image" content={`${SITE}/og-image.svg`} />
+      <meta property="og:image" content={`${SITE}/logo.png`} />
+      <meta name="twitter:image" content={`${SITE}/logo.png`} />
       <meta name="twitter:card" content="summary_large_image" />
       <script
         type="application/ld+json"

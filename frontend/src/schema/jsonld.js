@@ -25,7 +25,7 @@ export function organization() {
     '@id': `${SITE}/#organization`,
     name: 'Hyrly',
     url: `${SITE}/`,
-    logo: `${SITE}/favicon.svg`,
+    logo: `${SITE}/logo.png`,
     description: 'AI-powered decision system for job search and hiring.',
   };
 }
