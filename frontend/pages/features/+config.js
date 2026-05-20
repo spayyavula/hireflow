@@ -1,5 +1,5 @@
 export default {
   title: 'Features | Hyrly',
   description:
-    'Explore AI match scoring, interview coaching, recruiter pipelines, analytics, and collaboration tools built for calmer hiring decisions.',
+    'What\'s actually inside Hyrly: Scout AI coach, Layoff Triage, the Playbook, voice mock interviews, AI job matching. Built for engineers in the first 90 days after a tech layoff.',
 };
