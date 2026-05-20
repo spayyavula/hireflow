@@ -9,6 +9,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
     { key: "about", label: "About" },
     { key: "roadmap", label: "Roadmap" },
     { key: "blog", label: "Blog" },
+    { key: "playbook", label: "Playbook" },
   ];
 
   return (
