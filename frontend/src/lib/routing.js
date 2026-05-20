@@ -5,6 +5,7 @@ export const PUBLIC_PAGE_TO_PATH = {
   about: "/about",
   roadmap: "/roadmap",
   blog: "/blog",
+  playbook: "/playbook",
   terms: "/terms",
   privacy: "/privacy",
   help: "/help",
@@ -26,6 +27,11 @@ export const getPageFromPath = (pathname) => {
     return slug ? `blog-post:${slug}` : "blog";
   }
 
+  if (pathname.startsWith("/playbook/")) {
+    const slug = pathname.replace("/playbook/", "").trim();
+    return slug ? `playbook-post:${slug}` : "playbook";
+  }
+
   const match = Object.entries(PUBLIC_PAGE_TO_PATH).find(([, path]) => path === pathname);
   return match ? match[0] : "coming-soon";
 };
@@ -40,6 +46,10 @@ export const getPathFromPage = (page) => {
   if (page.startsWith("blog-post:")) {
     const slug = page.replace("blog-post:", "").trim();
     return slug ? `/blog/${slug}` : "/blog";
+  }
+  if (page.startsWith("playbook-post:")) {
+    const slug = page.replace("playbook-post:", "").trim();
+    return slug ? `/playbook/${slug}` : "/playbook";
   }
   return PUBLIC_PAGE_TO_PATH[page] || "/";
 };
