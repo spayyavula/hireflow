@@ -32,7 +32,7 @@ const PublicNav = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
             <a
               key={link.key}
               href={getPathFromPage(link.key)}
-              onClick={link.key === 'playbook' ? undefined : (e) => { e.preventDefault(); onNavigate(link.key); }}
+              onClick={(e) => { e.preventDefault(); onNavigate(link.key); }}
               style={{
               padding: "8px 16px", borderRadius: 8, border: "none", background: "transparent",
               fontSize: 14, fontWeight: 600, cursor: "pointer", color: navPage === link.key ? "var(--coral)" : "var(--text-secondary)",

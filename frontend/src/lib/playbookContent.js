@@ -1,31 +1,40 @@
 // Build-time content loader for the /playbook content surface.
 // Articles live at frontend/content/playbook/*.md with YAML frontmatter.
 // We use Vite's glob import to pull them all into the bundle at build time;
-// no DB call, no runtime fetch. SSR-safe.
+// no DB call, no runtime fetch.
+//
+// Uses js-yaml (pure JS, browser-safe) rather than gray-matter — gray-matter
+// pulls in Node's Buffer which is undefined in the browser, breaking Vike's
+// client-side dynamic import of this page chunk.
 
-import matter from 'gray-matter';
+import yaml from 'js-yaml';
 import { marked } from 'marked';
 
 const SITE = import.meta.env.VITE_SITE_URL || 'https://hyrly.ai';
 
-// `?raw` returns the file contents as a string. `eager: true` means all
-// matching files are bundled (not lazy-loaded). The path is relative to
-// the Vite project root (the `frontend/` directory).
 const MODULES = import.meta.glob('/content/playbook/*.md', {
   eager: true,
   query: '?raw',
   import: 'default',
 });
 
+const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
+
+function parseFrontmatter(raw) {
+  const match = raw.match(FRONTMATTER_RE);
+  if (!match) return { data: {}, content: raw };
+  return { data: yaml.load(match[1]) || {}, content: match[2] };
+}
+
 function parseOne(rawContent) {
-  const { data, content } = matter(rawContent);
+  const { data, content } = parseFrontmatter(rawContent);
   // Replace {{SITE}} tokens before rendering so marked doesn't URL-encode them
   // inside link hrefs (it turns {{ }} into %7B%7B%7D%7D).
   const contentWithSite = content.replace(/\{\{SITE\}\}/g, SITE);
   const rendered = marked.parse(contentWithSite, { async: false });
   // Also catch any remaining encoded or literal tokens that slipped through.
   const html = rendered.replace(/\{\{SITE\}\}/g, SITE).replace(/%7B%7BSITE%7D%7D/g, SITE);
-  // gray-matter/js-yaml parses bare YYYY-MM-DD values as Date objects.
+  // js-yaml parses bare YYYY-MM-DD values as Date objects.
   // Normalise date fields back to ISO date strings so tests can .toMatch().
   const normalized = { ...data };
   for (const key of ['published_at', 'updated_at']) {
