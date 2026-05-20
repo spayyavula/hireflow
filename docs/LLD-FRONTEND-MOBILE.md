@@ -39,7 +39,7 @@ Shared behavior (web/mobile):
 - Parse non-2xx responses and throw Error(detail)
 
 Token storage:
-- Web: localStorage key jobssearch_token
+- Web: localStorage key hyrly_token
 - Mobile native: Expo SecureStore with localStorage fallback on web
 
 ## 4. Request Flow

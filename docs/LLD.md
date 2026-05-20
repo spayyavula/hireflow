@@ -295,7 +295,7 @@ sequenceDiagram
 ## 9.1 Web client API contract notes
 
 - Base URL: `VITE_API_URL` (falls back to same-origin)
-- Bearer token stored in `localStorage` key `jobssearch_token`
+- Bearer token stored in `localStorage` key `hyrly_token`
 - `_fetch` normalizes API errors by extracting `detail`
 
 Known integration caveat:

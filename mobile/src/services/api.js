@@ -10,7 +10,7 @@ if (Platform.OS !== 'web') {
   SecureStore = require('expo-secure-store');
 }
 
-const TOKEN_KEY = 'jobssearch_token';
+const TOKEN_KEY = 'hyrly_token';
 
 class HyrlyAPI {
   constructor() {

@@ -1720,7 +1720,7 @@ export default function App() {
   });
   // Rehydrate session from stored token on mount
   useEffect(() => {
-    const token = localStorage.getItem('jobssearch_token');
+    const token = localStorage.getItem('hyrly_token');
     if (token) {
       api.getProfile()
         .then(data => {

@@ -26,7 +26,7 @@ const safeStorage = {
 
 class HyrlyAPI {
   constructor() {
-    this.token = safeStorage.get('jobssearch_token') || null;
+    this.token = safeStorage.get('hyrly_token') || null;
   }
 
   // ─── Internal ─────────────────────────────────────────
@@ -55,7 +55,7 @@ class HyrlyAPI {
       body: JSON.stringify(body),
     });
     this.token = data.access_token;
-    safeStorage.set('jobssearch_token', this.token);
+    safeStorage.set('hyrly_token', this.token);
     return data;
   }
 
@@ -65,13 +65,13 @@ class HyrlyAPI {
       body: JSON.stringify({ email, password }),
     });
     this.token = data.access_token;
-    safeStorage.set('jobssearch_token', this.token);
+    safeStorage.set('hyrly_token', this.token);
     return data;
   }
 
   logout() {
     this.token = null;
-    safeStorage.remove('jobssearch_token');
+    safeStorage.remove('hyrly_token');
   }
 
   // ─── Seeker ───────────────────────────────────────────
