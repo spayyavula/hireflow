@@ -1,5 +1,5 @@
 export default {
   title: 'Pricing | Hyrly',
   description:
-    'Simple pricing for seekers, recruiters, and companies. Start free and scale your hiring workflow with AI decision support.',
+    'Free Layoff Triage + Playbook + 3 Scout AI sessions. Hyrly Coach $29/month for unlimited. Layoff Sprint $99 one-time bundle with a personal founder call. No B2B tiers, no contracts.',
 };
