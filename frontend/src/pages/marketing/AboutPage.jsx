@@ -34,10 +34,17 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           The version of Hyrly you're using today is narrow on purpose: an AI coach for engineers in their first 30–90 days post-layoff, plus a 5-article playbook on the things that actually matter in week 1 (visa, severance, finances, resume, LinkedIn). If that's you, the triage takes 3 minutes and the rest of the product is built around what you tell it.
         </p>
         <p style={{ marginBottom: 20 }}>
-          If you're a recruiter or a hiring manager and the broader-platform language elsewhere on this site caught your eye, that path exists — there's job-posting, candidate-search, and pipeline tooling under the hood — but it isn't what the brand is focused on. If you want to talk about that direction, the email below works.
+          Recruiter and hiring-side tools are in private beta — <a href="mailto:hello@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>hello@hyrly.ai</a> for early access.
         </p>
         <p style={{ marginBottom: 0 }}>
           Honest about what this is and what it isn't. If Hyrly helps you, tell me what to fix: <a href="mailto:hello@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>hello@hyrly.ai</a>. Real reply, usually within a day.
+        </p>
+      </section>
+
+      {/* Last updated */}
+      <section style={{ padding: "0 48px 48px", maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+        <p style={{ fontSize: 12, color: "var(--text-muted)", fontStyle: "italic", margin: 0 }}>
+          Last updated: May 20, 2026.
         </p>
       </section>
 
