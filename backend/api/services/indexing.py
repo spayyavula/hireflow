@@ -14,13 +14,14 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 
 from api.core.config import GOOGLE_INDEXING_CREDENTIALS
 
 logger = logging.getLogger(__name__)
 
-SITE = "https://jobssearch.work"
+SITE = os.environ.get("SITE_URL", "https://hyrly.ai")
 _INDEXING_ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
 _SCOPE = "https://www.googleapis.com/auth/indexing"
 

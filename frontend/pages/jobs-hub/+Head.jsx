@@ -2,13 +2,15 @@ import { usePageContext } from 'vike-react/usePageContext';
 import { itemList, faqPage, breadcrumbList } from '../../src/schema/jsonld';
 import { hubUrlPath, hubLabel } from '../../src/lib/hubRoute';
 
+const SITE = import.meta.env.VITE_SITE_URL || 'https://hyrly.ai';
+
 export default function Head() {
   const { data } = usePageContext();
   const descriptor = data?.descriptor;
   if (!descriptor) {
     return <meta name="robots" content="noindex,follow" />;
   }
-  const canonical = `https://jobssearch.work${hubUrlPath(descriptor)}`;
+  const canonical = `${SITE}${hubUrlPath(descriptor)}`;
   const label = hubLabel(descriptor);
 
   // Below the indexability threshold: render but keep it out of the index.
@@ -23,8 +25,8 @@ export default function Head() {
 
   const graph = [
     breadcrumbList([
-      { name: 'Home', url: 'https://jobssearch.work/' },
-      { name: 'Jobs', url: 'https://jobssearch.work/jobs' },
+      { name: 'Home', url: `${SITE}/` },
+      { name: 'Jobs', url: `${SITE}/jobs` },
       { name: label, url: canonical },
     ]),
     itemList(data.jobs),

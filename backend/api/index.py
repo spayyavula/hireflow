@@ -38,7 +38,7 @@ app = FastAPI(
 # ─── CORS (allow frontend origins) ───────────────────────
 ALLOWED_ORIGINS = os.environ.get(
     "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://localhost:5173,http://localhost:8081,http://localhost:8082,http://localhost:19006,http://192.168.1.47:8081,http://192.168.1.47:8082,https://hireflow-ui.vercel.app,https://jobssearch.work,https://www.jobssearch.work",
+    "http://localhost:3000,http://localhost:5173,http://localhost:8081,http://localhost:8082,http://localhost:19006,http://192.168.1.47:8081,http://192.168.1.47:8082,https://hireflow-ui.vercel.app,https://jobssearch.work,https://www.jobssearch.work,https://hyrly.ai,https://www.hyrly.ai",
 ).split(",")
 
 app.add_middleware(

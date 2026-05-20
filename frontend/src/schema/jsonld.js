@@ -1,4 +1,4 @@
-const SITE = 'https://jobssearch.work';
+const SITE = import.meta.env.VITE_SITE_URL || 'https://hyrly.ai';
 const DEFAULT_COUNTRY = 'US';
 const DEFAULT_CURRENCY = 'USD';
 

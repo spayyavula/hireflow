@@ -61,7 +61,7 @@ describe('jobPosting', () => {
 
 describe('organization / website', () => {
   it('organization has a stable @id', () => {
-    expect(organization()['@id']).toBe('https://jobssearch.work/#organization');
+    expect(organization()['@id']).toBe('https://hyrly.ai/#organization');
   });
   it('website includes a SearchAction', () => {
     expect(website().potentialAction['@type']).toBe('SearchAction');
@@ -71,13 +71,13 @@ describe('organization / website', () => {
 describe('breadcrumbList', () => {
   it('numbers positions from 1', () => {
     const ld = breadcrumbList([
-      { name: 'Home', url: 'https://jobssearch.work/' },
-      { name: 'Jobs', url: 'https://jobssearch.work/jobs' },
+      { name: 'Home', url: 'https://hyrly.ai/' },
+      { name: 'Jobs', url: 'https://hyrly.ai/jobs' },
     ]);
     expect(ld['@type']).toBe('BreadcrumbList');
     expect(ld.itemListElement[0].position).toBe(1);
     expect(ld.itemListElement[1].position).toBe(2);
-    expect(ld.itemListElement[1].item).toBe('https://jobssearch.work/jobs');
+    expect(ld.itemListElement[1].item).toBe('https://hyrly.ai/jobs');
   });
 });
 

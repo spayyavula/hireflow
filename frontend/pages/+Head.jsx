@@ -1,24 +1,26 @@
+const SITE = import.meta.env.VITE_SITE_URL || 'https://hyrly.ai';
+
 export default function HeadDefault() {
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': 'https://jobssearch.work/#organization',
+        '@id': `${SITE}/#organization`,
         name: 'JobsSearch',
-        url: 'https://jobssearch.work/',
-        logo: 'https://jobssearch.work/favicon.svg',
+        url: `${SITE}/`,
+        logo: `${SITE}/favicon.svg`,
         description: 'AI-powered decision system for job search and hiring.',
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://jobssearch.work/#website',
-        url: 'https://jobssearch.work/',
+        '@id': `${SITE}/#website`,
+        url: `${SITE}/`,
         name: 'JobsSearch',
-        publisher: { '@id': 'https://jobssearch.work/#organization' },
+        publisher: { '@id': `${SITE}/#organization` },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://jobssearch.work/jobs?search={search_term_string}',
+          target: `${SITE}/jobs?search={search_term_string}`,
           'query-input': 'required name=search_term_string',
         },
       },
@@ -33,7 +35,7 @@ export default function HeadDefault() {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="JobsSearch" />
-      <meta property="og:image" content="https://jobssearch.work/og-image.svg" />
+      <meta property="og:image" content={`${SITE}/og-image.svg`} />
       <meta name="twitter:card" content="summary_large_image" />
       <script
         type="application/ld+json"

@@ -4,17 +4,17 @@ import { urlsetXml, sitemapIndexXml, deriveHubEntries } from './sitemap';
 describe('urlsetXml', () => {
   it('builds a urlset with loc entries', () => {
     const xml = urlsetXml([
-      { loc: 'https://jobssearch.work/' },
-      { loc: 'https://jobssearch.work/features' },
+      { loc: 'https://hyrly.ai/' },
+      { loc: 'https://hyrly.ai/features' },
     ]);
     expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
     expect(xml).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
-    expect(xml).toContain('<loc>https://jobssearch.work/</loc>');
-    expect(xml).toContain('<loc>https://jobssearch.work/features</loc>');
+    expect(xml).toContain('<loc>https://hyrly.ai/</loc>');
+    expect(xml).toContain('<loc>https://hyrly.ai/features</loc>');
     expect(xml.trim().endsWith('</urlset>')).toBe(true);
   });
   it('escapes ampersands in loc URLs', () => {
-    const xml = urlsetXml([{ loc: 'https://jobssearch.work/jobs?a=1&b=2' }]);
+    const xml = urlsetXml([{ loc: 'https://hyrly.ai/jobs?a=1&b=2' }]);
     expect(xml).toContain('a=1&amp;b=2');
     expect(xml).not.toContain('a=1&b=2');
   });
@@ -23,11 +23,11 @@ describe('urlsetXml', () => {
 describe('sitemapIndexXml', () => {
   it('builds a sitemap index referencing child sitemaps', () => {
     const xml = sitemapIndexXml([
-      'https://jobssearch.work/sitemap-static.xml',
-      'https://jobssearch.work/sitemap-jobs.xml',
+      'https://hyrly.ai/sitemap-static.xml',
+      'https://hyrly.ai/sitemap-jobs.xml',
     ]);
     expect(xml).toContain('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
-    expect(xml).toContain('<loc>https://jobssearch.work/sitemap-static.xml</loc>');
+    expect(xml).toContain('<loc>https://hyrly.ai/sitemap-static.xml</loc>');
     expect(xml.trim().endsWith('</sitemapindex>')).toBe(true);
   });
 });

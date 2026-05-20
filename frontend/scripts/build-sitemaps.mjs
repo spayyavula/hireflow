@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { urlsetXml, sitemapIndexXml, deriveHubEntries } from '../src/lib/sitemap.js';
 
-const SITE = 'https://jobssearch.work';
+const SITE = process.env.VITE_SITE_URL || 'https://hyrly.ai';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDirs = [
   path.resolve(__dirname, '..', 'dist', 'client'),
