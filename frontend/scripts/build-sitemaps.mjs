@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises';
+import { writeFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +17,18 @@ const STATIC_ROUTES = [
   '/', '/features', '/pricing', '/about', '/roadmap',
   '/terms', '/privacy', '/help', '/blog',
 ];
+
+async function readPlaybookSlugs() {
+  const dir = path.resolve(__dirname, '..', 'content', 'playbook');
+  try {
+    const files = await readdir(dir);
+    return files
+      .filter((f) => f.endsWith('.md'))
+      .map((f) => f.replace(/\.md$/, ''));
+  } catch {
+    return [];
+  }
+}
 
 async function fetchJson(url) {
   try {
@@ -40,6 +52,7 @@ async function main() {
   // returns 422, which fetchJson swallows to [] — leaving the sitemap empty.
   const jobs = apiBase ? await fetchJson(`${apiBase}/api/jobs?limit=100`) : [];
   const posts = apiBase ? await fetchJson(`${apiBase}/api/blog`) : [];
+  const playbookSlugs = await readPlaybookSlugs();
 
   const files = {
     'sitemap-static.xml': urlsetXml(STATIC_ROUTES.map((r) => ({ loc: `${SITE}${r}` }))),
@@ -49,6 +62,10 @@ async function main() {
     'sitemap-jobs.xml': urlsetXml(jobs.map((j) => ({ loc: `${SITE}${jobUrl(j)}` }))),
     'sitemap-hubs.xml': urlsetXml(
       deriveHubEntries(jobs).map((p) => ({ loc: `${SITE}${p}` })),
+    ),
+    'sitemap-playbook.xml': urlsetXml(
+      [`${SITE}/playbook`, ...playbookSlugs.map((s) => `${SITE}/playbook/${s}`)]
+        .map((loc) => ({ loc })),
     ),
   };
   files['sitemap.xml'] = sitemapIndexXml(
@@ -63,7 +80,7 @@ async function main() {
   }
   console.log(
     `Sitemaps written: ${jobs.length} jobs, ${posts.length} blog posts, ` +
-    `${deriveHubEntries(jobs).length} hubs.`,
+    `${deriveHubEntries(jobs).length} hubs, ${playbookSlugs.length} playbook articles.`,
   );
 }
 
