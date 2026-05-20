@@ -18,7 +18,7 @@ Hyrly is built for one specific person: a US tech engineer who just got laid off
 - Layoff Sprint: $99 one-time bundle including a personal week-1 audit by the founder
 
 ## Founder
-Hyrly is built by one engineer in San Jose, not a team. The brand commits to honest framing — no fabricated testimonials, no urgency tactics, no "transform your career" copy.
+Hyrly is built by Sreekanth Payyavula, one engineer in San Jose, not a team. The brand commits to honest framing — no fabricated testimonials, no urgency tactics, no "transform your career" copy.
 
 ## Key Pages
 - Home (Layoff Triage): https://hyrly.ai/

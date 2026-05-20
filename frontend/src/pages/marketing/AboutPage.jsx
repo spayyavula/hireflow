@@ -16,10 +16,21 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           display: "inline-block", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
           background: "rgba(155,143,212,0.1)", color: "var(--lavender)", marginBottom: 24, letterSpacing: "0.02em",
         }}>About</div>
+        <img
+          src="/founder.png"
+          alt="Sreekanth Payyavula"
+          width="120"
+          height="120"
+          style={{
+            width: 120, height: 120, borderRadius: "50%", objectFit: "cover",
+            display: "block", margin: "0 auto 20px",
+            border: "3px solid white", boxShadow: "0 6px 24px rgba(13,13,15,0.10)",
+          }}
+        />
         <h1 style={{
           fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px, 4.5vw, 52px)", fontWeight: 700,
           lineHeight: 1.1, color: "var(--ink)", letterSpacing: "-0.03em", marginBottom: 16,
-        }}>Built by one engineer in San Jose.</h1>
+        }}>Built by Sreekanth Payyavula in San Jose.</h1>
         <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
           No team yet. No funding. No fabricated testimonials. Just a tool I wish my friends had had — and that I'll use myself the next time I need it.
         </p>
@@ -44,7 +55,7 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       {/* Last updated */}
       <section style={{ padding: "0 48px 48px", maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
         <p style={{ fontSize: 12, color: "var(--text-muted)", fontStyle: "italic", margin: 0 }}>
-          Last updated: May 20, 2026.
+          Last updated: May 20, 2026 — written by Sreekanth Payyavula.
         </p>
       </section>
 
