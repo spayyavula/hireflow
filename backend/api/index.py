@@ -22,7 +22,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog, seo
+from api.routes import auth, seeker, jobs, recruiter, company, chat, matcher, features, blog, seo, triage
 from api.routes.scout import router as scout_router
 from api.routes.interview import router as interview_router
 
@@ -80,6 +80,7 @@ app.include_router(blog.router)
 app.include_router(seo.router)
 app.include_router(scout_router)
 app.include_router(interview_router)
+app.include_router(triage.router)
 
 
 # ─── Health Check ─────────────────────────────────────────
