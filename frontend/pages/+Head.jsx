@@ -10,7 +10,7 @@ export default function HeadDefault() {
         name: 'Hyrly',
         url: `${SITE}/`,
         logo: `${SITE}/logo.png`,
-        description: 'AI-powered decision system for job search and hiring.',
+        description: 'The AI career coach for engineers in their first 90 days after a tech layoff.',
       },
       {
         '@type': 'WebSite',

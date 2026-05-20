@@ -1,5 +1,5 @@
 export default {
   title: 'About | Hyrly',
   description:
-    'Learn why Hyrly exists: replacing noisy hiring dashboards with a decision-first system that helps teams and candidates move forward.',
+    'Built by one engineer in San Jose. No team yet, no funding, no fabricated testimonials — just a tool I wish my friends had had when they got the news.',
 };

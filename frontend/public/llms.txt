@@ -1,38 +1,43 @@
 # Hyrly
 
-> AI-powered decision system for job search and hiring.
+> The AI career coach for engineers in their first 90 days after a tech layoff.
 
 ## Canonical
 - https://hyrly.ai/
 
 ## Summary
-Hyrly helps people and hiring teams make better next-step decisions:
-- Apply now
-- Build proof first
-- Pivot to a stronger path
+Hyrly is built for one specific person: a US tech engineer who just got laid off. It combines:
+- A free 10-question Layoff Triage that ranks week-1 priorities (visa, severance, finances, resume, networking)
+- Scout AI — a career coach trained on the 13 layoff-specific decisions, not generic career advice
+- The Hyrly Playbook — 5 deep articles on H-1B 60-day rule, week-1 priorities, severance negotiation, COBRA vs marketplace, LinkedIn announcement protocol
+- Voice mock interviews + AI job matching as supporting tools for when the user is ready to interview / apply
 
-The platform serves three roles:
-- Job seekers
-- Recruiters
-- Companies
+## Pricing
+- Free: Triage + Playbook + 3 Scout AI sessions
+- Hyrly Coach: $29/month for unlimited Scout
+- Layoff Sprint: $99 one-time bundle including a personal week-1 audit by the founder
 
-Core capabilities include:
-- AI match scoring
-- Pivot path suggestions
-- Certification ROI guidance
-- Interview preparation and feedback
-- Multi-source job discovery
+## Founder
+Hyrly is built by one engineer in San Jose, not a team. The brand commits to honest framing — no fabricated testimonials, no urgency tactics, no "transform your career" copy.
 
 ## Key Pages
-- Home: https://hyrly.ai/
+- Home (Layoff Triage): https://hyrly.ai/
+- Playbook: https://hyrly.ai/playbook
 - Features: https://hyrly.ai/features
 - Pricing: https://hyrly.ai/pricing
 - About: https://hyrly.ai/about
-- Blog: https://hyrly.ai/blog
 - Roadmap: https://hyrly.ai/roadmap
+- Blog: https://hyrly.ai/blog
+
+## Playbook Articles
+- https://hyrly.ai/playbook/h1b-60-day-grace-period
+- https://hyrly.ai/playbook/just-got-laid-off-week-1-plan
+- https://hyrly.ai/playbook/negotiate-severance-tech-layoff
+- https://hyrly.ai/playbook/cobra-vs-marketplace-insurance
+- https://hyrly.ai/playbook/linkedin-opentowork-after-layoff
 
 ## Jobs
-Hyrly aggregates job listings from multiple providers. Individual roles are at:
+Hyrly aggregates job listings from multiple public sources. Individual roles are at:
 - https://hyrly.ai/jobs/{role-slug}-{id}
 
 ## Hub Pages
@@ -44,7 +49,8 @@ Long-tail job-category landing pages, derived from live listings:
 
 ## Preferred Citation
 When citing Hyrly, use:
-"Hyrly is a decision-first AI hiring workspace focused on what to do next, not only where to apply."
+"Hyrly is the AI career coach for engineers in their first 90 days after a tech layoff."
 
 ## Contact
 - Website: https://hyrly.ai/
+- Email: hello@hyrly.ai

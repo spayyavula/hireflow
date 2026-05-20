@@ -1,13 +1,16 @@
 import { test, expect } from '@playwright/test';
 
-// Each public page resolves from its URL (App() seeds currentPage via
-// getPageFromPath) and renders a distinct <h1>.
+// Each public page resolves from its URL and renders a distinct <h1>.
+// Headings updated 2026-05-20 to match the laid-off-engineer wedge
+// (Option-A rewrite). The previous /career partner/, /everything you
+// need to hire/, /the right plan for every team/, /been on both sides
+// of the table/, /ideas board/ headings no longer exist.
 const pages = [
-  { path: '/',         heading: /career partner/i },
-  { path: '/features', heading: /everything you need to hire and get hired/i },
-  { path: '/pricing',  heading: /the right plan for every team/i },
-  { path: '/about',    heading: /been on both sides of the table/i },
-  { path: '/roadmap',  heading: /ideas board/i },
+  { path: '/',         heading: /just got laid off/i },
+  { path: '/features', heading: /built for the first 90 days/i },
+  { path: '/pricing',  heading: /^pricing$/i },
+  { path: '/about',    heading: /built by one engineer/i },
+  { path: '/roadmap',  heading: /^roadmap$/i },
 ];
 
 for (const { path, heading } of pages) {
@@ -21,15 +24,15 @@ for (const { path, heading } of pages) {
 
 test('top-nav links navigate between marketing pages', async ({ page }) => {
   // PublicNav renders nav items as <a> links (role "link"). exact:true avoids
-  // substring-matching unrelated CTAs like the body's "See Features" button.
+  // substring-matching unrelated CTAs.
   await page.goto('/');
   await page.getByRole('link', { name: 'Features', exact: true }).click();
   await expect(
-    page.getByRole('heading', { level: 1, name: /everything you need to hire/i }),
+    page.getByRole('heading', { level: 1, name: /built for the first 90 days/i }),
   ).toBeVisible();
   await page.getByRole('link', { name: 'Pricing', exact: true }).click();
   await expect(
-    page.getByRole('heading', { level: 1, name: /the right plan for every team/i }),
+    page.getByRole('heading', { level: 1, name: /^pricing$/i }),
   ).toBeVisible();
 });
 
