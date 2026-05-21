@@ -598,3 +598,32 @@ class TriageResponse(BaseModel):
     """Response shape from POST /api/triage."""
     triage_id: str               # UUID, used to fetch + Scout handoff
     plan: TriagePlan
+
+
+# ─── LP2: Scout AI Sessions ──────────────────────────────────
+
+class ScoutSessionMessage(BaseModel):
+    """One message in a Scout AI conversation."""
+    role: str       # 'user' | 'scout'
+    content: str
+    ts: str         # ISO 8601 UTC timestamp
+
+
+class ScoutSessionCreateRequest(BaseModel):
+    """Request to start a new Scout session.
+
+    triage_id is optional — sessions can be anonymous and triage-less,
+    in which case the opening message is a generic layoff greeting.
+    """
+    triage_id: str | None = None
+
+
+class ScoutSessionMessageRequest(BaseModel):
+    """User sends a follow-up message in an existing session."""
+    content: str
+
+
+class ScoutSessionResponse(BaseModel):
+    """Response shape for POST /api/scout/sessions and message appends."""
+    session_id: str
+    messages: list[ScoutSessionMessage]
