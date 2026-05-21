@@ -15,7 +15,7 @@ export function LandingTestimonials() {
             We're collecting real testimonials from our first cohort of beta users
             right now. Quotes will appear here with full name, photo, and LinkedIn
             link once we have permission. If you're a Hyrly user and would like to
-            be featured, <a href="mailto:spayyavula@gmail.com" style={{ color: "var(--coral)", fontWeight: 600 }}>email us</a>.
+            be featured, <a href="mailto:sreekanth@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>email us</a>.
           </p>
         </div>
       </div>

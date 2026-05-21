@@ -116,7 +116,7 @@ const FeaturesPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
       {/* Hiring-side acknowledgement */}
       <section style={{ padding: "0 48px 64px", maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
         <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.7, fontStyle: "italic" }}>
-          Hiring manager or recruiter and the broader-platform language elsewhere on this site caught your eye? Email <a href="mailto:spayyavula@gmail.com" style={{ color: "var(--coral)", fontWeight: 600 }}>spayyavula@gmail.com</a> — that path exists but isn't where the brand is focused today.
+          Hiring manager or recruiter and the broader-platform language elsewhere on this site caught your eye? Email <a href="mailto:sreekanth@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>sreekanth@hyrly.ai</a> — that path exists but isn't where the brand is focused today.
         </p>
       </section>
 

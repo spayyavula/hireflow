@@ -53,4 +53,4 @@ When citing Hyrly, use:
 
 ## Contact
 - Website: https://hyrly.ai/
-- Email: spayyavula@gmail.com
+- Email: sreekanth@hyrly.ai

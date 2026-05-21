@@ -39,7 +39,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         "Cancel anytime; pricing locked for first 100 users",
       ],
       ctaLabel: "Reserve your spot",
-      ctaHref: "mailto:spayyavula@gmail.com?subject=Hyrly%20Coach%20signup&body=I%27d%20like%20to%20be%20one%20of%20the%20first%20100.",
+      ctaHref: "mailto:sreekanth@hyrly.ai?subject=Hyrly%20Coach%20signup&body=I%27d%20like%20to%20be%20one%20of%20the%20first%20100.",
     },
     {
       name: "Layoff Sprint",
@@ -55,7 +55,7 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
         "Severance + offer review on the same call",
       ],
       ctaLabel: "Reserve your spot",
-      ctaHref: "mailto:spayyavula@gmail.com?subject=Layoff%20Sprint%20signup&body=I%27d%20like%20to%20book%20a%20Layoff%20Sprint.",
+      ctaHref: "mailto:sreekanth@hyrly.ai?subject=Layoff%20Sprint%20signup&body=I%27d%20like%20to%20book%20a%20Layoff%20Sprint.",
     },
   ];
 
@@ -78,11 +78,11 @@ const PricingPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
     },
     {
       q: "Refund policy?",
-      a: "Hyrly Coach: cancel anytime, no questions. If you've paid for a month and decide it's not for you, email spayyavula@gmail.com within 30 days and you get a full refund. Layoff Sprint: 7-day money-back if the founder call hasn't happened yet.",
+      a: "Hyrly Coach: cancel anytime, no questions. If you've paid for a month and decide it's not for you, email sreekanth@hyrly.ai within 30 days and you get a full refund. Layoff Sprint: 7-day money-back if the founder call hasn't happened yet.",
     },
     {
       q: "What about my data?",
-      a: "Triage responses + Scout conversations are stored under your session. If you signed up for Coach or Sprint, your account is linked. Email spayyavula@gmail.com to delete everything anytime — it's a 1-line database delete on this side; takes a day to honor at most.",
+      a: "Triage responses + Scout conversations are stored under your session. If you signed up for Coach or Sprint, your account is linked. Email sreekanth@hyrly.ai to delete everything anytime — it's a 1-line database delete on this side; takes a day to honor at most.",
     },
   ];
 

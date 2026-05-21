@@ -45,10 +45,10 @@ const AboutPage = ({ onGetStarted, onSignIn, onNavigate, currentPage }) => {
           The version of Hyrly you're using today is narrow on purpose: an AI coach for engineers in their first 30–90 days post-layoff, plus a 5-article playbook on the things that actually matter in week 1 (visa, severance, finances, resume, LinkedIn). If that's you, the triage takes 3 minutes and the rest of the product is built around what you tell it.
         </p>
         <p style={{ marginBottom: 20 }}>
-          Recruiter and hiring-side tools are in private beta — <a href="mailto:spayyavula@gmail.com" style={{ color: "var(--coral)", fontWeight: 600 }}>spayyavula@gmail.com</a> for early access.
+          Recruiter and hiring-side tools are in private beta — <a href="mailto:sreekanth@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>sreekanth@hyrly.ai</a> for early access.
         </p>
         <p style={{ marginBottom: 0 }}>
-          Honest about what this is and what it isn't. If Hyrly helps you, tell me what to fix: <a href="mailto:spayyavula@gmail.com" style={{ color: "var(--coral)", fontWeight: 600 }}>spayyavula@gmail.com</a>. Real reply, usually within a day.
+          Honest about what this is and what it isn't. If Hyrly helps you, tell me what to fix: <a href="mailto:sreekanth@hyrly.ai" style={{ color: "var(--coral)", fontWeight: 600 }}>sreekanth@hyrly.ai</a>. Real reply, usually within a day.
         </p>
       </section>
 
