@@ -102,10 +102,13 @@ class HyrlyAPI {
     });
   }
 
-  async createScoutSession(triageId) {
+  async createScoutSession(triageId, suggestedFirstTopic = null) {
     return this._fetch('/api/scout/sessions', {
       method: 'POST',
-      body: JSON.stringify({ triage_id: triageId || null }),
+      body: JSON.stringify({
+        triage_id: triageId || null,
+        suggested_first_topic: suggestedFirstTopic || null,
+      }),
     });
   }
 

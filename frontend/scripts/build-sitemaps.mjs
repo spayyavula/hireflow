@@ -16,6 +16,7 @@ const apiBase = (process.env.VITE_API_URL || '').replace(/\/$/, '');
 const STATIC_ROUTES = [
   '/', '/features', '/pricing', '/about', '/roadmap',
   '/terms', '/privacy', '/help', '/blog',
+  '/laid-off-h1b',
 ];
 
 async function readPlaybookSlugs() {

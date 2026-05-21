@@ -613,9 +613,18 @@ class ScoutSessionCreateRequest(BaseModel):
     """Request to start a new Scout session.
 
     triage_id is optional — sessions can be anonymous and triage-less,
-    in which case the opening message is a generic layoff greeting.
+    in which case the opening message is a generic layoff greeting unless
+    suggested_first_topic is provided.
+
+    suggested_first_topic lets a topic-specific landing page (e.g.
+    /laid-off-h1b) seed the conversation without requiring a full triage.
+    Ignored when triage_id is provided (triage wins).
+    Accepted values match the topics the opening builder knows:
+    'visa' | 'severance' | 'finances' | 'resume' | 'career_exploration' |
+    'networking' | 'generic'.
     """
     triage_id: str | None = None
+    suggested_first_topic: str | None = None
 
 
 class ScoutSessionMessageRequest(BaseModel):

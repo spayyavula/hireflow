@@ -86,6 +86,30 @@ def test_create_session_without_triage_returns_generic_opening(patched_supabase)
 
 
 @pytest.mark.integration
+def test_create_session_with_suggested_first_topic_no_triage_uses_topic(patched_supabase):
+    """Topic-keyed session without a triage (e.g. /laid-off-h1b landing page)."""
+    session_insert = MagicMock()
+    session_insert.execute.return_value = MagicMock(data=[{'id': 'session-uuid-3'}])
+    session_table = MagicMock()
+    session_table.insert.return_value = session_insert
+
+    patched_supabase.table.return_value = session_table
+
+    resp = client.post(
+        '/api/scout/sessions',
+        json={'suggested_first_topic': 'visa'},
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body['session_id'] == 'session-uuid-3'
+    assert len(body['messages']) == 1
+    assert body['messages'][0]['role'] == 'scout'
+    # Topic 'visa' -> opening mentions H-1B
+    content_lower = body['messages'][0]['content'].lower()
+    assert 'h-1b' in content_lower or 'h1b' in content_lower
+
+
+@pytest.mark.integration
 def test_create_session_returns_503_when_triage_lookup_fails(patched_supabase):
     triage_table = MagicMock()
     triage_table.select.side_effect = Exception('supabase down')

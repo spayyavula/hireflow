@@ -1349,6 +1349,11 @@ def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
                 profile = triage.get('answers') or {}
                 plan = triage.get('plan') or {}
                 suggested_first_topic = plan.get('suggested_first_topic')
+        elif req.suggested_first_topic:
+            # Topic-keyed session without a triage (e.g. from /laid-off-h1b
+            # landing page). Profile is empty so the handler uses its
+            # non-personalized branch.
+            suggested_first_topic = req.suggested_first_topic
 
         opening_content = build_opening_response(profile, suggested_first_topic)
         first_msg = ScoutSessionMessage(

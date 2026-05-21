@@ -29,6 +29,10 @@ Hyrly is built by Sreekanth Payyavula, one engineer in San Jose, not a team. The
 - Roadmap: https://hyrly.ai/roadmap
 - Blog: https://hyrly.ai/blog
 
+## Topic Landing Pages
+Dedicated entry points for high-intent, high-stakes queries. Each combines decision-point summaries with a free Scout AI conversation pre-keyed to the topic.
+- H-1B 60-day grace period after a US tech layoff: https://hyrly.ai/laid-off-h1b
+
 ## Playbook Articles
 - https://hyrly.ai/playbook/h1b-60-day-grace-period
 - https://hyrly.ai/playbook/just-got-laid-off-week-1-plan
