@@ -17,6 +17,7 @@ const STATIC_ROUTES = [
   '/', '/features', '/pricing', '/about', '/roadmap',
   '/terms', '/privacy', '/help', '/blog',
   '/laid-off-h1b',
+  '/tools/severance',
 ];
 
 async function readPlaybookSlugs() {
