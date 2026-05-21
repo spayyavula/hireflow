@@ -1,7 +1,7 @@
 export default {
   ssr: false,
   prerender: false,
-  title: 'Blog | Hyrly',
+  title: 'Hyrly Blog — Founder notes (coming soon)',
   description:
-    'Hiring strategy, job search guidance, interview prep, and career decision insights from the Hyrly team.',
+    'Founder-voice posts on building Hyrly, what laid-off engineers are actually asking for, and what\'s working. Coming soon — until then, the Playbook is where the real long-form content lives.',
 };
