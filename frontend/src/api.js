@@ -102,6 +102,20 @@ class HyrlyAPI {
     });
   }
 
+  async createScoutSession(triageId) {
+    return this._fetch('/api/scout/sessions', {
+      method: 'POST',
+      body: JSON.stringify({ triage_id: triageId || null }),
+    });
+  }
+
+  async sendScoutMessage(sessionId, content) {
+    return this._fetch(`/api/scout/sessions/${encodeURIComponent(sessionId)}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+  }
+
   // ─── Seeker ───────────────────────────────────────────
   async getProfile() {
     return this._fetch('/api/seeker/profile');
