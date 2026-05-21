@@ -3,6 +3,7 @@ import GlobalStyles from '../../src/styles/GlobalStyles';
 import PublicNav from '../../src/components/PublicNav';
 import { TriageWizard } from '../../src/features/triage/TriageWizard';
 import { TriagePlan } from '../../src/features/triage/TriagePlan';
+import { ScoutChat } from '../../src/features/scout/ScoutChat';
 import api from '../../src/api';
 import { marketingNavProps } from '../../src/lib/vikeNav';
 
@@ -16,8 +17,11 @@ const HERO_BODY =
 export default function HomePage() {
   const navProps = marketingNavProps('home');
   const [stage, setStage] = useState('hero');           // 'hero' | 'wizard' | 'submitting' | 'plan' | 'scout'
+  const [triageId, setTriageId] = useState(null);
   const [plan, setPlan] = useState(null);
-  const [scoutReply, setScoutReply] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState(null);
 
   async function handleWizardComplete(answers) {
@@ -25,6 +29,7 @@ export default function HomePage() {
     setError(null);
     try {
       const resp = await api.submitTriage(answers);
+      setTriageId(resp.triage_id);
       setPlan(resp.plan);
       setStage('plan');
     } catch (err) {
@@ -33,19 +38,38 @@ export default function HomePage() {
     }
   }
 
-  async function handleStartScout(p) {
+  async function handleStartScout() {
     setStage('submitting');
     setError(null);
     try {
-      const reply = await api.startScoutWithContext({
-        summary: p.summary,
-        suggestedFirstTopic: p.suggested_first_topic,
-      });
-      setScoutReply(reply);
+      const resp = await api.createScoutSession(triageId);
+      setSessionId(resp.session_id);
+      setMessages(resp.messages);
       setStage('scout');
     } catch (err) {
       setError(err.message || 'Scout request failed');
       setStage('plan');
+    }
+  }
+
+  async function handleSendScoutMessage(content) {
+    setIsThinking(true);
+    setError(null);
+    // Optimistic add of the user message
+    const optimistic = [
+      ...messages,
+      { role: 'user', content, ts: new Date().toISOString() },
+    ];
+    setMessages(optimistic);
+    try {
+      const resp = await api.sendScoutMessage(sessionId, content);
+      setMessages(resp.messages);
+    } catch (err) {
+      setError(err.message || 'Scout reply failed');
+      // Roll back the optimistic update
+      setMessages(messages);
+    } finally {
+      setIsThinking(false);
     }
   }
 
@@ -102,17 +126,17 @@ export default function HomePage() {
         <TriagePlan plan={plan} onStartScout={handleStartScout} />
       )}
 
-      {stage === 'scout' && scoutReply && (
-        <div style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
-          <h2 style={{
-            fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700,
-            color: 'var(--ink)', marginBottom: 16,
-          }}>Scout says:</h2>
-          <div style={{
-            background: 'white', borderRadius: 16, padding: 24,
-            border: '1px solid var(--border)', whiteSpace: 'pre-wrap', lineHeight: 1.7,
-          }}>{scoutReply.message || JSON.stringify(scoutReply, null, 2)}</div>
-        </div>
+      {stage === 'scout' && (
+        <>
+          <ScoutChat
+            messages={messages}
+            onSendMessage={handleSendScoutMessage}
+            isThinking={isThinking}
+          />
+          {error && (
+            <p style={{ textAlign: 'center', color: 'var(--coral)', fontSize: 14 }}>{error}</p>
+          )}
+        </>
       )}
     </div>
   );
