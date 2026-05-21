@@ -1,4 +1,5 @@
 import { usePageContext } from 'vike-react/usePageContext';
+import { useConfig } from 'vike-react/useConfig';
 import GlobalStyles from '../../../src/styles/GlobalStyles';
 import PublicNav from '../../../src/components/PublicNav';
 import { marketingNavProps } from '../../../src/lib/vikeNav';
@@ -7,6 +8,18 @@ export default function PlaybookArticle() {
   const { pageProps } = usePageContext();
   const article = pageProps?.article;
   const navProps = marketingNavProps('playbook');
+
+  // Override the inherited /playbook hub title + description with the
+  // per-article values. useConfig() is vike-react's documented mechanism
+  // for setting head config dynamically from a component — its output
+  // replaces (not duplicates) the static +config.js values.
+  const setConfig = useConfig();
+  if (article) {
+    setConfig({
+      title: `${article.title} — Hyrly`,
+      description: article.dek,
+    });
+  }
 
   if (!article) {
     return (

@@ -30,13 +30,12 @@ export default function PlaybookArticleHead() {
     keywords: Array.isArray(article.keywords) ? article.keywords.join(', ') : undefined,
   };
 
+  // <title> + <meta name="description"> + og:title + og:description are set
+  // via useConfig() in +Page.jsx — vike-react auto-emits all four from its
+  // title/description config. We only emit the article-specific extras here.
   return (
     <>
-      <title>{`${article.title} — Hyrly`}</title>
-      <meta name="description" content={article.dek} />
       <link rel="canonical" href={url} />
-      <meta property="og:title" content={article.title} />
-      <meta property="og:description" content={article.dek} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="article" />
       <meta property="article:author" content="Sreekanth Payyavula" />
