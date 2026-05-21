@@ -40,3 +40,5 @@ coverage/
 .agents/
 .claude/skills/
 skills-lock.json
+.vercel-build.log
+.vercel-deploy.log
