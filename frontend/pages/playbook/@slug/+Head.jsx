@@ -20,7 +20,11 @@ export default function PlaybookArticleHead() {
     description: article.dek,
     datePublished: article.published_at,
     dateModified: article.updated_at || article.published_at,
-    author: { '@type': 'Organization', name: 'Hyrly', '@id': `${SITE}/#organization` },
+    author: {
+      '@type': 'Person',
+      name: 'Sreekanth Payyavula',
+      url: `${SITE}/about`,
+    },
     publisher: { '@id': `${SITE}/#organization` },
     image: `${SITE}/api/og/home`,
     keywords: Array.isArray(article.keywords) ? article.keywords.join(', ') : undefined,
@@ -28,11 +32,18 @@ export default function PlaybookArticleHead() {
 
   return (
     <>
+      <title>{`${article.title} — Hyrly`}</title>
+      <meta name="description" content={article.dek} />
       <link rel="canonical" href={url} />
       <meta property="og:title" content={article.title} />
       <meta property="og:description" content={article.dek} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="article" />
+      <meta property="article:author" content="Sreekanth Payyavula" />
+      <meta property="article:published_time" content={article.published_at} />
+      {article.updated_at && article.updated_at !== article.published_at && (
+        <meta property="article:modified_time" content={article.updated_at} />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}

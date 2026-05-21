@@ -44,8 +44,13 @@ export default function PlaybookArticle() {
           <p style={{ fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.55, marginBottom: 12 }}>
             {article.dek}
           </p>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            {article.eta_min} min read · published {article.published_at}
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            By{' '}
+            <a
+              href="/about"
+              style={{ color: 'var(--text-secondary)', fontWeight: 600, textDecoration: 'none', borderBottom: '1px solid var(--border)' }}
+            >Sreekanth Payyavula</a>
+            {' · '}{article.eta_min} min read · published {article.published_at}
             {article.updated_at && article.updated_at !== article.published_at
               ? ` · last updated ${article.updated_at}` : ''}
           </div>
