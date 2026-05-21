@@ -1376,3 +1376,70 @@ def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
             status_code=503,
             detail='Scout session service temporarily unavailable.',
         ) from exc
+
+
+def _fetch_session(session_id: str) -> dict | None:
+    result = (
+        _db.supabase.table('scout_sessions')
+        .select('*')
+        .eq('id', session_id)
+        .execute()
+    )
+    if not result.data:
+        return None
+    return result.data[0]
+
+
+@router.post('/sessions/{session_id}/messages', response_model=ScoutSessionResponse)
+def append_message(
+    session_id: str, req: ScoutSessionMessageRequest,
+) -> ScoutSessionResponse:
+    """Append a user message and the Scout response to an existing session."""
+    try:
+        session = _fetch_session(session_id)
+        if session is None:
+            raise HTTPException(status_code=404, detail='Session not found.')
+
+        messages: list[dict] = list(session.get('messages') or [])
+
+        # Pull triage profile for follow-up context, if any.
+        profile: dict = {}
+        triage_id = session.get('triage_id')
+        if triage_id:
+            triage = _fetch_triage(triage_id)
+            if triage:
+                profile = triage.get('answers') or {}
+
+        # Append user message.
+        user_msg = ScoutSessionMessage(
+            role='user', content=req.content, ts=_now_iso(),
+        )
+        messages.append(user_msg.model_dump())
+
+        # Route + compose Scout response.
+        scout_content = route_message(req.content, profile, messages)
+        scout_msg = ScoutSessionMessage(
+            role='scout', content=scout_content, ts=_now_iso(),
+        )
+        messages.append(scout_msg.model_dump())
+
+        # Persist.
+        (
+            _db.supabase.table('scout_sessions')
+            .update({'messages': messages, 'updated_at': _now_iso()})
+            .eq('id', session_id)
+            .execute()
+        )
+
+        # Return as ScoutSessionMessage list.
+        return ScoutSessionResponse(
+            session_id=session_id,
+            messages=[ScoutSessionMessage(**m) for m in messages],
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail='Scout session service temporarily unavailable.',
+        ) from exc
