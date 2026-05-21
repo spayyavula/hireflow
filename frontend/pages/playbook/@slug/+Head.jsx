@@ -26,7 +26,7 @@ export default function PlaybookArticleHead() {
       url: `${SITE}/about`,
     },
     publisher: { '@id': `${SITE}/#organization` },
-    image: `${SITE}/api/og/home`,
+    image: `${SITE}/api/og/playbook/${article.slug}`,
     keywords: Array.isArray(article.keywords) ? article.keywords.join(', ') : undefined,
   };
 

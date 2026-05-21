@@ -35,9 +35,11 @@ export default function HeadDefault() {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="Hyrly" />
-      <meta property="og:image" content={`${SITE}/logo.png`} />
-      <meta name="twitter:image" content={`${SITE}/logo.png`} />
-      <meta name="twitter:card" content="summary_large_image" />
+      {/* og:image + twitter:image come from vike-react's `image` config
+          (set site-wide in pages/+config.js, overridden per page via
+          useConfig or per-page +config.js). Don't add JSX <meta> tags here
+          or they'll duplicate the config-emitted ones and crawlers will
+          honor whichever appears first — usually the wrong one. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}

@@ -11,4 +11,9 @@ export default {
   title: 'Hyrly | The AI coach for laid-off tech engineers',
   description:
     'Hyrly is the AI career coach for engineers in their first 90 days post-layoff. Free Layoff Triage, deep playbook articles, and unlimited Scout AI coaching when you need it.',
+  // Absolute URL is required by OG validators. Per-page useConfig({image: ...})
+  // and per-page +config.js image: overrides this without duplicating.
+  // VITE_SITE_URL can't be read here — Vike strips import.meta.env from +config.js
+  // execution context — so the production hostname is hardcoded.
+  image: 'https://hyrly.ai/logo.png',
 };

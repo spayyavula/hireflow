@@ -16,14 +16,12 @@ export default function HomeHead() {
       name: 'Layoff response and career coaching for US tech engineers',
     },
   };
+  // og:image + twitter:image come from the `image` config in
+  // pages/index/+config.js (which overrides the site-wide default).
   return (
-    <>
-      <meta property="og:image" content={`${SITE}/api/og/home`} />
-      <meta name="twitter:image" content={`${SITE}/api/og/home`} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-      />
-    </>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+    />
   );
 }
