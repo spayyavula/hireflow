@@ -8,13 +8,22 @@ leadership coaching, and more.
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime, timezone
 import re
 import random
 
 from api.core.config import get_current_user, require_user
 from api.core.database import get_user_by_id
+import api.core.database as _db
 from api.services.jobs_api import search_all_providers
 from api.services.ai import compute_job_match
+from api.services.scout_layoff import build_opening_response, route_message
+from api.models.schemas import (
+    ScoutSessionCreateRequest,
+    ScoutSessionResponse,
+    ScoutSessionMessage,
+    ScoutSessionMessageRequest,
+)
 
 router = APIRouter(prefix="/api/scout", tags=["Scout"])
 
@@ -1304,3 +1313,66 @@ async def _handle_job_search(message: str, profile: dict, api_key: str) -> Scout
         suggestions=suggestions,
         insight_type="job_search",
     )
+
+
+# ═══════════════════════════════════════════════════════════════════
+# LP2: Layoff-tuned Scout sessions (homepage triage handoff)
+# ═══════════════════════════════════════════════════════════════════
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _fetch_triage(triage_id: str) -> dict | None:
+    """Returns the triage row dict, or None if not found."""
+    result = (
+        _db.supabase.table('triage_responses')
+        .select('*')
+        .eq('id', triage_id)
+        .execute()
+    )
+    if not result.data:
+        return None
+    return result.data[0]
+
+
+@router.post('/sessions', response_model=ScoutSessionResponse)
+def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
+    """Create a new Scout session, optionally seeded by a triage_id."""
+    profile: dict = {}
+    suggested_first_topic: str | None = None
+
+    try:
+        if req.triage_id:
+            triage = _fetch_triage(req.triage_id)
+            if triage:
+                profile = triage.get('answers') or {}
+                plan = triage.get('plan') or {}
+                suggested_first_topic = plan.get('suggested_first_topic')
+
+        opening_content = build_opening_response(profile, suggested_first_topic)
+        first_msg = ScoutSessionMessage(
+            role='scout', content=opening_content, ts=_now_iso(),
+        )
+
+        insert_result = (
+            _db.supabase.table('scout_sessions')
+            .insert({
+                'user_id': None,
+                'triage_id': req.triage_id,
+                'messages': [first_msg.model_dump()],
+            })
+            .execute()
+        )
+        if not insert_result.data:
+            raise RuntimeError('insert returned no data')
+
+        session_id = str(insert_result.data[0]['id'])
+        return ScoutSessionResponse(session_id=session_id, messages=[first_msg])
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail='Scout session service temporarily unavailable.',
+        ) from exc
