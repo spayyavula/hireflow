@@ -7,6 +7,12 @@ export default {
   // Enable Vike's universal-deploy server entry so the Vercel adapter
   // (vite-plugin-vercel) can emit the SSR catch-all serverless function.
   server: true,
+  // vike-react's default passToClient is just ['_configFromHook']. Dynamic
+  // routes (e.g. /playbook/@slug) set `pageProps` via +onBeforeRender and
+  // need it shipped to the client, otherwise hydration runs with
+  // pageProps === undefined and falls into the not-found branch, blowing
+  // away the SSR'd content.
+  passToClient: ['pageProps'],
   lang: 'en',
   title: 'Hyrly | The AI coach for laid-off tech engineers',
   description:

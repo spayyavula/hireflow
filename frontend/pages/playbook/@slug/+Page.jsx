@@ -6,6 +6,21 @@ import { marketingNavProps } from '../../../src/lib/vikeNav';
 
 const SITE = import.meta.env.VITE_SITE_URL || 'https://hyrly.ai';
 
+export function rankBySlugSimilarity(attemptedSlug, articles) {
+  if (!articles || articles.length === 0) return [];
+  if (!attemptedSlug) return articles;
+  const target = new Set(attemptedSlug.toLowerCase().split(/[-/_]+/).filter(Boolean));
+  return [...articles]
+    .map((a) => {
+      const tokens = new Set(a.slug.toLowerCase().split(/[-/_]+/).filter(Boolean));
+      let overlap = 0;
+      for (const t of target) if (tokens.has(t)) overlap += 1;
+      return { article: a, score: overlap };
+    })
+    .sort((x, y) => y.score - x.score)
+    .map((x) => x.article);
+}
+
 export default function PlaybookArticle() {
   const { pageProps } = usePageContext();
   const article = pageProps?.article;
@@ -26,18 +41,76 @@ export default function PlaybookArticle() {
   }
 
   if (!article) {
+    const attemptedSlug = pageProps?.attemptedSlug || '';
+    const allArticles = pageProps?.allArticles || [];
+    const ranked = rankBySlugSimilarity(attemptedSlug, allArticles);
     return (
       <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
         <GlobalStyles />
         <PublicNav {...navProps} />
-        <main style={{ maxWidth: 720, margin: '0 auto', padding: '64px 24px' }}>
+        <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px 64px' }}>
           <h1 style={{
-            fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700,
-            color: 'var(--ink)', marginBottom: 16,
+            fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700,
+            color: 'var(--ink)', marginBottom: 12, letterSpacing: '-0.02em',
           }}>Article not found</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            That playbook entry doesn't exist (yet). <a href="/playbook" style={{ color: 'var(--coral)', fontWeight: 600 }}>Back to the playbook</a>.
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 8, fontSize: 16, lineHeight: 1.6 }}>
+            We don't have a playbook entry at <code style={{
+              background: 'rgba(13,13,15,0.06)', padding: '2px 8px', borderRadius: 6,
+              fontSize: 14, color: 'var(--ink)',
+            }}>/playbook/{attemptedSlug || 'this slug'}</code>{' '}— either the link is stale or the article hasn't been written yet.
           </p>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 24, fontSize: 16, lineHeight: 1.6 }}>
+            Here are the entries we do have:
+          </p>
+
+          {ranked.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+              {ranked.map((a, i) => (
+                <a
+                  key={a.slug}
+                  href={`/playbook/${a.slug}`}
+                  style={{
+                    display: 'block', textDecoration: 'none', color: 'inherit',
+                    background: 'white', borderRadius: 12, padding: '18px 22px',
+                    border: i === 0 && attemptedSlug
+                      ? '2px solid var(--coral)'
+                      : '1px solid var(--border)',
+                  }}
+                >
+                  {i === 0 && attemptedSlug && (
+                    <div style={{
+                      fontSize: 12, fontWeight: 700, color: 'var(--coral)',
+                      letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 6,
+                    }}>Closest match</div>
+                  )}
+                  <h2 style={{
+                    fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 700,
+                    color: 'var(--ink)', margin: 0, marginBottom: 6, lineHeight: 1.3,
+                  }}>{a.title}</h2>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    {a.dek}
+                  </p>
+                </a>
+              ))}
+            </div>
+          )}
+
+          <div style={{
+            borderTop: '1px solid var(--border)', paddingTop: 24, marginTop: 8,
+            textAlign: 'center',
+          }}>
+            <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 12 }}>
+              Not seeing what you needed? Tell Scout in your own words.
+            </p>
+            <a href="/" style={{
+              display: 'inline-block', background: 'var(--ink)', color: 'white',
+              padding: '12px 24px', borderRadius: 12, textDecoration: 'none',
+              fontSize: 15, fontWeight: 700,
+            }}>Start the Hyrly Triage →</a>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 10 }}>
+              3 minutes. No signup. Free.
+            </p>
+          </div>
         </main>
       </div>
     );
