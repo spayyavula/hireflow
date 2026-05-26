@@ -54,6 +54,16 @@ class TestIntentDetection:
         assert detect_layoff_intent('thinking about a pivot', []) == 'career_direction'
         assert detect_layoff_intent("don't know where I want to go", []) == 'career_direction'
 
+    def test_entrepreneurship_keywords_route_to_career_direction(self):
+        # Real user transcript: "I want to become an entrepreneur" was
+        # falling through to 'generic' and rendering the same menu the
+        # bot just offered, dead-ending the conversation.
+        assert detect_layoff_intent('I want to become an entrepreneur', []) == 'career_direction'
+        assert detect_layoff_intent('thinking about consulting', []) == 'career_direction'
+        assert detect_layoff_intent('I want to start my own business', []) == 'career_direction'
+        assert detect_layoff_intent('thinking about going freelance', []) == 'career_direction'
+        assert detect_layoff_intent('want to be my own boss', []) == 'career_direction'
+
     def test_unmatched_routes_to_generic(self):
         assert detect_layoff_intent('hello', []) == 'generic'
         assert detect_layoff_intent('thanks for the help', []) == 'generic'
@@ -95,6 +105,25 @@ class TestHandlers:
     def test_career_direction_response_mentions_values_or_walk(self):
         out = build_career_direction_response(_profile(top_concern='direction'), [])
         assert any(s in out.lower() for s in ['walk', 'values', 'regret', 'love'])
+
+    def test_career_direction_response_branches_for_entrepreneurship(self):
+        # When the user explicitly named going independent, the response
+        # should acknowledge that direction instead of restating "what do
+        # you want?" — that framing reads as evasive to a user who's
+        # already told us what they want.
+        conv = [{'role': 'user', 'content': 'I want to become an entrepreneur'}]
+        out = build_career_direction_response(_profile(top_concern='direction'), conv)
+        assert any(s in out.lower() for s in ['independent', 'founding', 'consulting', 'freelancing'])
+        assert 'runway' in out.lower()
+        # The default 90-min-walk framing should NOT lead; user already
+        # picked a direction.
+        default = build_career_direction_response(_profile(top_concern='direction'), [])
+        assert out != default
+
+    def test_career_direction_entrepreneur_branch_still_ends_with_question(self):
+        conv = [{'role': 'user', 'content': 'thinking about consulting full-time'}]
+        out = build_career_direction_response(_profile(), conv)
+        assert out.rstrip().endswith('?')
 
     def test_handlers_personalize_on_level(self):
         out_jr = build_severance_response(_profile(level='junior'), [])

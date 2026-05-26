@@ -44,8 +44,42 @@ INTENT_KEYWORDS = [
         'what should i do', 'what do i want', 'next role', 'pivot',
         'career', 'direction', 'burnout', 'tired of', "don't know",
         'figure out', 'thinking about', 'values',
+        # Independent / entrepreneurial paths route here too — they're a
+        # "what do I want next" question even if the user already has an
+        # answer in mind. Without these keywords "I want to become an
+        # entrepreneur" falls through to generic and shows the menu again.
+        'entrepreneur', 'startup', 'start a company', 'start a business',
+        'my own company', 'my own business', 'my own thing',
+        'consulting', 'freelance', 'freelancing', 'solopreneur',
+        'be my own boss', 'founding', 'go independent',
     ]),
 ]
+
+
+# Subset of the career_direction keywords that specifically signal the
+# user wants to go independent (found / consult / freelance). Used by
+# build_career_direction_response to switch the framing — the default
+# "90-min walk + 3 questions" copy is built for users picking a next
+# salaried role and reads as evasive to someone who's already named
+# their direction.
+_ENTREPRENEUR_TERMS = (
+    'entrepreneur', 'startup', 'start a company', 'start a business',
+    'my own company', 'my own business', 'my own thing',
+    'consulting', 'freelance', 'freelancing', 'solopreneur',
+    'be my own boss', 'founding', 'go independent',
+)
+
+
+def _mentions_entrepreneurship(conversation: list) -> bool:
+    """True if the most recent user message names an independent path."""
+    if not conversation:
+        return False
+    for msg in reversed(conversation):
+        if msg.get('role') != 'user':
+            continue
+        text = (msg.get('content') or '').lower()
+        return any(term in text for term in _ENTREPRENEUR_TERMS)
+    return False
 
 
 def _last_scout_topic(conversation: list) -> str | None:
@@ -291,15 +325,30 @@ def build_career_direction_response(profile: dict, conversation: list) -> str:
     level = _level_label(profile)
     role = _role_label(profile)
 
-    opening = (
-        "The 'what do I want next' question is the one that doesn't get solved by "
-        "scrolling LinkedIn. It gets solved by getting bored enough that the answer "
-        "surfaces on its own — which is a real strategy, not a cop-out. The biggest "
-        "mistake people make in this state is to start mass-applying out of anxiety "
-        "before they've actually decided what they're applying for. Three or four "
-        "weeks later they have a pile of interview rejections and still don't know "
-        "what they want."
-    )
+    entrepreneur = _mentions_entrepreneurship(conversation)
+
+    if entrepreneur:
+        opening = (
+            "Going independent — founding, consulting, or freelancing — is a real "
+            "path and the layoff is genuinely a good decision point for it. But it "
+            "deserves a separate framing than 'find my next role': the constraints "
+            "are different. Runway math matters more (think 12 months of expenses, "
+            "not 3-6); your old comp anchor matters less; and the first 6 months "
+            "look nothing like a salaried job. The honest first question is whether "
+            "going independent is what you actually want, or what you think you "
+            "should want after a layoff. Plenty of people pick the second and burn "
+            "12-18 months before admitting it."
+        )
+    else:
+        opening = (
+            "The 'what do I want next' question is the one that doesn't get solved by "
+            "scrolling LinkedIn. It gets solved by getting bored enough that the answer "
+            "surfaces on its own — which is a real strategy, not a cop-out. The biggest "
+            "mistake people make in this state is to start mass-applying out of anxiety "
+            "before they've actually decided what they're applying for. Three or four "
+            "weeks later they have a pile of interview rejections and still don't know "
+            "what they want."
+        )
 
     middle = (
         f"What works concretely: a 90-minute walk with a notebook, no phone, no "
@@ -327,7 +376,14 @@ def build_career_direction_response(profile: dict, conversation: list) -> str:
             "window — they have to take the first reasonable offer. Use it."
         )
 
-    close = "\n\nWant to start working through those three questions together right now, or talk through your specific must-haves and walk-aways first?"
+    if entrepreneur:
+        close = (
+            "\n\nWant to walk through the runway math for going independent, "
+            "or talk about which model (founding / consulting / freelancing) "
+            "actually fits your situation first?"
+        )
+    else:
+        close = "\n\nWant to start working through those three questions together right now, or talk through your specific must-haves and walk-aways first?"
 
     return opening + "\n\n" + middle + close
 
