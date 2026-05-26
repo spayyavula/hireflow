@@ -8,6 +8,11 @@ from api.services.scout_layoff import (
     build_career_direction_response,
     build_generic_layoff_response,
     build_opening_response,
+    build_visa_opener,
+    build_severance_opener,
+    build_finances_opener,
+    build_resume_opener,
+    build_career_direction_opener,
 )
 
 
@@ -129,5 +134,73 @@ class TestOpeningBuilder:
         assert any(s in out.lower() for s in ['senior', 'engineer'])
 
     def test_opening_with_no_topic_uses_generic(self):
-        out = build_opening_response(_profile(), suggested_first_topic=None)
+        # Profile's top_concern='direction' would normally map to the career
+        # opener; pass a concern that doesn't map so we exercise the generic
+        # fallback specifically.
+        out = build_opening_response(
+            _profile(top_concern='other'), suggested_first_topic=None,
+        )
         assert len(out) > 100
+
+    def test_opening_uses_user_concern_when_plan_picks_networking(self):
+        # The route conflict that caused 0/11 engagement on 2026-05-21: the
+        # plan generator picked 'networking' for a healthy-runway EM whose
+        # stated concern was 'finances'. Scout should honor the user's voice.
+        out = build_opening_response(
+            _profile(top_concern='finances', severance_runway='8_16w',
+                     role='em', level='senior'),
+            suggested_first_topic='networking',
+        )
+        assert len(out) < 800
+        assert any(s in out.lower() for s in ['unemployment', 'cash flow', 'cobra'])
+
+    def test_opening_user_concern_does_not_override_specific_plan_topic(self):
+        # When the plan picks a specific opener topic (e.g. 'visa' for an
+        # H-1B user nearing day 60), that should win over a stated concern
+        # like 'finances' — the plan has visibility into urgency the user
+        # may not have flagged.
+        out = build_opening_response(
+            _profile(top_concern='finances', visa_status='h1b',
+                     laid_off_when='today'),
+            suggested_first_topic='visa',
+        )
+        assert any(s in out.lower() for s in ['h-1b', 'h1b', '60'])
+
+
+@pytest.mark.unit
+class TestShortOpeners:
+    """Openers must be short enough to read on a phone screen without scrolling
+    past the input. Detailed handlers (build_*_response) stay long for
+    follow-ups; these openers are deliberately ~600-800 chars."""
+
+    OPENERS = [
+        build_visa_opener,
+        build_severance_opener,
+        build_finances_opener,
+        build_resume_opener,
+        build_career_direction_opener,
+    ]
+
+    def test_all_openers_under_800_chars(self):
+        for fn in self.OPENERS:
+            out = fn(_profile())
+            assert len(out) < 800, f"{fn.__name__} is {len(out)} chars — too long for mobile opener"
+
+    def test_all_openers_end_with_a_question(self):
+        for fn in self.OPENERS:
+            out = fn(_profile()).rstrip()
+            assert out.endswith('?'), f"{fn.__name__} doesn't end with a question"
+
+    def test_openers_have_no_playbook_url_in_first_message(self):
+        # The opener's job is to make the user reply, not to dump links.
+        # Playbook URLs surface in the detailed follow-up handlers.
+        for fn in self.OPENERS:
+            out = fn(_profile())
+            assert '/playbook/' not in out, f"{fn.__name__} dumps a playbook URL in the opener"
+
+    def test_opening_response_routes_to_short_opener_for_finances(self):
+        out = build_opening_response(_profile(), suggested_first_topic='finances')
+        # Short opener (< 800 chars) NOT the detailed response (which is ~1800)
+        assert len(out) < 800
+        # Still acknowledges level (existing test contract)
+        assert any(s in out.lower() for s in ['senior', 'engineer'])

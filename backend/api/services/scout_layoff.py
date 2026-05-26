@@ -349,41 +349,126 @@ def build_generic_layoff_response(profile: dict, conversation: list) -> str:
         )
 
     options = (
-        "\n\n• Visa timing if you're on H-1B / OPT / H-4 (the 60-day clock is the "
-        "most time-bound thing on most people's list)"
+        "\n\n• Visa & H-1B timing (the 60-day clock is the most time-bound thing)"
         "\n• Severance negotiation (the first offer is rarely the final number)"
-        "\n• Financial defense (unemployment filing, COBRA vs marketplace, runway math)"
-        "\n• Resume + LinkedIn protocol (when to update, what to post, the green-ring "
-        "badge trap)"
+        "\n• Finances (unemployment filing, COBRA, runway math)"
+        "\n• Resume & LinkedIn (when to update, the green-ring badge trap)"
         "\n• Career direction (the 90-minute walk with three questions)"
     )
 
-    close = "\n\nWhich one feels most pressing for you right now?"
+    close = "\n\nWhich one feels most pressing right now — or tell me in your own words?"
 
     return opening + options + close
 
 
+# ─── Short openers ───────────────────────────────────────────
+# The detailed handlers above fire on every follow-up message and are
+# deliberately exhaustive. For the FIRST message of a session that's a
+# wall of text on mobile and suppresses replies. Openers are tight
+# (acknowledgment + single hook + question) so the user types back;
+# the detailed handler then takes over once they engage.
+
+
+def build_visa_opener(profile: dict) -> str:
+    return (
+        "The H-1B 60-day clock is the most time-bound thing on your plate right "
+        "now — and it runs from your last day, not from when you find a new "
+        "role. Day 61 starts unlawful presence, which has long-tail consequences "
+        "you don't want to deal with.\n\n"
+        "Three rough paths: AC-21 transfer to a new employer, change of status "
+        "(B-2 / F-1 / H-4), or leave. Want me to walk through which one fits "
+        "your situation, or talk through what to tell recruiters first?"
+    )
+
+
+def build_severance_opener(profile: dict) -> str:
+    return (
+        "Quick rule before anything else: don't sign the severance package for "
+        "48-72 hours, no matter what deadline the document claims. The first "
+        "offer is almost never the final number — 60-70% of engineers don't "
+        "counter at all, which is the asymmetry you can benefit from.\n\n"
+        "Want me to walk through the highest-value items to negotiate (RSU "
+        "acceleration, ISO window, COBRA), or help you draft a counter-offer "
+        "email first?"
+    )
+
+
+def build_finances_opener(profile: dict) -> str:
+    level = _level_label(profile) or 'Senior'
+    role = _role_label(profile)
+    return (
+        f"For a {level} {role}, the most fixable thing this week is cash flow. "
+        "One action today: file for unemployment, even if you have severance. "
+        "The processing delay means filing now maximizes your total payout — "
+        "weekly UI stacks to $5-15k over a multi-month search.\n\n"
+        "Want me to walk through the next priorities in order (COBRA vs "
+        "marketplace, runway math, the 401(k) order), or is a different "
+        "concern more urgent?"
+    )
+
+
+def build_resume_opener(profile: dict) -> str:
+    level = _level_label(profile) or 'Senior'
+    return (
+        "Two pieces of contrarian advice up front: (1) don't update your resume "
+        "on day 1 — wait until day 5-6, after you've sent the first batch of "
+        f"warm-network DMs. (2) Don't enable LinkedIn's #OpenToWork badge yet, "
+        f"especially at the {level} level — the green ring has flipped from "
+        "helpful to harmful at senior+ in 2024-2026.\n\n"
+        "Want me to explain why, or jump to what to actually update when you do?"
+    )
+
+
+def build_career_direction_opener(profile: dict) -> str:
+    return (
+        "The \"what do I want next\" question doesn't get solved by scrolling "
+        "LinkedIn. The biggest trap is mass-applying out of anxiety before "
+        "you've actually decided what you're applying for — three weeks later "
+        "you have a stack of rejections and still don't know what you want.\n\n"
+        "Want to walk through the 90-minute-walk exercise (three questions, no "
+        "phone), or talk through your specific constraints first?"
+    )
+
+
 # ─── Opening builder ─────────────────────────────────────────
+
+_CONCERN_TO_OPENER_TOPIC = {
+    'finances': 'finances',
+    'visa': 'visa',
+    'direction': 'career_exploration',
+}
+
 
 def build_opening_response(profile: dict, suggested_first_topic: str | None) -> str:
     """First message sent by Scout when a session is created from a triage.
 
-    Routes to the appropriate domain handler based on the triage's
-    suggested_first_topic. If the topic isn't set (e.g., session created
-    without a triage), uses the generic greeting.
+    Routes to a SHORT opener based on the triage's suggested_first_topic.
+    Detailed handlers fire on follow-ups via route_message().
+
+    The user's stated `top_concern` overrides when the plan would otherwise
+    drop them into the generic menu (suggested_first_topic in {None,
+    'networking', 'generic'}). The plan generator sometimes picks
+    'networking' for healthy-runway users even when they told us finances
+    was the issue — that route conflict was the root cause of the
+    2026-05-21 launch's zero-engagement signal.
     """
-    topic = suggested_first_topic or 'generic'
-    routes = {
-        'visa': build_visa_response,
-        'severance': build_severance_response,
-        'finances': build_finances_response,
-        'resume': build_resume_response,
-        'career_exploration': build_career_direction_response,
-        'networking': build_generic_layoff_response,  # not a v1 dedicated domain
-        'generic': build_generic_layoff_response,
+    openers = {
+        'visa': build_visa_opener,
+        'severance': build_severance_opener,
+        'finances': build_finances_opener,
+        'resume': build_resume_opener,
+        'career_exploration': build_career_direction_opener,
     }
-    handler = routes.get(topic, build_generic_layoff_response)
-    return handler(profile, [])
+
+    topic = suggested_first_topic
+    if topic not in openers:
+        concern = (profile.get('top_concern') or '').strip()
+        topic = _CONCERN_TO_OPENER_TOPIC.get(concern)
+
+    opener = openers.get(topic) if topic else None
+    if opener is None:
+        return build_generic_layoff_response(profile, [])
+    return opener(profile)
 
 
 # ─── Intent → handler dispatch ───────────────────────────────

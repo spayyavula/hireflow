@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { track } from '@vercel/analytics';
 import GlobalStyles from '../../src/styles/GlobalStyles';
 import PublicNav from '../../src/components/PublicNav';
 import { TriageWizard } from '../../src/features/triage/TriageWizard';
@@ -39,6 +40,10 @@ export default function HomePage() {
   }
 
   async function handleStartScout() {
+    if (sessionId) {
+      setStage('scout');
+      return;
+    }
     setStage('submitting');
     setError(null);
     try {
@@ -46,6 +51,7 @@ export default function HomePage() {
       setSessionId(resp.session_id);
       setMessages(resp.messages);
       setStage('scout');
+      track('scout_opened', { triage_id: triageId });
     } catch (err) {
       setError(err.message || 'Scout request failed');
       setStage('plan');
@@ -73,6 +79,26 @@ export default function HomePage() {
     }
   }
 
+  if (stage === 'scout') {
+    return (
+      <>
+        <GlobalStyles />
+        <ScoutChat
+          messages={messages}
+          onSendMessage={handleSendScoutMessage}
+          onBack={() => setStage('plan')}
+          isThinking={isThinking}
+        />
+        {error && (
+          <div style={{
+            position: 'fixed', bottom: 80, left: 0, right: 0,
+            textAlign: 'center', color: 'var(--coral)', fontSize: 14, zIndex: 60,
+          }}>{error}</div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
       <GlobalStyles />
@@ -93,7 +119,7 @@ export default function HomePage() {
             maxWidth: 540, margin: '0 auto 40px',
           }}>{HERO_BODY}</p>
           <button
-            onClick={() => setStage('wizard')}
+            onClick={() => { track('triage_started'); setStage('wizard'); }}
             style={{
               background: 'var(--ink)', color: 'white', padding: '16px 36px',
               borderRadius: 12, border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer',
@@ -126,18 +152,6 @@ export default function HomePage() {
         <TriagePlan plan={plan} onStartScout={handleStartScout} />
       )}
 
-      {stage === 'scout' && (
-        <>
-          <ScoutChat
-            messages={messages}
-            onSendMessage={handleSendScoutMessage}
-            isThinking={isThinking}
-          />
-          {error && (
-            <p style={{ textAlign: 'center', color: 'var(--coral)', fontSize: 14 }}>{error}</p>
-          )}
-        </>
-      )}
     </div>
   );
 }
