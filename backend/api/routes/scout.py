@@ -5,7 +5,7 @@ salary negotiation, career transitions, networking, work-life balance,
 leadership coaching, and more.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
@@ -1337,10 +1337,14 @@ def _fetch_triage(triage_id: str) -> dict | None:
 
 
 @router.post('/sessions', response_model=ScoutSessionResponse)
-def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
+def create_session(
+    req: ScoutSessionCreateRequest,
+    src: str | None = Query(default=None, max_length=32),
+) -> ScoutSessionResponse:
     """Create a new Scout session, optionally seeded by a triage_id."""
     profile: dict = {}
     suggested_first_topic: str | None = None
+    source: str | None = src
 
     try:
         if req.triage_id:
@@ -1349,6 +1353,11 @@ def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
                 profile = triage.get('answers') or {}
                 plan = triage.get('plan') or {}
                 suggested_first_topic = plan.get('suggested_first_topic')
+                # If the SPA dropped ?src= between triage and Scout, fall
+                # back to whatever source the originating triage was tagged
+                # with so the funnel stays attributable end-to-end.
+                if source is None:
+                    source = triage.get('source')
         elif req.suggested_first_topic:
             # Topic-keyed session without a triage (e.g. from /laid-off-h1b
             # landing page). Profile is empty so the handler uses its
@@ -1366,6 +1375,7 @@ def create_session(req: ScoutSessionCreateRequest) -> ScoutSessionResponse:
                 'user_id': None,
                 'triage_id': req.triage_id,
                 'messages': [first_msg.model_dump()],
+                'source': source,
             })
             .execute()
         )

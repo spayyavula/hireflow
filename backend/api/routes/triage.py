@@ -6,7 +6,7 @@ homepage Triage."""
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 import api.core.database as _db
 from api.models.schemas import TriageAnswers, TriageResponse
@@ -17,7 +17,10 @@ router = APIRouter(prefix="/api/triage", tags=["Triage"])
 
 
 @router.post("", response_model=TriageResponse)
-def submit_triage(answers: TriageAnswers) -> TriageResponse:
+def submit_triage(
+    answers: TriageAnswers,
+    src: str | None = Query(default=None, max_length=32),
+) -> TriageResponse:
     plan = generate_plan(answers)
     try:
         result = (
@@ -26,6 +29,7 @@ def submit_triage(answers: TriageAnswers) -> TriageResponse:
                 "user_id": None,
                 "answers": answers.model_dump(),
                 "plan": plan.model_dump(),
+                "source": src,
             })
             .execute()
         )

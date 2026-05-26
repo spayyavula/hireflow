@@ -49,12 +49,24 @@ Tell a friend who needs it.
 ## First comment (post immediately after, then pin)
 
 ```
-Link: https://hyrly.ai
+Link: https://hyrly.ai/?src=li2
 
-Triage is 3 minutes, anonymous. The severance calculator is at hyrly.ai/tools/severance if you're mid-negotiation. And the H-1B 60-day breakdown is at hyrly.ai/laid-off-h1b.
+Triage is 3 minutes, anonymous. The severance calculator is at hyrly.ai/tools/severance?src=li2-sev if you're mid-negotiation. And the H-1B 60-day breakdown is at hyrly.ai/laid-off-h1b?src=li2-h1b.
 ```
 
 Posting cadence: post the main body, wait 30-60 seconds, post this comment, then immediately pin it (... menu → "Pin to top"). The 30-60s gap matters — LinkedIn pattern-matches simultaneous post + comment as automation and rate-limits both.
+
+### Why three separate `?src=` tags
+
+Migration 010 added a `source` column to `triage_responses` and `scout_sessions`; the frontend captures `?src=` from the URL on first visit and persists it across the triage → scout funnel. Per-URL tags let us see *which link* drove engagement, not just "the attempt #2 post in aggregate":
+
+| Tag | Where it appears | What it measures |
+|---|---|---|
+| `li2` | Bare hyrly.ai link in pinned comment | Top-of-funnel traffic; people who clicked the headline link |
+| `li2-sev` | Severance calculator link | "Mid-negotiation" cohort — usually highest intent |
+| `li2-h1b` | H-1B landing page link | H-1B cohort — measures whether the visa angle is a real wedge |
+
+If one tag dominates 5x over the others, that's a signal to lead with that angle in attempt #3. If they're roughly even, the post itself drove the conversions, not any specific link.
 
 ---
 
@@ -63,6 +75,7 @@ Posting cadence: post the main body, wait 30-60 seconds, post this comment, then
 - [ ] **Image:** screenshot of the homepage hero (`hyrly.ai/`, the "Just got laid off? / Don't update your resume yet." card). Take it on desktop at 1920x1080, crop to LinkedIn 1200x627. Attach to the main post.
 - [ ] **Pre-warm DMs:** identify 8-12 close engineering friends/ex-coworkers. Send each a DM 30 minutes before posting: *"Posting attempt #2 of my Hyrly launch on LinkedIn at [time] — the first one underperformed because LinkedIn suppresses posts with external links. If you have a sec to leave a real comment in the first hour I'd really appreciate it. No worries if you're busy — and no need to reshare unless it actually resonates."*
 - [ ] **Confirm hyrly.ai is live + working:** open in an incognito browser, run the triage end-to-end, confirm the Scout chat opens, confirm the severance calc loads. Trust but verify before sending traffic.
+- [ ] **Confirm `?src=` tagging is live end-to-end:** open `hyrly.ai/?src=li2-preflight` in incognito, complete the triage, click into Scout, send one message. Then run the funnel query below — you should see one new triage row and one scout row, both with `source = 'li2-preflight'`. If the rows show `source = NULL`, the frontend or backend deploy did not include the source-capture wire and the entire attempt #2 data plan is broken. Fix before posting.
 - [ ] **Have follow-up replies prepped** for the 4-5 likely first comments (see template below).
 - [ ] **Block 90 minutes after posting** for reply discipline. The first 60-90 minutes of engagement is what the algorithm uses to decide reach.
 
@@ -101,27 +114,46 @@ Three Scout AI sessions free, then $29/mo for unlimited Scout (the Hyrly Coach t
 
 ```
 T-30min   DM 8-12 engineering friends with the soft pre-warm ask
-T-15min   Open Supabase SQL Editor + a triage_responses count query
+T-15min   Open Supabase SQL Editor with the funnel query below
             ready in a tab (so you can watch the funnel live)
 T-5min    Triple-check the post body has NO external link (only the
             hyrly.ai mention in the "I'll drop the link in the first
             comment" line — that's not a clickable URL)
 T+0       Post the body + attached image
-T+45-90s  Post the first comment with the actual URL → pin it
+T+45-90s  Post the first comment with the three tagged URLs → pin it
 T+5-15m   Reply to every comment substantively. Match comment length;
             don't just say "thanks!"
 T+30m     Quote-comment your own post with one new specific (e.g. a
             user reaction, a screenshot of the severance calc) —
             this is a legitimate algorithm boost.
-T+60m     Check the Supabase query — any new triages? If so, the
-            funnel is alive; reply to recent comments mentioning
-            specific calculator/article URLs.
-T+24h     Run the full funnel query (see attempt-1 doc) and compare
-            triage count vs attempt #1 (was 1 real). Aim for 5-10x.
+T+60m     Re-run the funnel query — any rows with source LIKE 'li2%'?
+            If so, the funnel is alive; reply to recent comments
+            mentioning the specific calculator/H-1B URLs.
+T+24h     Run the funnel query split by source tag. See which tag
+            (li2 / li2-sev / li2-h1b) drove the most engaged scout
+            sessions. That ratio informs attempt #3's hook.
 T+48h     If reach > 200 views, do nothing — let it ride. If reach <
             100, the contrarian hook didn't land either; try hook C
             (product-first) in attempt #3 in 1-2 weeks.
 ```
+
+### Funnel query (paste into Supabase SQL Editor)
+
+```sql
+SELECT t.source,
+       COUNT(t.id)                                AS triages,
+       COUNT(DISTINCT s.id)                       AS scout_sessions,
+       COUNT(DISTINCT s.id) FILTER (
+         WHERE jsonb_array_length(s.messages) >= 4
+       )                                          AS scout_engaged
+FROM triage_responses t
+LEFT JOIN scout_sessions s ON s.triage_id = t.id
+WHERE t.source LIKE 'li2%'
+GROUP BY t.source
+ORDER BY triages DESC;
+```
+
+`scout_engaged` requires ≥ 4 messages (≥ 2 user turns) — the threshold that surfaced the attempt #1 product signal (11 sessions started, 0 engaged). If `scout_engaged` lands above zero this time, the Scout opening message change worked. If it's still zero, the distribution is real but Scout itself needs work.
 
 ---
 
@@ -146,9 +178,10 @@ If attempt #2 also lands at <100 views, the issue isn't link-in-body or hook qua
 
 Don't optimize for views. Optimize for:
 
-- **5+ real triages in 24 hours** (5x attempt #1)
-- **2+ Scout sessions** (the plan-to-Scout handoff worked at least once)
+- **5+ triages tagged `source LIKE 'li2%'` in 24 hours** — attempt #1's baseline was ambiguous (DB showed 11 triages in the launch-day window, but most were likely pre-flight test runs, not real users). With source tagging, attempt #2's number is unambiguous.
+- **2+ scout sessions tagged `source LIKE 'li2%'`** — the plan-to-Scout handoff worked at least once.
+- **1+ engaged scout session** (≥ 4 messages) — attempt #1 had zero. A single engaged session is the first real evidence that Scout's opening keeps people in the conversation.
 - **1+ cold DM** from someone outside your network saying "this helped"
 - **Any reshare from someone outside your immediate network**
 
-If 3 of these 4 happen, attempt #2 worked. Iterate the post on what people engaged with.
+If 3 of these 5 happen, attempt #2 worked. The engaged-scout-session metric matters most because it tells you whether you fixed the attempt-#1 product gap, not just the distribution gap.

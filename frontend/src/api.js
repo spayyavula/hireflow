@@ -24,6 +24,34 @@ const safeStorage = {
   },
 };
 
+// Distribution attribution: read ?src=... once per session and persist
+// across SPA navigation so the triage→scout funnel stays attributable
+// even after the URL stops carrying the param.
+const SRC_KEY = 'hyrly_src';
+const SRC_MAX_LEN = 32;
+function getDistributionSource() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const url = new URL(window.location.href);
+    const fromUrl = url.searchParams.get('src');
+    if (fromUrl) {
+      const clean = fromUrl.slice(0, SRC_MAX_LEN);
+      window.sessionStorage?.setItem(SRC_KEY, clean);
+      return clean;
+    }
+    return window.sessionStorage?.getItem(SRC_KEY) || null;
+  } catch {
+    return null;
+  }
+}
+
+function withSrc(path) {
+  const src = getDistributionSource();
+  if (!src) return path;
+  const sep = path.includes('?') ? '&' : '?';
+  return `${path}${sep}src=${encodeURIComponent(src)}`;
+}
+
 class HyrlyAPI {
   constructor() {
     this.token = safeStorage.get('hyrly_token') || null;
@@ -76,7 +104,7 @@ class HyrlyAPI {
 
   // ─── Triage (LP1) ─────────────────────────────────────
   async submitTriage(answers) {
-    return this._fetch('/api/triage', {
+    return this._fetch(withSrc('/api/triage'), {
       method: 'POST',
       body: JSON.stringify(answers),
     });
@@ -103,7 +131,7 @@ class HyrlyAPI {
   }
 
   async createScoutSession(triageId, suggestedFirstTopic = null) {
-    return this._fetch('/api/scout/sessions', {
+    return this._fetch(withSrc('/api/scout/sessions'), {
       method: 'POST',
       body: JSON.stringify({
         triage_id: triageId || null,
