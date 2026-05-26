@@ -1,4 +1,5 @@
 export function TriagePlan({ plan, onStartScout }) {
+  const topPriority = plan?.actions?.[0]?.title;
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '24px' }}>
       <div style={{ marginBottom: 32 }}>
@@ -40,22 +41,43 @@ export function TriagePlan({ plan, onStartScout }) {
 
       <div style={{
         position: 'sticky', bottom: 16,
-        background: 'var(--cream)', padding: '16px 24px', borderRadius: 16,
+        background: 'var(--cream)', padding: '20px 24px', borderRadius: 16,
         border: '1px solid var(--border)', boxShadow: '0 -2px 12px rgba(13,13,15,0.06)',
-        textAlign: 'center',
       }}>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
-          Want a coach to help you actually execute this plan?
+        {topPriority && (
+          <>
+            <p style={{
+              fontSize: 12, fontWeight: 700, color: 'var(--text-muted)',
+              margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em',
+            }}>Your #1 priority</p>
+            <p style={{
+              fontSize: 17, fontWeight: 700, color: 'var(--ink)',
+              margin: '0 0 12px', lineHeight: 1.35,
+            }}>{topPriority}</p>
+          </>
+        )}
+        <p style={{
+          fontSize: 14, color: 'var(--text-secondary)',
+          margin: '0 0 14px', lineHeight: 1.55,
+        }}>
+          Ask Scout for specifics — what to do this week, what to say, what to negotiate.
         </p>
         <button
           onClick={() => onStartScout(plan)}
           style={{
-            background: 'var(--ink)', color: 'white', padding: '14px 28px',
-            borderRadius: 12, border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            background: 'var(--ink)', color: 'white', padding: '14px 24px',
+            borderRadius: 12, border: 'none', fontSize: 15, fontWeight: 700,
+            cursor: 'pointer', width: '100%',
           }}
         >
-          Talk to Scout AI about this →
+          Ask Scout about this →
         </button>
+        <p style={{
+          fontSize: 12, color: 'var(--text-muted)',
+          margin: '10px 0 0', textAlign: 'center',
+        }}>
+          Free · Anonymous · No signup
+        </p>
       </div>
     </div>
   );

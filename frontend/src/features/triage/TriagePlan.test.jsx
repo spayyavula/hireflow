@@ -25,7 +25,9 @@ describe('TriagePlan', () => {
 
   it('renders all action items in priority order', () => {
     render(<TriagePlan plan={SAMPLE_PLAN} onStartScout={() => {}} />);
-    expect(screen.getByText('Negotiate severance')).toBeInTheDocument();
+    // The #1 priority title now appears in both the priority card and the
+    // content-aware sticky CTA, so it shows up twice.
+    expect(screen.getAllByText('Negotiate severance')).toHaveLength(2);
     expect(screen.getByText('File for unemployment')).toBeInTheDocument();
     expect(screen.getByText(/First offer is never final/)).toBeInTheDocument();
     expect(screen.getByText(/Your state UI portal/)).toBeInTheDocument();
@@ -34,7 +36,13 @@ describe('TriagePlan', () => {
   it('calls onStartScout with the plan when the Scout CTA is clicked', () => {
     const onStartScout = vi.fn();
     render(<TriagePlan plan={SAMPLE_PLAN} onStartScout={onStartScout} />);
-    fireEvent.click(screen.getByText(/Talk to Scout AI/i));
+    fireEvent.click(screen.getByRole('button', { name: /Ask Scout/i }));
     expect(onStartScout).toHaveBeenCalledWith(SAMPLE_PLAN);
+  });
+
+  it('content-aware CTA references the #1 priority and shows the trust reassertion', () => {
+    render(<TriagePlan plan={SAMPLE_PLAN} onStartScout={() => {}} />);
+    expect(screen.getByText(/Your #1 priority/i)).toBeInTheDocument();
+    expect(screen.getByText(/Free · Anonymous · No signup/)).toBeInTheDocument();
   });
 });
