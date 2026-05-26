@@ -13,6 +13,7 @@
     "test:e2e:pr": "playwright test e2e/smoke.spec.js --grep \"homepage loads and shows the hero heading|a new seeker reaches the onboarding choice screen\" e2e/onboarding.spec.js"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "@vercel/og": "^0.11.1",
     "js-yaml": "^4.1.0",
     "marked": "^18.0.4",
