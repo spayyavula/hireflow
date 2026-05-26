@@ -40,6 +40,20 @@ INTENT_KEYWORDS = [
         'resume', 'cv', 'headline', 'linkedin profile', 'linkedin headline',
         'opentowork', 'open to work', 'profile rewrite',
     ]),
+    ('interview_prep', [
+        # Interview prep is explicitly NOT Scout's wedge — Scout covers the
+        # 90-day window BEFORE active interviewing. But "how do I prep for
+        # interviews" is one of the most common off-script questions from
+        # laid-off engineers, and falling through to the generic menu reads
+        # as evasive. This handler honestly disclaims + points users to
+        # external best-in-class tools (Final Round AI, Pramp, Hello
+        # Interview) and pivots back to where Scout still helps:
+        # interview-readiness check + offer negotiation.
+        'interview', 'system design', 'coding round', 'tech screen',
+        'phone screen', 'onsite', 'final round', 'behavioral round',
+        'leetcode', 'algorithm round', 'mock interview', 'pramp',
+        'final round ai', 'hello interview',
+    ]),
     ('career_direction', [
         'what should i do', 'what do i want', 'next role', 'pivot',
         'career', 'direction', 'burnout', 'tired of', "don't know",
@@ -97,7 +111,7 @@ def _last_scout_topic(conversation: list) -> str | None:
 
 def detect_layoff_intent(content: str, conversation: list) -> str:
     """Return one of 'visa' | 'severance' | 'finances' | 'resume' |
-    'career_direction' | 'generic'."""
+    'interview_prep' | 'career_direction' | 'generic'."""
     text = (content or '').lower()
     for intent, kws in INTENT_KEYWORDS:
         if any(kw in text for kw in kws):
@@ -388,6 +402,56 @@ def build_career_direction_response(profile: dict, conversation: list) -> str:
     return opening + "\n\n" + middle + close
 
 
+def build_interview_prep_response(profile: dict, conversation: list) -> str:
+    """Stub handler for interview-prep intents.
+
+    Scout's wedge is the 90-day window BEFORE active interviewing, so
+    this handler honestly disclaims + routes to external best-in-class
+    tools rather than fabricating advice on a topic the playbook doesn't
+    cover. Pivots back to two things Scout DOES do well at the interview
+    stage: readiness check (you're not ready if you're still grieving)
+    and offer negotiation (back in Scout's wedge once an offer lands).
+    """
+    level = _level_label(profile) or 'Senior'
+    role = _role_label(profile)
+
+    opening = (
+        "Interview prep is outside what Scout's tuned for. Scout focuses on "
+        "the 90-day window BEFORE active interviewing — the layoff-specific "
+        "decisions that get skipped when people rush to apply. Once you're "
+        "in actual loops, there are tools much sharper than I am."
+    )
+
+    recommendations = (
+        "\n\nWhat's worth your time at the interview stage:"
+        "\n• Voice / behavioral practice: Final Round AI "
+        "(https://finalroundai.com) — live transcription + framing feedback, "
+        "best-in-class for engineers"
+        "\n• Mock interviews with real engineers: Pramp "
+        "(https://pramp.com) — free, scheduled peer practice"
+        "\n• System design (L5+): Hello Interview "
+        "(https://hellointerview.com)"
+        "\n• Algos: LeetCode is fine; spend less time here than you think"
+    )
+
+    pivot = (
+        "\n\nWhere I can still help right now:"
+        f"\n• Deciding whether you're *ready* — a {level} {role} who's still "
+        "grieving the layoff burns interview slots they can't get back. "
+        "I can walk through that readiness check."
+        "\n• Negotiating once you HAVE an offer — that's back in Scout's "
+        "wedge. First offer is rarely the final number, and 60-70% of "
+        "engineers don't counter at all."
+    )
+
+    close = (
+        "\n\nIs the question 'am I ready to interview', 'I have an offer "
+        "to negotiate', or something else specific?"
+    )
+
+    return opening + recommendations + pivot + close
+
+
 def build_generic_layoff_response(profile: dict, conversation: list) -> str:
     level = _level_label(profile)
     role = _role_label(profile)
@@ -537,6 +601,7 @@ def route_message(content: str, profile: dict, conversation: list) -> str:
         'severance': build_severance_response,
         'finances': build_finances_response,
         'resume': build_resume_response,
+        'interview_prep': build_interview_prep_response,
         'career_direction': build_career_direction_response,
         'generic': build_generic_layoff_response,
     }

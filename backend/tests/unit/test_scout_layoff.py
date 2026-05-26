@@ -5,6 +5,7 @@ from api.services.scout_layoff import (
     build_severance_response,
     build_finances_response,
     build_resume_response,
+    build_interview_prep_response,
     build_career_direction_response,
     build_generic_layoff_response,
     build_opening_response,
@@ -54,6 +55,16 @@ class TestIntentDetection:
         assert detect_layoff_intent('thinking about a pivot', []) == 'career_direction'
         assert detect_layoff_intent("don't know where I want to go", []) == 'career_direction'
 
+    def test_interview_prep_keywords_route_to_interview_prep(self):
+        # Stub handler — the only thing that matters here is "do NOT
+        # dead-end on the generic menu" for the most common off-script
+        # intent on layoffs.fyi-style audiences.
+        assert detect_layoff_intent('how do I prep for my interview', []) == 'interview_prep'
+        assert detect_layoff_intent('system design round next week', []) == 'interview_prep'
+        assert detect_layoff_intent('any tips for the phone screen', []) == 'interview_prep'
+        assert detect_layoff_intent('leetcode strategy', []) == 'interview_prep'
+        assert detect_layoff_intent('I have an onsite tomorrow', []) == 'interview_prep'
+
     def test_entrepreneurship_keywords_route_to_career_direction(self):
         # Real user transcript: "I want to become an entrepreneur" was
         # falling through to 'generic' and rendering the same menu the
@@ -102,6 +113,21 @@ class TestHandlers:
         assert 'resume' in out.lower()
         assert '/playbook/linkedin-opentowork-after-layoff' in out or '/playbook/just-got-laid-off-week-1-plan' in out
 
+    def test_interview_prep_response_routes_to_external_tools_and_pivots(self):
+        # The stub MUST honestly disclaim (not Scout's wedge), point to
+        # external best-in-class tools, and pivot back to readiness +
+        # negotiation (where Scout still helps).
+        out = build_interview_prep_response(_profile(), [])
+        low = out.lower()
+        # External recommendations (at least 2 of 3 should appear so the
+        # stub is genuinely useful, not just disclaimer + dead-end)
+        external_hits = sum(s in low for s in ['finalroundai', 'pramp', 'hellointerview'])
+        assert external_hits >= 2, f"expected ≥2 external tool refs, got {external_hits}"
+        # Pivot to Scout's actual wedge
+        assert any(s in low for s in ['ready', 'negotiat', 'offer'])
+        # Honest framing — this is NOT a "Scout knows interview prep" response
+        assert any(s in low for s in ['outside', 'not', 'sharper than']) or 'wedge' in low
+
     def test_career_direction_response_mentions_values_or_walk(self):
         out = build_career_direction_response(_profile(top_concern='direction'), [])
         assert any(s in out.lower() for s in ['walk', 'values', 'regret', 'love'])
@@ -139,7 +165,8 @@ class TestHandlers:
 
     def test_each_handler_ends_with_a_question(self):
         for fn in [build_visa_response, build_severance_response, build_finances_response,
-                   build_resume_response, build_career_direction_response, build_generic_layoff_response]:
+                   build_resume_response, build_interview_prep_response,
+                   build_career_direction_response, build_generic_layoff_response]:
             out = fn(_profile(), [])
             assert out.rstrip().endswith('?'), f"{fn.__name__} doesn't end with a question"
 
